@@ -66,8 +66,10 @@ public class PortalWand extends Wand {
         }
 
         if ( firstPortal.isInPortal( player ) ) {
+            secondPortal.teleport( player );
             Bukkit.broadcastMessage( player.getName() + " is in portal 1" );
         } else if ( secondPortal.isInPortal( player ) ) {
+            firstPortal.teleport( player );
             Bukkit.broadcastMessage( player.getName() + " is in portal 2" );
         }
 
@@ -92,11 +94,14 @@ public class PortalWand extends Wand {
         if ( target == null )
             return;
 
+        Location lastBlock = player.getLocation();
+
         for ( Block block : blocks ) {
             Location location = block.getLocation();
 
             if ( block.getType() == Material.AIR || block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER ) {
                 player.playEffect( location, Effect.MOBSPAWNER_FLAMES, 0 );
+                lastBlock = block.getLocation();
                 continue;
             }
 
@@ -121,7 +126,7 @@ public class PortalWand extends Wand {
             portalBlocks.add( target.getLocation() );
             portalBlocks.add( secondBlock );
 
-            portal = new Portal( Portal.PortalType.FLOOR, portalBlocks.get( 0 ).getBlock(), portalBlocks.get( 1 ).getBlock() );
+            portal = new Portal( Portal.getBlockFaceFromTo( target.getLocation(), lastBlock ), portalBlocks.get( 0 ).getBlock(), portalBlocks.get( 1 ).getBlock() );
         }
 
         sendDefaultBlocks( left );
