@@ -10,7 +10,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -25,7 +24,7 @@ public class WandManager implements Listener {
     private static Wand[] wands = new Wand[]{
             new FireWand(),
             new PortalWand(),
-            new CreeperWand(  )
+            new CreeperWand()
     };
 
     private Map<UUID, Wand> playerWands = new HashMap<>();
@@ -39,7 +38,7 @@ public class WandManager implements Listener {
 
         Bukkit.getScheduler().runTaskTimer( devathlon, new Runnable() {
             @Override
-            public void run( ) {
+            public void run() {
                 for ( Map.Entry<UUID, Wand> playerWandEntry : playerWands.entrySet() ) {
                     Wand wand = playerWandEntry.getValue();
 
@@ -48,7 +47,7 @@ public class WandManager implements Listener {
                     if ( !wand.isRightClicking() )
                         continue;
 
-                    if ( ( System.currentTimeMillis() - wand.getLastInteract() ) <= 100 )
+                    if ( (System.currentTimeMillis() - wand.getLastInteract()) <= 100 )
                         continue;
 
                     wand.onRightClickRelease();
@@ -59,20 +58,11 @@ public class WandManager implements Listener {
     }
 
     @EventHandler
-    public void onJoin( PlayerJoinEvent event ) {
-        Player player = event.getPlayer();
-
-        for ( Wand wand : wands ) {
-            player.getInventory().addItem( wand.getItem() );
-        }
-    }
-
-    @EventHandler
     public void onPlayerInteractEntity( PlayerInteractEntityEvent event ) {
         Entity entity = event.getRightClicked();
         if ( entity != null ) {
             Wand wand = getWandByItemStack( event.getPlayer(), event.getPlayer().getItemInHand() );
-            if(wand != null) {
+            if ( wand != null ) {
                 wand.onPlayerInteractEntity( entity );
             }
         }
@@ -88,12 +78,12 @@ public class WandManager implements Listener {
         Wand oldWand = null;
         Wand newWand = null;
 
-        if ( oldItem != null && ( oldWand = getWandByItemStack( player, oldItem ) ) != null ) {
+        if ( oldItem != null && (oldWand = getWandByItemStack( player, oldItem )) != null ) {
             playerWands.remove( player.getUniqueId() );
             oldWand.onDisable();
         }
 
-        if ( newItem != null && ( newWand = getWandByItemStack( player, newItem ) ) != null ) {
+        if ( newItem != null && (newWand = getWandByItemStack( player, newItem )) != null ) {
             newWand.onEnable();
         }
     }
@@ -144,7 +134,7 @@ public class WandManager implements Listener {
     private Wand getWandByItemStack( Player player, ItemStack itemStack ) {
         Wand playersWand = null;
 
-        if ( playerWands.containsKey( player.getUniqueId() ) && ( playersWand = playerWands.get( player.getUniqueId() ) ).getItem().equals( itemStack ) ) {
+        if ( playerWands.containsKey( player.getUniqueId() ) && (playersWand = playerWands.get( player.getUniqueId() )).getItem().equals( itemStack ) ) {
             return playersWand;
         }
 
@@ -165,6 +155,14 @@ public class WandManager implements Listener {
         }
 
         return null;
+    }
+
+    public void giveAllWands( Player player ) {
+        for ( Wand wand : wands ) {
+            player.getInventory().addItem( wand.getItem() );
+        }
+
+        player.getInventory().setHeldItemSlot( 0 );
     }
 
 }

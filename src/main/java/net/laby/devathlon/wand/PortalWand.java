@@ -85,7 +85,7 @@ public class PortalWand extends Wand {
      */
     private void makePortal( boolean left ) {
         // Getting line of sight (up to 50 blocks)
-        List<Block> blocks = player.getLineOfSight( ( HashSet<Byte> ) null, 50 );
+        List<Block> blocks = player.getLineOfSight( ( HashSet<Byte> ) null, 100 );
         Block target = null;
 
         for ( Block block : blocks ) {

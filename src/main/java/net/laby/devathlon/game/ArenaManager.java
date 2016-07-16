@@ -8,6 +8,7 @@ import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.WorldCreator;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -145,6 +146,36 @@ public class ArenaManager {
      */
     public File getDirectory() {
         return directory;
+    }
+
+    /**
+     * State whether the player is in an arena
+     *
+     * @param player player should be checked
+     * @return true if the player is ingame
+     */
+    public boolean isIngame( Player player ) {
+        return getPlayerArena( player ) != null;
+    }
+
+    /**
+     * Gets the arena the player is in
+     *
+     * @param player player the check should be for
+     * @return player's arena (null if there is no arena the player is in)
+     */
+    public Arena getPlayerArena( Player player ) {
+        // Iterating through all arenas
+        for ( Arena arena : arenas ) {
+            // Checking whether the player is in the joined-players-list
+            if ( !arena.getJoinedPlayers().contains( player.getUniqueId() ) )
+                continue;
+
+            // Returning true
+            return arena;
+        }
+
+        return null;
     }
 
     /**

@@ -1,6 +1,7 @@
 package net.laby.devathlon.listener;
 
 import net.laby.devathlon.Devathlon;
+import net.laby.devathlon.game.Arena;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
@@ -13,7 +14,13 @@ public class QuitListener implements Listener {
 
     @EventHandler
     public void onQuit( PlayerQuitEvent event ) {
-        event.setQuitMessage( Devathlon.PREFIX + "§6" + event.getPlayer().getName() + " §7hat das Spiel §cverlassen!" );
+        event.setQuitMessage( "§6" + event.getPlayer().getName() + " §7hat das Spiel §cverlassen!" );
+
+        Arena arena = Devathlon.getInstance().getArenaManager().getPlayerArena( event.getPlayer() );
+
+        if( arena != null ) {
+            arena.loosePlayer( event.getPlayer() );
+        }
     }
 
     @EventHandler

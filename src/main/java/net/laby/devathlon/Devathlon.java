@@ -2,14 +2,24 @@ package net.laby.devathlon;
 
 import net.laby.devathlon.commands.ArenaCommand;
 import net.laby.devathlon.game.ArenaManager;
+import net.laby.devathlon.listener.BlockBreakListener;
+import net.laby.devathlon.listener.EntityDamageListener;
+import net.laby.devathlon.listener.FoodLevelChangeListener;
+import net.laby.devathlon.listener.InteractListener;
 import net.laby.devathlon.listener.JoinListener;
+import net.laby.devathlon.listener.PlayerDeathListener;
 import net.laby.devathlon.listener.QuitListener;
+import net.laby.devathlon.listener.SignChangeListener;
 import net.laby.devathlon.wand.WandManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Class created by qlow | Jan
@@ -18,14 +28,16 @@ public class Devathlon extends JavaPlugin {
 
     public static final String PREFIX = "§7\u00BB §6MagicalBattle§8: §r";
 
+    private WandManager wandManager;
     private ArenaManager arenaManager;
+    private Map<UUID, Location> cachedLocations = new HashMap<>();
 
     @Override
     public void onEnable() {
         this.instance = this;
 
         // Loading WandManager
-        new WandManager( this );
+        this.wandManager = new WandManager( this );
 
         // Loading arenas
         this.arenaManager = new ArenaManager( new File( "arenas" ) );
@@ -33,7 +45,13 @@ public class Devathlon extends JavaPlugin {
         // Registering listeners
         Listener[] listeners = new Listener[]{
                 new JoinListener(),
-                new QuitListener()
+                new QuitListener(),
+                new SignChangeListener(),
+                new InteractListener(),
+                new FoodLevelChangeListener(),
+                new BlockBreakListener(),
+                new EntityDamageListener(),
+                new PlayerDeathListener()
         };
 
         for ( Listener listener : listeners ) {
@@ -46,6 +64,14 @@ public class Devathlon extends JavaPlugin {
 
     @Override
     public void onDisable() {
+    }
+
+    public Map<UUID, Location> getCachedLocations() {
+        return cachedLocations;
+    }
+
+    public WandManager getWandManager() {
+        return wandManager;
     }
 
     public ArenaManager getArenaManager() {
