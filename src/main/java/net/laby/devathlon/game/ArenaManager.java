@@ -97,6 +97,10 @@ public class ArenaManager {
                         FileUtils.deleteDirectory( new File( Bukkit.getWorldContainer(), arenaConfig.getName() ) );
                     }
 
+                    if(new File(mapFolder, "uid.dat").exists()) {
+                        new File(mapFolder, "uid.dat").delete();
+                    }
+
                     FileUtils.copyDirectory( mapFolder, new File( Bukkit.getWorldContainer(), arenaConfig.getName() ) );
                     Bukkit.createWorld( new WorldCreator( arenaConfig.getName() ) );
                 }
