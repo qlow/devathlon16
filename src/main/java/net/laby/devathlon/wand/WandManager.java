@@ -96,6 +96,10 @@ public class WandManager implements Listener {
 
         Wand wand = getWandByItemStack( player, item );
 
+        if(wand == null) {
+            return;
+        }
+
         if(event.getAction().name().startsWith( "LEFT" )) {
             wand.onLeftClick();
             return;
