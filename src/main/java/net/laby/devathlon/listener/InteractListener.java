@@ -3,6 +3,7 @@ package net.laby.devathlon.listener;
 import net.laby.devathlon.Devathlon;
 import net.laby.devathlon.game.Arena;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -66,7 +67,10 @@ public class InteractListener implements Listener {
 
                         // Sending message & teleporting
                         joined.sendMessage( Devathlon.PREFIX + "§aDer Fight startet jetzt!" );
+
                         joined.teleport( arena.getSpawns().get( spawnIndex ) );
+                        joined.setGameMode( GameMode.SURVIVAL );
+                        joined.setHealth( 20D );
 
                         spawnIndex++;
                     }

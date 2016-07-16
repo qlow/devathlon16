@@ -4,6 +4,7 @@ import net.laby.devathlon.commands.ArenaCommand;
 import net.laby.devathlon.game.ArenaManager;
 import net.laby.devathlon.listener.BlockBreakListener;
 import net.laby.devathlon.listener.EntityDamageListener;
+import net.laby.devathlon.listener.EntityExplodeListener;
 import net.laby.devathlon.listener.FoodLevelChangeListener;
 import net.laby.devathlon.listener.InteractListener;
 import net.laby.devathlon.listener.JoinListener;
@@ -51,7 +52,8 @@ public class Devathlon extends JavaPlugin {
                 new FoodLevelChangeListener(),
                 new BlockBreakListener(),
                 new EntityDamageListener(),
-                new PlayerDeathListener()
+                new PlayerDeathListener(),
+                new EntityExplodeListener()
         };
 
         for ( Listener listener : listeners ) {

@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -109,16 +110,16 @@ public class Arena {
         setIngame( false );
 
         // Sending win-message and teleporting to spawn
-        for ( UUID joinedPlayerUUID : getJoinedPlayers() ) {
+        for ( UUID joinedPlayerUUID : Arrays.asList( lastPlayer, player.getUniqueId() ) ) {
             Player joinedPlayer = Bukkit.getPlayer( joinedPlayerUUID );
 
-            joinedPlayer.sendMessage( Devathlon.PREFIX + "§6" +  Bukkit.getPlayer( lastPlayer ) + " §ahat die Runde gewonnen!");
+            joinedPlayer.sendMessage( Devathlon.PREFIX + "§6" + Bukkit.getPlayer( lastPlayer ) + " §ahat die Runde gewonnen!" );
             joinedPlayer.setHealth( 20D );
 
             joinedPlayer.getInventory().clear();
 
             // Returning player to cached location
-            if(Devathlon.getInstance().getCachedLocations().containsKey( joinedPlayerUUID )) {
+            if ( Devathlon.getInstance().getCachedLocations().containsKey( joinedPlayerUUID ) ) {
                 joinedPlayer.teleport( Devathlon.getInstance().getCachedLocations().get( player.getUniqueId() ) );
 
                 Devathlon.getInstance().getCachedLocations().remove( player.getUniqueId() );
