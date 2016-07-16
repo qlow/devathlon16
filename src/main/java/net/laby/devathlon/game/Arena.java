@@ -113,7 +113,7 @@ public class Arena {
         for ( UUID joinedPlayerUUID : Arrays.asList( lastPlayer, player.getUniqueId() ) ) {
             Player joinedPlayer = Bukkit.getPlayer( joinedPlayerUUID );
 
-            joinedPlayer.sendMessage( Devathlon.PREFIX + "§6" + Bukkit.getPlayer( lastPlayer ) + " §ahat die Runde gewonnen!" );
+            joinedPlayer.sendMessage( Devathlon.PREFIX + "§6" + joinedPlayer.getName() + " §ahat die Runde gewonnen!" );
             joinedPlayer.setHealth( 20D );
 
             joinedPlayer.getInventory().clear();

@@ -45,10 +45,13 @@ public class InteractListener implements Listener {
                 }
 
                 arena.getJoinedPlayers().add( player.getUniqueId() );
+                arena.updateSigns();
 
                 if ( arena.getJoinedPlayers().size() == 2 ) {
                     Bukkit.broadcastMessage( arena.getName() + " starts");
                     arena.setIngame( true );
+
+                    arena.updateSigns();
 
                     int spawnIndex = 0;
                     for ( UUID joinedPlayer : arena.getJoinedPlayers() ) {
