@@ -47,7 +47,7 @@ public class PortalWand extends Wand {
     }
 
     private void makePortal( boolean left ) {
-        List<Block> blocks = player.getLineOfSight( new HashSet<Material>(), 50 );
+        List<Block> blocks = player.getLineOfSight( (HashSet<Byte>) null, 50 );
 
         for ( Block block : blocks ) {
             Location location = block.getLocation();
