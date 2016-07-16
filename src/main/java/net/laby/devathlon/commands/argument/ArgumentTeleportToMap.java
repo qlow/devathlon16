@@ -27,6 +27,7 @@ public class ArgumentTeleportToMap extends ArgumentCommand {
             return;
         }
 
+        Bukkit.broadcastMessage( "checkin for " + args[0] );
         if ( Bukkit.getWorld( args[0] ) == null ) {
             sender.sendMessage( Devathlon.PREFIX + "§cDiese Welt existiert nicht!" );
             return;
