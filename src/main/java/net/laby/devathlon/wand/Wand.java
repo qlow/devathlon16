@@ -4,6 +4,7 @@ import net.laby.devathlon.utils.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -114,7 +115,13 @@ public abstract class Wand {
     /**
      * Called on entity interact
      */
-    public void onEntityInteract(Entity entity) {
+    public void onPlayerInteractEntity(Entity entity) {
+    }
+
+    /**
+     * Called on block interact
+     */
+    public void onBlockInteract( PlayerInteractEvent event ) {
     }
 
     /**
@@ -196,4 +203,5 @@ public abstract class Wand {
     public void setRightClicking( boolean rightClicking ) {
         this.rightClicking = rightClicking;
     }
+
 }

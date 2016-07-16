@@ -10,17 +10,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.HashSet;
-import java.util.Random;
 
 /**
  * Class created by LabyStudio
  */
 public class FireWand extends Wand {
 
-    private Random random = new Random();
-    private long last5Tick = 0;
+    // Last tick to modify the speed
+    private long lastTick = 0;
+    // Current location of the fire
     private Location currentLocation = null;
+    // Target location of the fire
     private Location targetLocation = null;
+    // Sound pitch level
     private int level;
 
     public FireWand( Player player ) {
@@ -34,23 +36,30 @@ public class FireWand extends Wand {
     @Override
     public void onTick( ) {
         if ( currentLocation != null ) {
-            if ( last5Tick < System.currentTimeMillis() ) {
-                last5Tick = ( long ) ( System.currentTimeMillis() + ( level * 5 ) );
+            if ( lastTick < System.currentTimeMillis() ) {
+                lastTick = ( long ) ( System.currentTimeMillis() + ( level * 5 ) );
 
+                // Get next block
                 Vector add = this.targetLocation.toVector().subtract( this.currentLocation.toVector() ).normalize().multiply( 1.5 );
                 currentLocation = this.currentLocation.add( add );
 
+                // Set the fire on top of the world
                 this.currentLocation = this.currentLocation.getWorld().getHighestBlockAt( this.currentLocation ).getLocation();
 
+                // Replace the current block to fire if the block type is air
                 if ( this.currentLocation.getBlock().getType() == Material.AIR ) {
                     this.currentLocation.getBlock().setType( Material.FIRE );
                 }
+
+                // Sound and Effects
                 this.currentLocation.getBlock().getWorld().playSound( this.currentLocation.getBlock().getLocation(), Sound.ENTITY_BLAZE_SHOOT, 5, level * 0.05f );
                 this.currentLocation.getBlock().getWorld().playEffect( this.currentLocation.getBlock().getLocation(), Effect.MOBSPAWNER_FLAMES, 1 );
 
+                // Next pitch level
                 level++;
 
-                if ( level > 30 || this.currentLocation.distance( targetLocation ) < 2 ) {
+                // Stop the fire
+                if ( level > 15 || this.currentLocation.distance( targetLocation ) < 2 ) {
                     this.currentLocation.getBlock().getWorld().createExplosion( this.currentLocation, 2f );
                     targetLocation = null;
                     currentLocation = null;
@@ -62,23 +71,32 @@ public class FireWand extends Wand {
 
     @Override
     public void onRightClick( ) {
-        if ( getPlayer().isOnGround() ) {
-            Block targetBlock = getPlayer().getTargetBlock( ( HashSet<Byte> ) null, 50 );
-            if ( targetBlock != null && currentLocation == null ) {
-                Entity target = getTargetEntity( targetBlock.getLocation(), 40 );
-                if ( target == null ) {
-                    this.targetLocation = targetBlock.getWorld().getHighestBlockAt( targetBlock.getLocation() ).getLocation();
-                } else {
-                    this.targetLocation = target.getLocation();
-                }
-                this.currentLocation = getPlayer().getLocation();
-                this.level = 0;
+        // Get target block
+        Block targetBlock = getPlayer().getTargetBlock( ( HashSet<Byte> ) null, 50 );
+        if ( targetBlock != null && currentLocation == null ) {
+            // Check nearest player
+            Entity target = getNearestEntity( targetBlock.getLocation(), 40 );
+            if ( target == null ) {
+                // Use the target block location
+                this.targetLocation = targetBlock.getWorld().getHighestBlockAt( targetBlock.getLocation() ).getLocation();
+            } else {
+                // Use nearest players location
+                this.targetLocation = target.getLocation();
             }
+            // Set startpoint location
+            this.currentLocation = getPlayer().getLocation();
+            this.level = 0;
         }
     }
 
-
-    public Entity getTargetEntity( Location location, double range ) {
+    /**
+     * Get the nearest entity
+     *
+     * @param location
+     * @param range search radius
+     * @return nearest entity
+     */
+    public Entity getNearestEntity( Location location, double range ) {
         double distance = range;
         Entity target = null;
         for ( Entity all : location.getWorld().getEntities() ) {

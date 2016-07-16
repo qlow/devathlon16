@@ -5,12 +5,14 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
+import net.laby.devathlon.Devathlon;
 import net.laby.devathlon.utils.Portal;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -158,29 +160,33 @@ public class PortalWand extends Wand {
             secondPortal = portal;
         }
 
-        // Iterating through the portal-blocks
-        for ( Location portalBlock : portalBlocks ) {
-            byte data = 6;
 
-            if ( left ) {
-                data = 11;
+        new BukkitRunnable(){
+            public void run( ) {
+                // Iterating through the portal-blocks
+                for ( Location portalBlock : portalBlocks ) {
+                    byte data = 6;
+
+                    if ( left ) {
+                        data = 11;
+                    }
+
+                    // Creating block-change-packet
+                    PacketContainer packetContainer = ProtocolLibrary.getProtocolManager().createPacket( PacketType.Play.Server.BLOCK_CHANGE );
+
+                    // Writing data into the packet
+                    packetContainer.getBlockPositionModifier().write( 0, new BlockPosition( portalBlock.getBlockX(), portalBlock.getBlockY(), portalBlock.getBlockZ() ) );
+                    packetContainer.getBlockData().write( 0, WrappedBlockData.createData( Material.STAINED_CLAY, data ) );
+
+                    // Sending packet to player
+                    try {
+                        ProtocolLibrary.getProtocolManager().sendServerPacket( player, packetContainer );
+                    } catch ( InvocationTargetException e ) {
+                        e.printStackTrace();
+                    }
+                }
             }
-
-            // Creating block-change-packet
-            PacketContainer packetContainer = ProtocolLibrary.getProtocolManager().createPacket( PacketType.Play.Server.BLOCK_CHANGE );
-
-            // Writing data into the packet
-            packetContainer.getBlockPositionModifier().write( 0, new BlockPosition( portalBlock.getBlockX(), portalBlock.getBlockY(), portalBlock.getBlockZ() ) );
-            packetContainer.getBlockData().write( 0, WrappedBlockData.createData( Material.STAINED_CLAY, data ) );
-
-            // Sending packet to player
-            try {
-                ProtocolLibrary.getProtocolManager().sendServerPacket( player, packetContainer );
-            } catch ( InvocationTargetException e ) {
-                e.printStackTrace();
-            }
-        }
-
+        }.runTaskLater( Devathlon.getInstance(), 1L );
     }
 
     /**
