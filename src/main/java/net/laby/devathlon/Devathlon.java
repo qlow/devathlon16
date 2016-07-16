@@ -1,5 +1,6 @@
 package net.laby.devathlon;
 
+import net.laby.devathlon.commands.ArenaCommand;
 import net.laby.devathlon.game.ArenaManager;
 import net.laby.devathlon.listener.JoinListener;
 import net.laby.devathlon.listener.QuitListener;
@@ -30,14 +31,17 @@ public class Devathlon extends JavaPlugin {
         this.arenaManager = new ArenaManager( new File( "arenas" ) );
 
         // Registering listeners
-        Listener[] listeners = new Listener[] {
+        Listener[] listeners = new Listener[]{
                 new JoinListener(),
                 new QuitListener()
         };
 
-        for(Listener listener : listeners) {
+        for ( Listener listener : listeners ) {
             Bukkit.getPluginManager().registerEvents( listener, this );
         }
+
+        // Registering commands
+        new ArenaCommand();
     }
 
     @Override
