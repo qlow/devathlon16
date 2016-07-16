@@ -21,7 +21,7 @@ import java.util.UUID;
 public class WandManager implements Listener {
 
     private static Wand[] wands = new Wand[]{
-            new MagicLaserWand(  ),
+            new FireWand(  ),
             new PortalWand(  )
     };
 

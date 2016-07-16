@@ -9,8 +9,15 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class Devathlon extends JavaPlugin implements Listener {
 
+    private static Devathlon instance;
+
+    public static Devathlon getInstance( ) {
+        return instance;
+    }
+
     @Override
     public void onEnable() {
+        this.instance = this;
         new WandManager( this );
     }
 
