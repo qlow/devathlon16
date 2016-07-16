@@ -47,7 +47,7 @@ public class Portal {
                         ((loc.getBlockX() - 1) == firstBlock.getLocation().getBlockX() || (loc.getBlockX() + 1) == firstBlock.getLocation().getBlockX()));
                 boolean onY = loc.getBlockY() == firstBlock.getLocation().getBlockY() || loc.getBlockY() == secondBlock.getLocation().getBlockY();
 
-                return onXAxis && onZAxis && onY;
+                return (onXAxis || onZAxis) && onY;
         }
 
         return false;
