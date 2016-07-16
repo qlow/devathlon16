@@ -1,5 +1,6 @@
 package net.laby.devathlon.utils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -56,10 +57,10 @@ public class Portal {
         switch ( portalType ) {
             case FLOOR:
                 player.teleport( firstBlock.getLocation().clone().add( 0, 3, 0 ) );
-                player.setVelocity( new Vector( 0, 2, 0 ) );
+                player.setVelocity( new Vector( 0, 1, 0 ) );
                 break;
             case WALL:
-                player.teleport( firstBlock.getRelative( getBlockFace(), 2 ).getLocation() );
+                player.teleport( firstBlock.getRelative( getBlockFace(), 5 ).getLocation() );
                 break;
         }
     }
@@ -110,6 +111,7 @@ public class Portal {
             if ( blockFaces.getModZ() != z )
                 continue;
 
+            Bukkit.broadcastMessage( blockFaces.getOppositeFace().name() );
             return blockFaces.getOppositeFace();
         }
 
