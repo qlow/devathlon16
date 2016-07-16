@@ -6,7 +6,6 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
 import net.laby.devathlon.utils.Portal;
-import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -67,10 +66,8 @@ public class PortalWand extends Wand {
 
         if ( firstPortal.isInPortal( player ) ) {
             secondPortal.teleport( player );
-            Bukkit.broadcastMessage( player.getName() + " is in portal 1" );
         } else if ( secondPortal.isInPortal( player ) ) {
             firstPortal.teleport( player );
-            Bukkit.broadcastMessage( player.getName() + " is in portal 2" );
         }
 
         tickCounter = 0;

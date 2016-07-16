@@ -1,6 +1,5 @@
 package net.laby.devathlon.utils;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -60,7 +59,15 @@ public class Portal {
                 player.setVelocity( new Vector( 0, 1, 0 ) );
                 break;
             case WALL:
-                player.teleport( firstBlock.getRelative( getBlockFace(), 5 ).getLocation() );
+                AnglesToLocationCalculator anglesToLocationCalculator =
+                        new AnglesToLocationCalculator( firstBlock.getLocation(), firstBlock.getRelative( getBlockFace(), 2 ).getLocation() );
+
+                Location teleportTo = firstBlock.getRelative( getBlockFace(), 2 ).getLocation();
+                teleportTo.setYaw( ( float ) anglesToLocationCalculator.getYaw() );
+                teleportTo.setPitch( ( float ) anglesToLocationCalculator.getPitch() );
+
+                player.teleport( teleportTo );
+                player.setVelocity( new Vector( getBlockFace().getModX() * 2, 0, getBlockFace().getModZ() * 2 ) );
                 break;
         }
     }
@@ -111,11 +118,36 @@ public class Portal {
             if ( blockFaces.getModZ() != z )
                 continue;
 
-            Bukkit.broadcastMessage( blockFaces.getOppositeFace().name() );
             return blockFaces.getOppositeFace();
         }
 
         return BlockFace.NORTH;
+    }
+
+    private static class AnglesToLocationCalculator {
+
+        private double yaw;
+        private double pitch;
+
+        public AnglesToLocationCalculator( Location from, Location to ) {
+            double dx = to.getX() - from.getX();
+            double dy = to.getY() - from.getY();
+            double dz = to.getZ() - from.getZ();
+            double r = Math.sqrt( dx * dx + dy * dy + dz * dz );
+            yaw = -Math.atan2( dx, dz ) / Math.PI * 180;
+            if ( yaw < 0 )
+                yaw = 360 - yaw;
+
+            pitch = -Math.asin( dy / r ) / Math.PI * 180;
+        }
+
+        public double getYaw() {
+            return yaw;
+        }
+
+        public double getPitch() {
+            return pitch;
+        }
     }
 
 }
