@@ -22,3 +22,6 @@ build/
 bin/
 dist/
 manifest.mf
+
+# Our libraries
+lib

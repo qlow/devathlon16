@@ -8,5 +8,14 @@
     <artifactId>devathlon</artifactId>
     <version>1.0</version>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.10.2</version>
+            <systemPath>${basedir}/lib/spigot-1.10.2.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+    </dependencies>
 
 </project>
