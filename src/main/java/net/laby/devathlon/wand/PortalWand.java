@@ -116,7 +116,7 @@ public class PortalWand extends Wand {
             portalBlocks.add( target.getLocation() );
             portalBlocks.add( target.getLocation().add( 0, 1, 0 ) );
 
-            portal = new Portal( Portal.PortalType.WALL, portalBlocks.get( 0 ).getBlock(), portalBlocks.get( 1 ).getBlock() );
+            portal = new Portal( Portal.getBlockFaceFromTo( target.getLocation(), lastBlock ), portalBlocks.get( 0 ).getBlock(), portalBlocks.get( 1 ).getBlock() );
         } else {
             Location secondBlock = getSecondBlockLocationOnFloor( target.getLocation() );
 
@@ -126,7 +126,7 @@ public class PortalWand extends Wand {
             portalBlocks.add( target.getLocation() );
             portalBlocks.add( secondBlock );
 
-            portal = new Portal( Portal.getBlockFaceFromTo( target.getLocation(), lastBlock ), portalBlocks.get( 0 ).getBlock(), portalBlocks.get( 1 ).getBlock() );
+            portal = new Portal( Portal.PortalType.FLOOR, portalBlocks.get( 0 ).getBlock(), portalBlocks.get( 1 ).getBlock() );
         }
 
         sendDefaultBlocks( left );
