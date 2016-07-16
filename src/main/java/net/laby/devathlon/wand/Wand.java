@@ -56,7 +56,7 @@ public abstract class Wand {
      *
      * @return ItemStack with  wand's name, lore, material, data
      */
-    private ItemStack toItem( ) {
+    private ItemStack toItem() {
         // Creating item
         ItemStack item = new ItemStack( wandMaterial, 1, wandData );
 
@@ -77,31 +77,37 @@ public abstract class Wand {
     /**
      * Called when the player switches to the item
      */
-    public void onEnable( ) {
+    public void onEnable() {
     }
 
     /**
      * Called when the player switches to an other item
      */
-    public void onDisable( ) {
+    public void onDisable() {
     }
 
     /**
      * Called when the wand gets right-clicked
      */
-    public void onRightClick( ) {
+    public void onRightClick() {
+    }
+
+    /**
+     * Called when the wand gets left-clicked
+     */
+    public void onLeftClick() {
     }
 
     /**
      * Called when the player releases his right mouse button
      */
-    public void onRightClickRelease( ) {
+    public void onRightClickRelease() {
     }
 
     /**
      * Called every tick
      */
-    public void onTick( ) {
+    public void onTick() {
     }
 
     /**
@@ -109,7 +115,7 @@ public abstract class Wand {
      *
      * @return wand's item's name
      */
-    public String getName( ) {
+    public String getName() {
         return name;
     }
 
@@ -118,7 +124,7 @@ public abstract class Wand {
      *
      * @return wand's item's lore
      */
-    public String[] getLore( ) {
+    public String[] getLore() {
         return lore;
     }
 
@@ -127,7 +133,7 @@ public abstract class Wand {
      *
      * @return wand's item's material
      */
-    public Material getWandMaterial( ) {
+    public Material getWandMaterial() {
         return wandMaterial;
     }
 
@@ -136,7 +142,7 @@ public abstract class Wand {
      *
      * @return wand's item's data
      */
-    public short getWandData( ) {
+    public short getWandData() {
         return wandData;
     }
 
@@ -145,7 +151,7 @@ public abstract class Wand {
      *
      * @return item initialized in {@link Wand#toItem()}
      */
-    public ItemStack getItem( ) {
+    public ItemStack getItem() {
         return item;
     }
 
@@ -154,7 +160,7 @@ public abstract class Wand {
      *
      * @return player
      */
-    public Player getPlayer( ) {
+    public Player getPlayer() {
         return player;
     }
 
@@ -163,7 +169,7 @@ public abstract class Wand {
      *
      * @return timestamp in long
      */
-    public long getLastInteract( ) {
+    public long getLastInteract() {
         return lastInteract;
     }
 
@@ -176,7 +182,7 @@ public abstract class Wand {
      *
      * @return true if the player is rightclicking the wand
      */
-    public boolean isRightClicking( ) {
+    public boolean isRightClicking() {
         return rightClicking;
     }
 

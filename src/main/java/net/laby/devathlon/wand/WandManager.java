@@ -88,13 +88,18 @@ public class WandManager implements Listener {
         Player player = event.getPlayer();
         ItemStack item = event.getItem();
 
-        if ( event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK )
+        if ( event.getAction() == Action.PHYSICAL )
             return;
 
         if ( item == null )
             return;
 
         Wand wand = getWandByItemStack( player, item );
+
+        if(event.getAction().name().startsWith( "LEFT" )) {
+            wand.onLeftClick();
+            return;
+        }
 
         if ( wand.isRightClicking() ) {
             wand.setLastInteract( System.currentTimeMillis() );
