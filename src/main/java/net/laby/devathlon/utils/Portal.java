@@ -55,8 +55,8 @@ public class Portal {
     public void teleport( Player player ) {
         switch ( portalType ) {
             case FLOOR:
-                player.teleport( firstBlock.getLocation().clone().add( 0, 1.5, 0 ) );
-                player.setVelocity( new Vector( 0, 1, 0 ) );
+                player.teleport( firstBlock.getLocation().clone().add( 0, 3, 0 ) );
+                player.setVelocity( new Vector( 0, 2, 0 ) );
                 break;
             case WALL:
                 player.teleport( firstBlock.getRelative( getBlockFace(), 2 ).getLocation() );
