@@ -2,10 +2,12 @@ package net.laby.devathlon.wand;
 
 import net.laby.devathlon.Devathlon;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -61,6 +63,15 @@ public class WandManager implements Listener {
 
         for ( Wand wand : wands ) {
             player.getInventory().addItem( wand.getItem() );
+        }
+    }
+
+    @EventHandler
+    public void onJoin( EntityInteractEvent event ) {
+        Entity entity = event.getEntity();
+
+        for ( Wand wand : wands ) {
+            wand.onEntityInteract( entity );
         }
     }
 
