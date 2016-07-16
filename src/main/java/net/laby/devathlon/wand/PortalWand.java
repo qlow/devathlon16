@@ -42,7 +42,8 @@ public class PortalWand extends Wand {
 
     @Override
     public void onDisable() {
-        sendDefaultBlocks();
+        sendDefaultBlocks( true );
+        sendDefaultBlocks( false );
     }
 
     @Override
@@ -116,7 +117,7 @@ public class PortalWand extends Wand {
             return;
         }
 
-        sendDefaultBlocks();
+        sendDefaultBlocks( left );
 
         if ( left ) {
             firstPortal = portal;
@@ -145,10 +146,10 @@ public class PortalWand extends Wand {
 
     }
 
-    private void sendDefaultBlocks() {
+    private void sendDefaultBlocks( boolean left ) {
         List<Block> reset = new ArrayList<>();
-        if ( firstPortal != null ) reset.addAll( firstPortal.getPortalBlocks() );
-        if ( secondPortal != null ) reset.addAll( secondPortal.getPortalBlocks() );
+        if ( left && firstPortal != null ) reset.addAll( firstPortal.getPortalBlocks() );
+        if ( !left && secondPortal != null ) reset.addAll( secondPortal.getPortalBlocks() );
 
         for ( Block resetBlocks : reset ) {
             Location loc = resetBlocks.getLocation();
@@ -164,8 +165,8 @@ public class PortalWand extends Wand {
             }
         }
 
-        firstPortal = null;
-        secondPortal = null;
+        if ( left ) firstPortal = null;
+        if ( !left ) secondPortal = null;
     }
 
 }
