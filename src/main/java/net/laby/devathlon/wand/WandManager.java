@@ -21,6 +21,7 @@ import java.util.UUID;
 public class WandManager implements Listener {
 
     private static Wand[] wands = new Wand[]{
+            new MagicLaserWand(  )
     };
 
     private Map<UUID, Wand> playerWands = new HashMap<>();
@@ -31,30 +32,31 @@ public class WandManager implements Listener {
         Bukkit.getPluginManager().registerEvents( this, devathlon );
 
         // Running task for calling release-methods
+
         Bukkit.getScheduler().runTaskTimer( devathlon, new Runnable() {
             @Override
             public void run() {
                 for ( Map.Entry<UUID, Wand> playerWandEntry : playerWands.entrySet() ) {
                     Wand wand = playerWandEntry.getValue();
 
+                    wand.onTick();
+
                     if ( !wand.isRightClicking() )
                         continue;
 
-                    if ( (System.currentTimeMillis() - wand.getLastInteract()) <= 250 )
+                    if ( (System.currentTimeMillis() - wand.getLastInteract()) <= 100 )
                         continue;
 
                     wand.onRightClickRelease();
                     wand.setRightClicking( false );
                 }
             }
-        }, 5L, 5L );
+        }, 1L, 1L );
     }
 
     @EventHandler
     public void onJoin( PlayerJoinEvent event ) {
         Player player = event.getPlayer();
-
-        Bukkit.broadcastMessage( "JOIN" );
 
         for ( Wand wand : wands ) {
             player.getInventory().addItem( wand.getItem() );
