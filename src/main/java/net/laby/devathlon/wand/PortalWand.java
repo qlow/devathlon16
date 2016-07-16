@@ -65,9 +65,9 @@ public class PortalWand extends Wand {
         }
 
         if ( firstPortal.isInPortal( player ) ) {
-            Bukkit.broadcastMessage(player.getName() + " is in portal 1");
-        } else if(secondPortal.isInPortal( player )) {
-            Bukkit.broadcastMessage(player.getName() + " is in portal 2");
+            Bukkit.broadcastMessage( player.getName() + " is in portal 1" );
+        } else if ( secondPortal.isInPortal( player ) ) {
+            Bukkit.broadcastMessage( player.getName() + " is in portal 2" );
         }
 
         tickCounter = 0;
@@ -118,7 +118,7 @@ public class PortalWand extends Wand {
 
         sendDefaultBlocks();
 
-        if(left) {
+        if ( left ) {
             firstPortal = portal;
         } else {
             secondPortal = portal;
@@ -147,8 +147,8 @@ public class PortalWand extends Wand {
 
     private void sendDefaultBlocks() {
         List<Block> reset = new ArrayList<>();
-        reset.addAll( firstPortal.getPortalBlocks() );
-        reset.addAll( secondPortal.getPortalBlocks() );
+        if ( firstPortal != null ) reset.addAll( firstPortal.getPortalBlocks() );
+        if ( secondPortal != null ) reset.addAll( secondPortal.getPortalBlocks() );
 
         for ( Block resetBlocks : reset ) {
             Location loc = resetBlocks.getLocation();
