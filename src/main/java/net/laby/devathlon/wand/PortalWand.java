@@ -67,13 +67,13 @@ public class PortalWand extends Wand {
                         .write( 1, location.getY() )                                    // Y-position
                         .write( 2, location.getZ() );                                   // Z-position
 
-                packetContainer.getBytes().write( 0, ( byte ) 0 );                      // Angle
-                packetContainer.getBytes().write( 1, ( byte ) 0 );                      // Angle
-                packetContainer.getBytes().write( 2, ( byte ) 0 );                      // Angle
+                packetContainer.getIntegers().write( 2, 0 );                      // Angle
+                packetContainer.getIntegers().write( 3, 0 );                      // Angle
+                packetContainer.getIntegers().write( 4, 0 );                      // Angle
 
-                /* packetContainer.getIntegers().write( 2, 0 );                      // Vector-X
-                packetContainer.getIntegers().write( 3, 0 );                      // Vector-Y
-                packetContainer.getIntegers().write( 4, 0 ); */                      // Vector-Z
+                packetContainer.getBytes().write( 0, (byte) 0 );                      // Vector-X
+                packetContainer.getBytes().write( 1, (byte) 0 );                      // Vector-Y
+                packetContainer.getBytes().write( 2, (byte) 0 );                      // Vector-Z
 
                 WrappedDataWatcher dataWatcher = new WrappedDataWatcher();
 
