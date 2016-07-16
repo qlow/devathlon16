@@ -31,7 +31,10 @@ public class Portal {
                 return loc.getBlockY() == (firstBlock.getY() + 1) && ((loc.getBlockX() == firstBlock.getLocation().getBlockX() && loc.getBlockZ() == firstBlock.getLocation().getBlockZ())
                         || (loc.getBlockX() == secondBlock.getLocation().getBlockX() && loc.getBlockZ() == secondBlock.getLocation().getBlockZ()));
             case WALL:
-                return (loc.distance( firstBlock.getLocation() ) <= 1) || (loc.distance( secondBlock.getLocation() ) <= 1);
+                return (loc.getBlockX() == firstBlock.getLocation().getBlockX() &&
+                        ((loc.getBlockZ() - 1) == firstBlock.getLocation().getBlockZ() || (loc.getBlockZ() + 1) == firstBlock.getLocation().getBlockZ()))
+                        || (loc.getBlockZ() == firstBlock.getLocation().getBlockZ() &&
+                        ((loc.getBlockX() - 1) == firstBlock.getLocation().getBlockX() || (loc.getBlockX() + 1) == firstBlock.getLocation().getBlockX()));
         }
 
         return false;
