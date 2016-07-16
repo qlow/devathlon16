@@ -60,7 +60,7 @@ public class Portal {
                 break;
             case WALL:
                 AnglesToLocationCalculator anglesToLocationCalculator =
-                        new AnglesToLocationCalculator( firstBlock.getLocation(), firstBlock.getRelative( getBlockFace(), 2 ).getLocation() );
+                        new AnglesToLocationCalculator( firstBlock.getRelative( getBlockFace(), 2 ).getLocation(), firstBlock.getLocation() );
 
                 Location teleportTo = firstBlock.getRelative( getBlockFace(), 2 ).getLocation();
                 teleportTo.setYaw( ( float ) anglesToLocationCalculator.getYaw() );
