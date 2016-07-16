@@ -5,6 +5,8 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
+import net.laby.devathlon.utils.Portal;
+import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -22,8 +24,9 @@ import java.util.List;
 public class PortalWand extends Wand {
 
     private Player player;
-    private List<Block> firstPortalBlocks = new ArrayList<>();
-    private List<Block> secondPortalBlocks = new ArrayList<>();
+
+    private Portal firstPortal;
+    private Portal secondPortal;
 
     private static int counter = 1337 * 9;
 
@@ -51,6 +54,26 @@ public class PortalWand extends Wand {
     public void onLeftClick() {
         makePortal( true );
     }
+
+    @Override
+    public void onTick() {
+        if ( firstPortal == null || secondPortal == null )
+            return;
+
+        if ( tickCounter++ % 5 != 0 ) {
+            return;
+        }
+
+        if ( firstPortal.isInPortal( player ) ) {
+            Bukkit.broadcastMessage(player.getName() + " is in portal 1");
+        } else if(secondPortal.isInPortal( player )) {
+            Bukkit.broadcastMessage(player.getName() + " is in portal 2");
+        }
+
+        tickCounter = 0;
+    }
+
+    private int tickCounter = 0;
 
     private void makePortal( boolean left ) {
         List<Block> blocks = player.getLineOfSight( ( HashSet<Byte> ) null, 50 );
@@ -81,23 +104,31 @@ public class PortalWand extends Wand {
         }
 
         List<Location> portalBlocks = new ArrayList<>();
+        Portal portal = null;
 
         if ( target.getLocation().clone().add( 0, 1, 0 ).getBlock().getType() != Material.AIR ) {
             portalBlocks.add( target.getLocation() );
             portalBlocks.add( target.getLocation().add( 0, 1, 0 ) );
+
+            portal = new Portal( Portal.PortalType.WALL, portalBlocks.get( 0 ).getBlock(), portalBlocks.get( 1 ).getBlock() );
         } else {
             //TODO CHANGE THIS
             return;
+        }
+
+        sendDefaultBlocks();
+
+        if(left) {
+            firstPortal = portal;
+        } else {
+            secondPortal = portal;
         }
 
         for ( Location portalBlock : portalBlocks ) {
             byte data = 6;
 
             if ( left ) {
-                firstPortalBlocks.add( portalBlock.getBlock() );
                 data = 11;
-            } else {
-                secondPortalBlocks.add( portalBlock.getBlock() );
             }
 
             PacketContainer packetContainer = ProtocolLibrary.getProtocolManager().createPacket( PacketType.Play.Server.BLOCK_CHANGE );
@@ -116,8 +147,8 @@ public class PortalWand extends Wand {
 
     private void sendDefaultBlocks() {
         List<Block> reset = new ArrayList<>();
-        reset.addAll( firstPortalBlocks );
-        reset.addAll( secondPortalBlocks );
+        reset.addAll( firstPortal.getPortalBlocks() );
+        reset.addAll( secondPortal.getPortalBlocks() );
 
         for ( Block resetBlocks : reset ) {
             Location loc = resetBlocks.getLocation();
@@ -133,6 +164,8 @@ public class PortalWand extends Wand {
             }
         }
 
+        firstPortal = null;
+        secondPortal = null;
     }
 
 }
