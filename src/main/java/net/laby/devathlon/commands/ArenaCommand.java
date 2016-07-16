@@ -4,6 +4,8 @@ import net.laby.devathlon.Devathlon;
 import net.laby.devathlon.commands.argument.ArgumentAddSpawn;
 import net.laby.devathlon.commands.argument.ArgumentCreateArena;
 import net.laby.devathlon.commands.argument.ArgumentHelp;
+import net.laby.devathlon.commands.argument.ArgumentSaveMap;
+import net.laby.devathlon.commands.argument.ArgumentTeleportToMap;
 import net.laby.devathlon.utils.command.BaseCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -14,7 +16,11 @@ import org.bukkit.plugin.PluginDescriptionFile;
 public class ArenaCommand extends BaseCommand {
 
     public ArenaCommand() {
-        super( "arena", new ArgumentHelp(), new ArgumentCreateArena(), new ArgumentAddSpawn() );
+        super( "arena", new ArgumentHelp(),
+                new ArgumentCreateArena(),
+                new ArgumentAddSpawn(),
+                new ArgumentSaveMap(),
+                new ArgumentTeleportToMap() );
     }
 
     @Override

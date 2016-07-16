@@ -36,6 +36,7 @@ public abstract class BaseCommand implements CommandExecutor {
 
                 // Executing ArgumentCommand
                 argumentCommand.execute( commandSender, newArguments );
+                return true;
             }
         }
 

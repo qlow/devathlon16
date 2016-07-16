@@ -7,6 +7,7 @@ import net.laby.devathlon.game.ArenaManager;
 import net.laby.devathlon.utils.command.ArgumentCommand;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.WorldCreator;
 import org.bukkit.command.CommandSender;
 
 import java.io.File;
@@ -53,6 +54,9 @@ public class ArgumentCreateArena extends ArgumentCommand {
 
         try {
             FileUtils.copyDirectory( mapFolder, new File( arenaFolder, "map" ) );
+
+            Bukkit.createWorld( new WorldCreator( args[0] ) );
+
             new File( arenaFolder, "config.json" ).createNewFile();
 
             Arena arena = new Arena( arenaConfig, new File( arenaFolder, "map" ), args[0], new ArrayList<>(), new ArrayList<>() );
