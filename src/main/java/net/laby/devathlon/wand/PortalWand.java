@@ -61,7 +61,7 @@ public class PortalWand extends Wand {
                 // Spawning a slime
                 PacketContainer packetContainer = ProtocolLibrary.getProtocolManager().createPacket( PacketType.Play.Server.SPAWN_ENTITY_LIVING );
                 packetContainer.getIntegers().write( 0, ++counter );                    // Entity-ID
-                packetContainer.getStrings().write( 0, UUID.randomUUID().toString() );  // Entity-UUID
+                packetContainer.getSpecificModifier(UUID.class).write( 0, UUID.randomUUID() );  // Entity-UUID
                 packetContainer.getIntegers().write( 1, 55 );                           // Entity's type
                 packetContainer.getDoubles().write( 0, location.getX() )                // X-position
                         .write( 1, location.getY() )                                    // Y-position
