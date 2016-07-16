@@ -4,3 +4,8 @@ description: Magical-Battle plugin for the DevAthlon
 main: net.laby.devathlon.Devathlon
 version: 1.0
 depend: [ProtocolLib]
+
+commands:
+  arena:
+    description: Arena-command
+    usage: /<command> help
