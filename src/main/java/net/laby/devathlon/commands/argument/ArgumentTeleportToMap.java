@@ -3,6 +3,7 @@ package net.laby.devathlon.commands.argument;
 import net.laby.devathlon.Devathlon;
 import net.laby.devathlon.utils.command.ArgumentCommand;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -25,6 +26,10 @@ public class ArgumentTeleportToMap extends ArgumentCommand {
         if ( args.length < 1 ) {
             sender.sendMessage( Devathlon.PREFIX + "§c/arena tptomap <Welt>" );
             return;
+        }
+
+        for(World world : Bukkit.getWorlds()) {
+            System.out.println(world.getName());
         }
 
         Bukkit.broadcastMessage( "checkin for " + args[0] );
