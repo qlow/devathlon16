@@ -134,6 +134,7 @@ public class Arena {
     public void updateSigns() {
         // Iterating through all signs
         for ( Location signLoc : signs ) {
+            System.out.println("A non-sign detected! " + signLoc.toString());
             // Checking if they're even signs
             if ( !(signLoc.getBlock().getState() instanceof Sign) )
                 continue;
@@ -145,6 +146,8 @@ public class Arena {
             sign.setLine( 1, (joinedPlayers.size() == 2 ? "§7" : "§a") + joinedPlayers.size() + "§7/2" );
             sign.setLine( 2, (ingame ? "§cIm Spiel" : "§6Lobby") );
             sign.setLine( 3, (joinedPlayers.size() == 2 ? "" : "§aClick to join") );
+
+            System.out.println("Setted lines");
 
             // Updating
             sign.update( true );

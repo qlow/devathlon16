@@ -3,7 +3,6 @@ package net.laby.devathlon.commands.argument;
 import net.laby.devathlon.Devathlon;
 import net.laby.devathlon.utils.command.ArgumentCommand;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -28,11 +27,6 @@ public class ArgumentTeleportToMap extends ArgumentCommand {
             return;
         }
 
-        for(World world : Bukkit.getWorlds()) {
-            System.out.println(world.getName());
-        }
-
-        Bukkit.broadcastMessage( "checkin for " + args[0] );
         if ( Bukkit.getWorld( args[0] ) == null ) {
             sender.sendMessage( Devathlon.PREFIX + "§cDiese Welt existiert nicht!" );
             return;
