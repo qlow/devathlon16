@@ -48,7 +48,6 @@ public class InteractListener implements Listener {
                 arena.updateSigns();
 
                 if ( arena.getJoinedPlayers().size() == 2 ) {
-                    Bukkit.broadcastMessage( arena.getName() + " starts");
                     arena.setIngame( true );
 
                     arena.updateSigns();
@@ -77,8 +76,6 @@ public class InteractListener implements Listener {
 
                         spawnIndex++;
                     }
-                } else {
-                    Bukkit.broadcastMessage( arena.getName() + " waiting for players!");
                 }
 
                 return;
