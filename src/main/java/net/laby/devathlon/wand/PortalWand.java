@@ -86,7 +86,8 @@ public class PortalWand extends Wand {
             portalBlocks.add( target.getLocation() );
             portalBlocks.add( target.getLocation().add( 0, 1, 0 ) );
         } else {
-
+            //TODO CHANGE THIS
+            return;
         }
 
         for ( Location portalBlock : portalBlocks ) {
@@ -102,7 +103,7 @@ public class PortalWand extends Wand {
             PacketContainer packetContainer = ProtocolLibrary.getProtocolManager().createPacket( PacketType.Play.Server.BLOCK_CHANGE );
 
             packetContainer.getBlockPositionModifier().write( 0, new BlockPosition( portalBlock.getBlockX(), portalBlock.getBlockY(), portalBlock.getBlockZ() ) );
-            packetContainer.getBlockData().write( 0, new WrappedBlockData( WrappedBlockData.createData( Material.STAINED_CLAY, data ) ) );
+            packetContainer.getBlockData().write( 0, WrappedBlockData.createData( Material.STAINED_CLAY, data ) );
 
             try {
                 ProtocolLibrary.getProtocolManager().sendServerPacket( player, packetContainer );
@@ -123,7 +124,7 @@ public class PortalWand extends Wand {
             PacketContainer packetContainer = ProtocolLibrary.getProtocolManager().createPacket( PacketType.Play.Server.BLOCK_CHANGE );
 
             packetContainer.getBlockPositionModifier().write( 0, new BlockPosition( loc.getBlockX(), loc.getBlockY(), loc.getBlockZ() ) );
-            packetContainer.getBlockData().write( 0, new WrappedBlockData( WrappedBlockData.createData( resetBlocks.getType(), resetBlocks.getData() ) ) );
+            packetContainer.getBlockData().write( 0, WrappedBlockData.createData( resetBlocks.getType(), resetBlocks.getData() ) );
 
             try {
                 ProtocolLibrary.getProtocolManager().sendServerPacket( player, packetContainer );
