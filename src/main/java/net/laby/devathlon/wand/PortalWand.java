@@ -115,7 +115,7 @@ public class PortalWand extends Wand {
         } else {
             Location secondBlock = getSecondBlockLocationOnFloor( target.getLocation() );
 
-            if(secondBlock == null)
+            if ( secondBlock == null )
                 return;
 
             portalBlocks.add( target.getLocation() );
@@ -185,7 +185,7 @@ public class PortalWand extends Wand {
         };
 
         for ( Location nearbyBlock : nearbyBlocks ) {
-            if(nearbyBlock.getBlock().getType() != Material.AIR)
+            if ( nearbyBlock.clone().add( 0, 1, 0 ).getBlock().getType() != Material.AIR )
                 continue;
 
             return nearbyBlock;
