@@ -1,6 +1,6 @@
-name: DevAthlon
+name: MagicalBattle
 authors: [LabyStudio, qlow]
-description: Magical plugin for the DevAthlon
+description: Magical-Battle plugin for the DevAthlon
 main: net.laby.devathlon.Devathlon
 version: 1.0
 depend: [ProtocolLib]
