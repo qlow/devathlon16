@@ -1,0 +1,5 @@
+name: DevAthlon
+authors: [LabyStudio, qlow]
+description: Magical plugin for the DevAthlon
+main: net.laby.devathlon.Devathlon
+version: 1.0
