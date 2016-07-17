@@ -201,8 +201,10 @@ public class WandManager implements Listener {
     }
 
     public void giveAllWands( Player player ) {
+        int slotIndex = 2;
+
         for ( Wand wand : wands ) {
-            player.getInventory().addItem( wand.getItem() );
+            player.getInventory().setItem( slotIndex++, wand.getItem() );
         }
 
         player.getInventory().setHeldItemSlot( 0 );

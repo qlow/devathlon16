@@ -57,9 +57,9 @@ public class InteractListener implements Listener {
 
                     arena.updateSigns();
 
-                    if(arena.getWorld() != null) {
-                        for(Entity entity : arena.getWorld().getEntities()) {
-                            if(!(entity instanceof Player)) {
+                    if ( arena.getWorld() != null ) {
+                        for ( Entity entity : arena.getWorld().getEntities() ) {
+                            if ( !(entity instanceof Player) ) {
                                 entity.remove();
                             }
                         }
@@ -75,8 +75,9 @@ public class InteractListener implements Listener {
 
                         Player joined = Bukkit.getPlayer( joinedPlayer );
 
-                        // Clearing inventory & adding wands
+                        // Clearing inventory & adding wands & sword
                         joined.getInventory().clear();
+                        joined.getInventory().setItem( 0, new ItemStack( Material.WOOD_SWORD ) );
                         Devathlon.getInstance().getWandManager().giveAllWands( joined );
 
                         // Caching location
@@ -95,24 +96,24 @@ public class InteractListener implements Listener {
                         joined.setWalkSpeed( 0.2f );
                         joined.setFireTicks( 0 );
 
-                        for(PotionEffect type : joined.getActivePotionEffects()) {
+                        for ( PotionEffect type : joined.getActivePotionEffects() ) {
                             joined.removePotionEffect( type.getType() );
 
                         }
 
-                        ItemStack helmet = new ItemStack( Material.DIAMOND_HELMET);
+                        ItemStack helmet = new ItemStack( Material.DIAMOND_HELMET );
                         helmet.addUnsafeEnchantment( Enchantment.PROTECTION_EXPLOSIONS, 4 );
                         joined.getInventory().setHelmet( helmet );
 
-                        ItemStack chestplate = new ItemStack( Material.IRON_CHESTPLATE);
+                        ItemStack chestplate = new ItemStack( Material.IRON_CHESTPLATE );
                         chestplate.addUnsafeEnchantment( Enchantment.PROTECTION_EXPLOSIONS, 4 );
                         joined.getInventory().setChestplate( chestplate );
 
-                        ItemStack leggings = new ItemStack( Material.DIAMOND_LEGGINGS);
+                        ItemStack leggings = new ItemStack( Material.DIAMOND_LEGGINGS );
                         leggings.addUnsafeEnchantment( Enchantment.PROTECTION_EXPLOSIONS, 4 );
                         joined.getInventory().setLeggings( leggings );
 
-                        ItemStack boots = new ItemStack( Material.IRON_BOOTS);
+                        ItemStack boots = new ItemStack( Material.IRON_BOOTS );
                         boots.addUnsafeEnchantment( Enchantment.PROTECTION_EXPLOSIONS, 4 );
                         joined.getInventory().setBoots( boots );
 

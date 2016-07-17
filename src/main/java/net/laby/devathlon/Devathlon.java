@@ -46,7 +46,9 @@ public class Devathlon extends JavaPlugin {
                 new BlockBreakListener(),
                 new EntityDamageListener(),
                 new PlayerDeathListener(),
-                new BlockBurnListener()
+                new BlockBurnListener(),
+                new PlayerDropItemListener(),
+                new InventoryClickListener()
         };
 
         for ( Listener listener : listeners ) {

@@ -27,7 +27,7 @@ public class InvasionWand extends Wand {
     @Override
     public void onRightClick() {
         if((System.currentTimeMillis() - lastUsed) <= 20000) {
-            getPlayer().sendMessage( Devathlon.PREFIX + "§cDu kannst nur alle 20 Sekunden eine Invasion auf ein Ziel spawnen lassen!" );
+            getPlayer().sendMessage( Devathlon.PREFIX + "§cDu kannst erst in  " + ((System.currentTimeMillis() - lastUsed) / 1000) + " Sekunden eine Invasion auf ein Ziel spawnen lassen!" );
             return;
         }
 

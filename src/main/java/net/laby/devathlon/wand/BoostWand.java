@@ -50,7 +50,7 @@ public class BoostWand extends Wand {
                 return;
             }
 
-            if ( this.clickedEntity.getLocation().distance( getPlayer().getLocation() ) > 2 ) {
+            if ( this.clickedEntity.getLocation().distance( getPlayer().getLocation() ) > 5 ) {
                 this.clickedEntity = null;
                 this.power = 0;
                 return;
