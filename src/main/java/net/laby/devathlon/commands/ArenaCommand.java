@@ -26,7 +26,7 @@ public class ArenaCommand extends BaseCommand {
     @Override
     public void execute( CommandSender sender, String[] args ) {
         PluginDescriptionFile pluginDescriptionFile = Devathlon.getInstance().getDescription();
-        sender.sendMessage( Devathlon.PREFIX + "§7" +  pluginDescriptionFile.getName() + " §bv" + pluginDescriptionFile.getVersion());
+        sender.sendMessage( Devathlon.PREFIX + "§7" + pluginDescriptionFile.getName() + " §bv" + pluginDescriptionFile.getVersion() );
         sender.sendMessage( Devathlon.PREFIX + "§7/arena help for help" );
         sender.sendMessage( Devathlon.PREFIX + "§aby qlow & LabyStudio" );
     }
@@ -34,7 +34,7 @@ public class ArenaCommand extends BaseCommand {
     @Override
     public boolean executeBeforeArgumentsCheck( CommandSender sender, String[] args ) {
         // Permission-check
-        if(!sender.hasPermission( "devathlon.arena" )) {
+        if ( !sender.hasPermission( "devathlon.arena" ) ) {
             sender.sendMessage( Devathlon.PREFIX + "§cDu hast keine Rechte dazu!" );
             return true;
         }

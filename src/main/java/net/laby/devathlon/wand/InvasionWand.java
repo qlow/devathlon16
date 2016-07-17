@@ -17,23 +17,23 @@ public class InvasionWand extends Wand {
     private static long lastUsed;
 
     public InvasionWand( Player player ) {
-        super(player, Material.SPECTRAL_ARROW, 0, "§aZombieInvasion", "", "§7-> Mit Rechtsklick kannst du", "   §7auf dein Ziel eine Zombie", "   §7Invasion spawnen.", "");
+        super( player, Material.SPECTRAL_ARROW, 0, "§aZombieInvasion", "", "§7-> Mit Rechtsklick kannst du", "   §7auf dein Ziel eine Zombie", "   §7Invasion spawnen.", "" );
     }
 
     public InvasionWand() {
-        this(null);
+        this( null );
     }
 
     @Override
     public void onRightClick() {
-        if((System.currentTimeMillis() - lastUsed) <= 20000) {
+        if ( (System.currentTimeMillis() - lastUsed) <= 20000 ) {
             getPlayer().sendMessage( Devathlon.PREFIX + "§cDu kannst erst in  " + ((System.currentTimeMillis() - lastUsed) / 1000) + " Sekunden eine Invasion auf ein Ziel spawnen lassen!" );
             return;
         }
 
         Block targetBlock = getPlayer().getTargetBlock( ( HashSet<Byte> ) null, 50 );
 
-        if(targetBlock == null)
+        if ( targetBlock == null )
             return;
 
         lastUsed = System.currentTimeMillis();
@@ -43,7 +43,7 @@ public class InvasionWand extends Wand {
         zombieLocation.getWorld().setTime( 16000 );
         zombieLocation.getWorld().strikeLightning( zombieLocation );
 
-        for(int i = 0; i < 15; i++) {
+        for ( int i = 0; i < 15; i++ ) {
             zombieLocation.getWorld().spawnEntity( zombieLocation, EntityType.ZOMBIE );
         }
     }

@@ -17,12 +17,15 @@ public class SignChangeListener implements Listener {
     public void onSignUpdate( SignChangeEvent event ) {
         Player player = event.getPlayer();
 
+        // Returning if the player doesn't have the permission devathlon.sign
         if ( !player.hasPermission( "devathlon.sign" ) )
             return;
 
+        // Returning if it is no [mbattle] sign
         if ( event.getLine( 1 ) == null || event.getLine( 0 ) == null || !event.getLine( 0 ).equals( "[mbattle]" ) )
             return;
 
+        // Adding sign to arena in line 2 if there is an arena called like this
         Arena arena = Devathlon.getInstance().getArenaManager().getArenaByName( event.getLine( 1 ) );
 
         if ( arena == null )
@@ -34,6 +37,7 @@ public class SignChangeListener implements Listener {
         arena.getArenaConfig().getSigns().add( LocationSerializer.toString( event.getBlock().getLocation() ) );
         Devathlon.getInstance().getArenaManager().saveConfig( arena );
 
+        // Success-message
         player.sendMessage( Devathlon.PREFIX + "§aSchild erstellt!" );
     }
 

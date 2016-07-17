@@ -130,7 +130,7 @@ public class Arena {
 
         // Replacing fire with AIR
         for ( Location fireBlock : fireBlocks ) {
-            if(fireBlock.getBlock().getType() != Material.FIRE)
+            if ( fireBlock.getBlock().getType() != Material.FIRE )
                 continue;
 
             fireBlock.getBlock().setType( Material.AIR );

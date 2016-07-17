@@ -18,7 +18,7 @@ public class QuitListener implements Listener {
 
         Arena arena = Devathlon.getInstance().getArenaManager().getPlayerArena( event.getPlayer() );
 
-        if( arena != null ) {
+        if ( arena != null ) {
             arena.loosePlayer( event.getPlayer() );
         }
     }

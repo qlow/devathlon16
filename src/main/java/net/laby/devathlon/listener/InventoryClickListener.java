@@ -16,6 +16,7 @@ public class InventoryClickListener implements Listener {
         if ( !(event.getWhoClicked() instanceof Player) )
             return;
 
+        // Cancelling event if the player is ingame
         if ( !Devathlon.getInstance().getArenaManager().isIngame( ( Player ) event.getWhoClicked() ) )
             return;
 

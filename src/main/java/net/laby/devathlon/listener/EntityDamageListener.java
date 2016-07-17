@@ -16,6 +16,7 @@ public class EntityDamageListener implements Listener {
         if ( !(event.getEntity() instanceof Player) )
             return;
 
+        // Cancelling the event if the player isn't ingame
         if ( Devathlon.getInstance().getArenaManager().isIngame( ( Player ) event.getEntity() ) )
             return;
 

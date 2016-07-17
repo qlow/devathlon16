@@ -21,13 +21,13 @@ public class BoostWand extends Wand {
         super( player, Material.SPECTRAL_ARROW, 0, "§9Boost Wand", "", "§7-> Schießt einen Spieler ", "   §7im Umkreis von §65 Blöcken", "   §7in die Luft", "" );
     }
 
-    public BoostWand( ) {
+    public BoostWand() {
         this( null );
     }
 
 
     @Override
-    public void onRightClick( ) {
+    public void onRightClick() {
         if ( clickedEntity == null || power >= 20 ) {
             List<Entity> nearbyEntities = getPlayer().getNearbyEntities( 5, 5, 5 );
             if ( nearbyEntities != null && !nearbyEntities.isEmpty() ) {
@@ -38,10 +38,13 @@ public class BoostWand extends Wand {
     }
 
     @Override
-    public void onTick( ) {
+    public void onTick() {
+        // Returning if he didn't click on an entity
         if ( clickedEntity == null ) {
             return;
         }
+
+        // Counting power up if the player is rightclicking
         if ( isRightClicking() ) {
 
             if ( this.clickedEntity.isDead() ) {

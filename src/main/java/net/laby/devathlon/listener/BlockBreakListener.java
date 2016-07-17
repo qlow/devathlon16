@@ -18,6 +18,7 @@ public class BlockBreakListener implements Listener {
         if ( !(event.getBlock().getState() instanceof Sign) )
             return;
 
+        // Checking for an arena-sign & destroying
         for ( Arena arena : Devathlon.getInstance().getArenaManager().getArenas() ) {
             if ( !arena.getSigns().contains( event.getBlock().getLocation() ) )
                 continue;

@@ -19,7 +19,7 @@ public class ArgumentTeleportToMap extends ArgumentCommand {
 
     @Override
     public void execute( CommandSender sender, String[] args ) {
-        if(!(sender instanceof Player))
+        if ( !(sender instanceof Player) )
             return;
 
         if ( args.length < 1 ) {
@@ -32,7 +32,7 @@ public class ArgumentTeleportToMap extends ArgumentCommand {
             return;
         }
 
-        ((Player ) sender).teleport(Bukkit.getWorld( args[0] ).getSpawnLocation());
+        (( Player ) sender).teleport( Bukkit.getWorld( args[0] ).getSpawnLocation() );
     }
 
 }

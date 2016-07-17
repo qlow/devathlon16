@@ -34,7 +34,7 @@ public class FireWand extends Wand {
     public FireWand( Player player ) {
         super( player, Material.BLAZE_ROD, 0, "§6Fire Wand", "", "§7-> Mit Rechtsklick kannst du", "   §7auf dein Ziel eine riesen", "   §7Feuerspur schießen.", "" );
 
-        if(player != null) {
+        if ( player != null ) {
             currentArena = Devathlon.getInstance().getArenaManager().getPlayerArena( player );
         }
     }
@@ -60,7 +60,7 @@ public class FireWand extends Wand {
                 if ( this.currentLocation.getBlock().getType() == Material.AIR ) {
                     this.currentLocation.getBlock().setType( Material.FIRE );
 
-                    if ( currentArena != null && currentLocation.getBlock().getType() == Material.FIRE) {
+                    if ( currentArena != null && currentLocation.getBlock().getType() == Material.FIRE ) {
                         currentArena.getFireBlocks().add( this.currentLocation );
                     }
                 }
@@ -127,6 +127,10 @@ public class FireWand extends Wand {
         return target;
     }
 
+    /**
+     * Creates an explosion at this location
+     * @param location explosion-location
+     */
     private void createExplosion( Location location ) {
         net.minecraft.server.v1_10_R1.World world = (( CraftWorld ) location.getWorld()).getHandle();
         Explosion explosion = new Explosion( world, null, location.getX(), location.getY(), location.getZ(), 2.8F, true, false );

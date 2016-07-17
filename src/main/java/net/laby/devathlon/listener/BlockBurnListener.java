@@ -17,6 +17,7 @@ public class BlockBurnListener implements Listener {
 
     @EventHandler
     public void onWorldLoad( WorldLoadEvent event ) {
+        // Setting doFireTick-gamerule
         event.getWorld().setGameRuleValue( "doFireTick", "false" );
     }
 

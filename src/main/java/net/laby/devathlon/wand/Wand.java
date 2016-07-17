@@ -115,7 +115,7 @@ public abstract class Wand {
     /**
      * Called on entity interact
      */
-    public void onPlayerInteractEntity(Entity entity) {
+    public void onPlayerInteractEntity( Entity entity ) {
     }
 
     /**

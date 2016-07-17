@@ -11,6 +11,7 @@ public class JoinListener implements Listener {
 
     @EventHandler
     public void onJoin( PlayerJoinEvent event ) {
+        // Setting message & setting health/foodlevel
         event.setJoinMessage( "§6" + event.getPlayer().getName() + " §7hat das Spiel §abetreten!" );
 
         event.getPlayer().setHealth( 20D );

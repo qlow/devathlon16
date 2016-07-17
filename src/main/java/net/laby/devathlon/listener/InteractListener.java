@@ -101,6 +101,7 @@ public class InteractListener implements Listener {
 
                         }
 
+                        // Adding armor
                         ItemStack helmet = new ItemStack( Material.DIAMOND_HELMET );
                         helmet.addUnsafeEnchantment( Enchantment.PROTECTION_EXPLOSIONS, 4 );
                         joined.getInventory().setHelmet( helmet );
@@ -117,6 +118,7 @@ public class InteractListener implements Listener {
                         boots.addUnsafeEnchantment( Enchantment.PROTECTION_EXPLOSIONS, 4 );
                         joined.getInventory().setBoots( boots );
 
+                        // Counting spawn-index
                         spawnIndex++;
                     }
                 } else {

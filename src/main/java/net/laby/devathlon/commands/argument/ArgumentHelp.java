@@ -31,6 +31,7 @@ public class ArgumentHelp extends ArgumentCommand {
      * key = command
      * value = description
      * </p>
+     *
      * @return map with help-entries
      */
     public static Map<String, String> getHelpEntries() {

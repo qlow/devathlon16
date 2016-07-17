@@ -95,6 +95,7 @@ public class Portal {
 
     /**
      * List of all portal-blocks
+     *
      * @return new list with {@link Portal#firstBlock} and {@link Portal#secondBlock}
      */
     public List<Block> getPortalBlocks() {
@@ -111,6 +112,7 @@ public class Portal {
 
     /**
      * Type of portal
+     *
      * @return portal's type
      */
     public PortalType getPortalType() {
@@ -119,6 +121,7 @@ public class Portal {
 
     /**
      * Calculates the blockface/direction from
+     *
      * @param from
      * @param to
      * @return

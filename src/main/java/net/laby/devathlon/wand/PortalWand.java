@@ -81,6 +81,7 @@ public class PortalWand extends Wand {
 
     /**
      * Makes the portal
+     *
      * @param left true if it is the first portal
      */
     private void makePortal( boolean left ) {
@@ -161,8 +162,8 @@ public class PortalWand extends Wand {
         }
 
 
-        new BukkitRunnable(){
-            public void run( ) {
+        new BukkitRunnable() {
+            public void run() {
                 // Iterating through the portal-blocks
                 for ( Location portalBlock : portalBlocks ) {
                     byte data = 6;

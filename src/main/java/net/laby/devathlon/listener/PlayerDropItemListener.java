@@ -12,6 +12,7 @@ public class PlayerDropItemListener implements Listener {
 
     @EventHandler
     public void onDropItem( PlayerDropItemEvent event ) {
+        // Cancelling event if the player is ingame
         if ( !Devathlon.getInstance().getArenaManager().isIngame( event.getPlayer() ) )
             return;
 

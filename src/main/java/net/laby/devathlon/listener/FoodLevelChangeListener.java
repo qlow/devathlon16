@@ -11,6 +11,7 @@ public class FoodLevelChangeListener implements Listener {
 
     @EventHandler
     public void onFoodLevelChange( FoodLevelChangeEvent event ) {
+        // Cancelling FoodLevelChangeEvent
         event.setCancelled( true );
     }
 

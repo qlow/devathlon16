@@ -156,11 +156,18 @@ public class WandManager implements Listener {
 
         FreezeWand freezeWand = ( FreezeWand ) wand;
 
+        // Checking for last freeze (because of cooldown)
         if ( FreezeWand.lastFreeze < System.currentTimeMillis() && !freezeWand.getFreezedPlayers().containsKey( player.getUniqueId() ) ) {
             FreezeWand.lastFreeze = System.currentTimeMillis() + 1000 * 30;
+
+            // Setting walkspeed & putting shooted player into the map FreezeWand#freezedPlayers
             player.setWalkSpeed( 0.0f );
             freezeWand.getFreezedPlayers().put( player.getUniqueId(), System.currentTimeMillis() );
+
+            // Adding potion effect
             player.addPotionEffect( new PotionEffect( PotionEffectType.JUMP, 10000, 128 ) );
+
+            // Playing sound
             player.getWorld().playSound( player.getLocation(), Sound.ENTITY_ENDERDRAGON_DEATH, 5, 1 );
         } else {
             shooter.sendMessage( Devathlon.PREFIX + "§cDu musst noch " + (( int ) ((FreezeWand.lastFreeze - System.currentTimeMillis()) / 1000)) + " Sekunden warten, um diesen Stab zu benutzen!" );

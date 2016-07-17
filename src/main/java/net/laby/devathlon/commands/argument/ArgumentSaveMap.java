@@ -40,8 +40,8 @@ public class ArgumentSaveMap extends ArgumentCommand {
         Bukkit.getWorld( args[0] ).save();
 
         try {
-            FileUtils.deleteDirectory(new File(arenaManager.getDirectory(), args[0] + "/map"));
-            FileUtils.copyDirectory( new File(args[0]), new File(arenaManager.getDirectory(), args[0] + "/map") );
+            FileUtils.deleteDirectory( new File( arenaManager.getDirectory(), args[0] + "/map" ) );
+            FileUtils.copyDirectory( new File( args[0] ), new File( arenaManager.getDirectory(), args[0] + "/map" ) );
         } catch ( IOException e ) {
             e.printStackTrace();
         }

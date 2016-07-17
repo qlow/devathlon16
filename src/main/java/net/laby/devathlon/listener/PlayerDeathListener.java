@@ -14,6 +14,7 @@ public class PlayerDeathListener implements Listener {
 
     @EventHandler
     public void onPlayerDeath( PlayerDeathEvent event ) {
+        // Resetting player & calling Arena#loosePlayer if the player is in an arena
         event.setDeathMessage( null );
         Player player = event.getEntity();
 
