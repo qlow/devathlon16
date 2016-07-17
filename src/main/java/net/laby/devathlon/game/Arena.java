@@ -26,6 +26,8 @@ public class Arena {
     private List<Location> spawns;
     private List<Location> signs;
 
+    private List<Location> fireBlocks = new ArrayList<>();
+
     private List<UUID> joinedPlayers = new ArrayList<>();
     private boolean ingame;
 
@@ -89,6 +91,10 @@ public class Arena {
 
     public List<UUID> getJoinedPlayers() {
         return joinedPlayers;
+    }
+
+    public List<Location> getFireBlocks() {
+        return fireBlocks;
     }
 
     /**

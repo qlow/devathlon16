@@ -6,6 +6,7 @@ import net.laby.devathlon.listener.*;
 import net.laby.devathlon.wand.WandManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -57,6 +58,17 @@ public class Devathlon extends JavaPlugin {
 
     @Override
     public void onDisable() {
+
+
+        // Teleporting ingame players back
+        for ( Map.Entry<UUID, Location> cachedLocationEntry : cachedLocations.entrySet() ) {
+            Player player = Bukkit.getPlayer( cachedLocationEntry.getKey() );
+
+            if ( player == null )
+                continue;
+
+            player.teleport( cachedLocationEntry.getValue() );
+        }
     }
 
     public Map<UUID, Location> getCachedLocations() {
