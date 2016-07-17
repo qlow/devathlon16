@@ -28,7 +28,7 @@ public class FireWand extends Wand {
     private int level;
 
     public FireWand( Player player ) {
-        super( player, Material.BLAZE_ROD, 0, "Fire Wand", "" );
+        super( player, Material.BLAZE_ROD, 0, "§6Fire Wand", "" );
     }
 
     public FireWand( ) {

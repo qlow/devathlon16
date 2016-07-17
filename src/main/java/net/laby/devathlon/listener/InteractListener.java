@@ -85,6 +85,7 @@ public class InteractListener implements Listener {
                         joined.setGameMode( GameMode.SURVIVAL );
                         joined.setAllowFlight( false );
                         joined.setHealth( 20D );
+                        joined.setWalkSpeed( 0.2f );
 
                         for(PotionEffect type : joined.getActivePotionEffects()) {
                             joined.removePotionEffect( type.getType() );

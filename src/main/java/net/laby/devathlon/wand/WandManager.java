@@ -25,7 +25,8 @@ public class WandManager implements Listener {
             new FireWand(),
             new PortalWand(),
             new CreeperWand(),
-            new BoostWand( )
+            new BoostWand( ),
+            new FreezeWand(  )
     };
 
     private Map<UUID, Wand> playerWands = new HashMap<>();

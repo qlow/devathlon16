@@ -14,7 +14,11 @@ public class PlayerDeathListener implements Listener {
 
     @EventHandler
     public void onPlayerDeath( PlayerDeathEvent event ) {
+        event.setDeathMessage( null );
         Player player = event.getEntity();
+
+        player.setAllowFlight( false );
+        player.setWalkSpeed( 0.2f );
 
         Arena playerArena = Devathlon.getInstance().getArenaManager().getPlayerArena( player );
 
@@ -22,6 +26,8 @@ public class PlayerDeathListener implements Listener {
                 && playerArena.isIngame() ) {
             playerArena.loosePlayer( player );
         }
+
+
     }
 
 }

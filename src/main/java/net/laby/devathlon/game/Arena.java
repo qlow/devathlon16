@@ -132,7 +132,7 @@ public class Arena {
         for ( UUID joinedPlayerUUID : Arrays.asList( lastPlayer, player.getUniqueId() ) ) {
             Player joinedPlayer = Bukkit.getPlayer( joinedPlayerUUID );
 
-            joinedPlayer.sendMessage( Devathlon.PREFIX + "§6" + joinedPlayer.getName() + " §cist gestorben!" );
+            joinedPlayer.sendMessage( Devathlon.PREFIX + "§6" + player.getName() + " §cist gestorben!" );
             joinedPlayer.setHealth( 20D );
 
             joinedPlayer.getInventory().clear();
@@ -154,6 +154,7 @@ public class Arena {
                     Player joinedPlayer = Bukkit.getPlayer( joinedPlayerUUID );
                     joinedPlayer.teleport( Bukkit.getWorlds().get( 0 ).getSpawnLocation() );
                     joinedPlayer.setAllowFlight( false );
+                    joinedPlayer.setWalkSpeed( 0.2f );
                 }
             }
         }.runTaskLater( Devathlon.getInstance(), 20 * 2L );
