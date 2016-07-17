@@ -5,9 +5,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
+import org.bukkit.entity.Snowball;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
@@ -25,15 +24,25 @@ public class FreezeWand extends Wand {
     private HashMap<UUID, Long> freezedPlayers = new HashMap<UUID, Long>();
 
     public FreezeWand( Player player ) {
-        super( player, Material.TIPPED_ARROW, 0, "§bFreeze Wand", "" );
+        super( player, Material.TIPPED_ARROW, 0, "§bFreeze Wand", "", "§7-> Mit Rechtsklick wirfst du",
+                "   §7Schneebälle, die deinen Gegner", "   §7einfrieren.", "", "   §630 §7Sekunden Cooldown", "" );
     }
 
-    public FreezeWand( ) {
+    public FreezeWand() {
         this( null );
     }
 
+    /**
+     * List of freezed players
+     *
+     * @return
+     */
+    public HashMap<UUID, Long> getFreezedPlayers() {
+        return freezedPlayers;
+    }
+
     @Override
-    public void onTick( ) {
+    public void onTick() {
         ArrayList<UUID> list = new ArrayList<UUID>( freezedPlayers.keySet() );
         Iterator<UUID> iterator = list.iterator();
         while ( iterator.hasNext() ) {
@@ -60,7 +69,7 @@ public class FreezeWand extends Wand {
     }
 
     @Override
-    public void onDisable( ) {
+    public void onDisable() {
         for ( UUID uuid : freezedPlayers.keySet() ) {
             Player player = Bukkit.getPlayer( uuid );
             if ( player == null ) {
@@ -68,23 +77,17 @@ public class FreezeWand extends Wand {
             }
             player.setWalkSpeed( 0.2f );
             player.removePotionEffect( PotionEffectType.JUMP );
-            getPlayer().sendMessage( Devathlon.PREFIX + "Der Freeze Effekt von §6" + player.getName() + "§r wurde aufgehoben." );
+            getPlayer().sendMessage( Devathlon.PREFIX + "§cDer Freeze Effekt von §6" + player.getName() + "§c wurde aufgehoben." );
         }
         freezedPlayers.clear();
     }
 
     @Override
-    public void onPlayerInteractEntity( Entity entity ) {
-        if ( entity instanceof Player ) {
-            if ( lastFreeze < System.currentTimeMillis() && !freezedPlayers.containsKey( entity.getUniqueId() ) ) {
-                lastFreeze = System.currentTimeMillis() + 1000 * 30;
-                ( ( Player ) entity ).setWalkSpeed( 0.0f );
-                freezedPlayers.put( entity.getUniqueId(), System.currentTimeMillis() );
-                ( ( Player ) entity ).addPotionEffect( new PotionEffect( PotionEffectType.JUMP, 10000, 128 ) );
-                entity.getWorld().playSound( entity.getLocation(), Sound.ENTITY_ENDERDRAGON_DEATH, 5, 1 );
-            } else {
-                getPlayer().sendMessage( Devathlon.PREFIX + "Dieser Zauberstab hat noch " + ( ( int ) ( ( lastFreeze - System.currentTimeMillis() ) / 1000 ) ) + " Sekunden cooldown!" );
-            }
+    public void onRightClick() {
+        if ( FreezeWand.lastFreeze < System.currentTimeMillis() ) {
+            getPlayer().launchProjectile( Snowball.class );
+        } else {
+            getPlayer().sendMessage( Devathlon.PREFIX + "§cDu musst noch " + (( int ) ((FreezeWand.lastFreeze - System.currentTimeMillis()) / 1000)) + " Sekunden warten, um diesen Stab zu benutzen!" );
         }
     }
 }

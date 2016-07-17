@@ -46,6 +46,7 @@ public class Devathlon extends JavaPlugin {
                 new BlockBreakListener(),
                 new EntityDamageListener(),
                 new PlayerDeathListener(),
+                new BlockBurnListener()
         };
 
         for ( Listener listener : listeners ) {
@@ -68,6 +69,12 @@ public class Devathlon extends JavaPlugin {
                 continue;
 
             player.teleport( cachedLocationEntry.getValue() );
+
+            // Resetting some stuff
+            player.setHealth( 20D );
+            player.setFireTicks( 0 );
+            player.getInventory().clear();
+            player.getInventory().setArmorContents( null );
         }
     }
 

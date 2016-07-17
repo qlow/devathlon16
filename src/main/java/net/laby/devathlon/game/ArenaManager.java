@@ -73,6 +73,20 @@ public class ArenaManager {
                 // Loading config
                 ArenaConfig arenaConfig = gson.fromJson( IOUtils.toString( new FileInputStream( configFile ) ), ArenaConfig.class );
 
+                // Loading the world if it is not loaded
+                if ( Bukkit.getWorld( arenaConfig.getName() ) == null ) {
+                    if ( new File( Bukkit.getWorldContainer(), arenaConfig.getName() ).exists() ) {
+                        FileUtils.deleteDirectory( new File( Bukkit.getWorldContainer(), arenaConfig.getName() ) );
+                    }
+
+                    if ( new File( mapFolder, "uid.dat" ).exists() ) {
+                        new File( mapFolder, "uid.dat" ).delete();
+                    }
+
+                    FileUtils.copyDirectory( mapFolder, new File( Bukkit.getWorldContainer(), arenaConfig.getName() ) );
+                    Bukkit.createWorld( new WorldCreator( arenaConfig.getName() ) );
+                }
+
                 // List with spawn-locations & with sign-locations
                 List<Location> spawns = new ArrayList<>();
                 List<Location> signs = new ArrayList<>();
@@ -87,24 +101,12 @@ public class ArenaManager {
                     signs.add( LocationSerializer.fromString( signString ) );
                 }
 
+                Arena arena = new Arena( arenaConfig, mapFolder, arenaConfig.getName(), spawns, signs );
 
                 // Adding Arena to arena-list
-                arenas.add( new Arena( arenaConfig, mapFolder, arenaConfig.getName(), spawns, signs ) );
+                arenas.add( arena );
 
-                // Loading the world if it is not loaded
-                if ( Bukkit.getWorld( arenaConfig.getName() ) == null ) {
-                    if ( new File( Bukkit.getWorldContainer(), arenaConfig.getName() ).exists() ) {
-                        FileUtils.deleteDirectory( new File( Bukkit.getWorldContainer(), arenaConfig.getName() ) );
-                    }
-
-                    if(new File(mapFolder, "uid.dat").exists()) {
-                        new File(mapFolder, "uid.dat").delete();
-                    }
-
-                    FileUtils.copyDirectory( mapFolder, new File( Bukkit.getWorldContainer(), arenaConfig.getName() ) );
-                    Bukkit.createWorld( new WorldCreator( arenaConfig.getName() ) );
-                }
-
+                arena.updateSigns();
             } catch ( Exception ex ) {
                 ex.printStackTrace();
                 System.err.println( "[DevAthlon] Couldn't load " + arenaDirectory.getAbsolutePath() + "!" );

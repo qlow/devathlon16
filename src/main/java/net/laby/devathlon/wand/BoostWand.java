@@ -18,7 +18,7 @@ public class BoostWand extends Wand {
     private int power = 0;
 
     public BoostWand( Player player ) {
-        super( player, Material.SPECTRAL_ARROW, 0, "§9Boost Wand", "", "§7-> Schießt den Spieler ", "   §7in die Luft" );
+        super( player, Material.SPECTRAL_ARROW, 0, "§9Boost Wand", "", "§7-> Schießt einen Spieler ", "   §7im Umkreis von §65 Blöcken", "   §7in die Luft", "" );
     }
 
     public BoostWand( ) {
@@ -29,7 +29,7 @@ public class BoostWand extends Wand {
     @Override
     public void onRightClick( ) {
         if ( clickedEntity == null || power >= 20 ) {
-            List<Entity> nearbyEntities = getPlayer().getNearbyEntities( 2, 2, 2 );
+            List<Entity> nearbyEntities = getPlayer().getNearbyEntities( 5, 5, 5 );
             if ( nearbyEntities != null && !nearbyEntities.isEmpty() ) {
                 this.clickedEntity = nearbyEntities.get( 0 );
                 this.power = 0;
@@ -59,12 +59,12 @@ public class BoostWand extends Wand {
             this.power++;
 
             getPlayer().getWorld().playSound( getPlayer().getLocation(), Sound.ENTITY_ZOMBIE_INFECT, 2, power * 0.1f );
-            getPlayer().getWorld().playEffect( getPlayer().getLocation(), Effect.SMALL_SMOKE, 1 );
+            getPlayer().getWorld().playEffect( clickedEntity.getLocation().clone().add( 0, 2.5, 0 ), Effect.LARGE_SMOKE, 1 );
 
             if ( this.power > 10 ) {
 
                 Vector vec = getPlayer().getLocation().getDirection();
-                vec.setY( 1.5 );
+                vec.setY( 1 );
                 this.clickedEntity.setVelocity( vec );
                 getPlayer().getWorld().playEffect( getPlayer().getLocation(), Effect.EXPLOSION_LARGE, 1 );
 

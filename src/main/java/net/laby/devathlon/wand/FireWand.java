@@ -1,5 +1,7 @@
 package net.laby.devathlon.wand;
 
+import net.laby.devathlon.Devathlon;
+import net.laby.devathlon.game.Arena;
 import net.minecraft.server.v1_10_R1.Explosion;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -27,19 +29,25 @@ public class FireWand extends Wand {
     // Sound pitch level
     private int level;
 
+    private Arena currentArena;
+
     public FireWand( Player player ) {
-        super( player, Material.BLAZE_ROD, 0, "§6Fire Wand", "" );
+        super( player, Material.BLAZE_ROD, 0, "§6Fire Wand", "", "§7-> Mit Rechtsklick kannst du", "   §7auf dein Ziel eine riesen", "   §7Feuerspur schießen.", "" );
+
+        if(player != null) {
+            currentArena = Devathlon.getInstance().getArenaManager().getPlayerArena( player );
+        }
     }
 
-    public FireWand( ) {
+    public FireWand() {
         this( null );
     }
 
     @Override
-    public void onTick( ) {
+    public void onTick() {
         if ( currentLocation != null ) {
             if ( lastTick < System.currentTimeMillis() ) {
-                lastTick = ( long ) ( System.currentTimeMillis() + ( level * 5 ) );
+                lastTick = ( long ) (System.currentTimeMillis() + (level * 5));
 
                 // Get next block
                 Vector add = this.targetLocation.toVector().subtract( this.currentLocation.toVector() ).normalize().multiply( 1.5 );
@@ -51,6 +59,10 @@ public class FireWand extends Wand {
                 // Replace the current block to fire if the block type is air
                 if ( this.currentLocation.getBlock().getType() == Material.AIR ) {
                     this.currentLocation.getBlock().setType( Material.FIRE );
+
+                    if ( currentArena != null && currentLocation.getBlock().getType() == Material.FIRE) {
+                        currentArena.getFireBlocks().add( this.currentLocation );
+                    }
                 }
 
                 // Sound and Effects
@@ -64,7 +76,7 @@ public class FireWand extends Wand {
                 if ( level > 15 || this.currentLocation.distance( targetLocation ) < 2 ) {
                     //this.currentLocation.getBlock().getWorld().playSound( this.currentLocation, Sound.ENTITY_GENERIC_EXPLODE, 5, 1 );
                     //this.currentLocation.getBlock().getWorld().playEffect( this.currentLocation, Effect.EXPLOSION_LARGE, 1 );
-                    createExplosion(this.currentLocation);
+                    createExplosion( this.currentLocation );
                     targetLocation = null;
                     currentLocation = null;
                     level = 0;
@@ -74,7 +86,7 @@ public class FireWand extends Wand {
     }
 
     @Override
-    public void onRightClick( ) {
+    public void onRightClick() {
         // Get target block
         Block targetBlock = getPlayer().getTargetBlock( ( HashSet<Byte> ) null, 50 );
         if ( targetBlock != null && currentLocation == null ) {
@@ -97,14 +109,14 @@ public class FireWand extends Wand {
      * Get the nearest entity
      *
      * @param location
-     * @param range search radius
+     * @param range    search radius
      * @return nearest entity
      */
     public Entity getNearestEntity( Location location, double range ) {
         double distance = range;
         Entity target = null;
         for ( Entity all : location.getWorld().getEntities() ) {
-            if(all.getWorld().equals( location.getWorld() )) {
+            if ( all.getWorld().equals( location.getWorld() ) ) {
                 double entityDistance = all.getLocation().distance( location );
                 if ( entityDistance < distance ) {
                     distance = entityDistance;
@@ -115,10 +127,10 @@ public class FireWand extends Wand {
         return target;
     }
 
-    private void createExplosion(Location location) {
-        net.minecraft.server.v1_10_R1.World world = ((CraftWorld) location.getWorld()).getHandle();
-        Explosion explosion = new Explosion(world, null, location.getX(), location.getY(), location.getZ(), 2.8F, true, false);
+    private void createExplosion( Location location ) {
+        net.minecraft.server.v1_10_R1.World world = (( CraftWorld ) location.getWorld()).getHandle();
+        Explosion explosion = new Explosion( world, null, location.getX(), location.getY(), location.getZ(), 2.8F, true, false );
         explosion.a();
-        explosion.a(true);
+        explosion.a( true );
     }
 }

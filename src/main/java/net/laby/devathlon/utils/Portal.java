@@ -81,14 +81,14 @@ public class Portal {
                 player.teleport( firstBlock.getLocation().clone().add( 0, 3, 0 ) );
 
                 // Setting velocity
-                player.setVelocity( new Vector( 0, 1, 0 ) );
+                player.setVelocity( new Vector( 0, 0.5, 0 ) );
                 break;
             case WALL:
                 // Teleporting
                 player.teleport( firstBlock.getRelative( getBlockFace(), 2 ).getLocation() );
 
                 // Setting velocity
-                player.setVelocity( new Vector( getBlockFace().getModX() * 2, 0, getBlockFace().getModZ() * 2 ) );
+                player.setVelocity( new Vector( getBlockFace().getModX() * 0.8, 0, getBlockFace().getModZ() * 0.8 ) );
                 break;
         }
     }

@@ -2,15 +2,20 @@ package net.laby.devathlon.wand;
 
 import net.laby.devathlon.Devathlon;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,8 +30,9 @@ public class WandManager implements Listener {
             new FireWand(),
             new PortalWand(),
             new CreeperWand(),
-            new BoostWand( ),
-            new FreezeWand(  )
+            new BoostWand(),
+            new FreezeWand(),
+            new InvasionWand()
     };
 
     private Map<UUID, Wand> playerWands = new HashMap<>();
@@ -124,6 +130,41 @@ public class WandManager implements Listener {
         wand.onRightClick();
         wand.setRightClicking( true );
         wand.setLastInteract( System.currentTimeMillis() );
+    }
+
+    @EventHandler
+    public void onEntityDamageByEntity( EntityDamageByEntityEvent event ) {
+        if ( !(event.getEntity() instanceof Player) )
+            return;
+
+        if ( !(event.getDamager() instanceof Snowball) )
+            return;
+
+        if ( !((( Snowball ) event.getDamager()).getShooter() instanceof Player) )
+            return;
+
+        Player player = ( Player ) event.getEntity();
+        Player shooter = ( Player ) (( Snowball ) event.getDamager()).getShooter();
+
+        if ( !playerWands.containsKey( shooter.getUniqueId() ) )
+            return;
+
+        Wand wand = null;
+
+        if ( !((wand = playerWands.get( shooter.getUniqueId() )) instanceof FreezeWand) )
+            return;
+
+        FreezeWand freezeWand = ( FreezeWand ) wand;
+
+        if ( FreezeWand.lastFreeze < System.currentTimeMillis() && !freezeWand.getFreezedPlayers().containsKey( player.getUniqueId() ) ) {
+            FreezeWand.lastFreeze = System.currentTimeMillis() + 1000 * 30;
+            player.setWalkSpeed( 0.0f );
+            freezeWand.getFreezedPlayers().put( player.getUniqueId(), System.currentTimeMillis() );
+            player.addPotionEffect( new PotionEffect( PotionEffectType.JUMP, 10000, 128 ) );
+            player.getWorld().playSound( player.getLocation(), Sound.ENTITY_ENDERDRAGON_DEATH, 5, 1 );
+        } else {
+            shooter.sendMessage( Devathlon.PREFIX + "§cDu musst noch " + (( int ) ((FreezeWand.lastFreeze - System.currentTimeMillis()) / 1000)) + " Sekunden warten, um diesen Stab zu benutzen!" );
+        }
     }
 
     /**

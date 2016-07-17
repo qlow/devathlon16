@@ -57,10 +57,14 @@ public class InteractListener implements Listener {
 
                     arena.updateSigns();
 
-                    for(Entity entity : arena.getWorld().getEntities()) {
-                        if(!(entity instanceof Player)) {
-                            entity.remove();
+                    if(arena.getWorld() != null) {
+                        for(Entity entity : arena.getWorld().getEntities()) {
+                            if(!(entity instanceof Player)) {
+                                entity.remove();
+                            }
                         }
+
+                        arena.getWorld().setTime( 0 );
                     }
 
                     int spawnIndex = 0;
@@ -79,13 +83,17 @@ public class InteractListener implements Listener {
                         Devathlon.getInstance().getCachedLocations().put( joinedPlayer, joined.getLocation() );
 
                         // Sending message & teleporting
-                        joined.sendMessage( Devathlon.PREFIX + "§aDer Fight startet jetzt!" );
+                        joined.sendMessage( Devathlon.PREFIX + "§aDer Fight startet nun!" );
 
+                        // Teleporting
                         joined.teleport( arena.getSpawns().get( spawnIndex ) );
+
+                        // Resetting some stuff
                         joined.setGameMode( GameMode.SURVIVAL );
                         joined.setAllowFlight( false );
                         joined.setHealth( 20D );
                         joined.setWalkSpeed( 0.2f );
+                        joined.setFireTicks( 0 );
 
                         for(PotionEffect type : joined.getActivePotionEffects()) {
                             joined.removePotionEffect( type.getType() );
@@ -110,6 +118,8 @@ public class InteractListener implements Listener {
 
                         spawnIndex++;
                     }
+                } else {
+                    player.sendMessage( Devathlon.PREFIX + "§aDu hast die Warteschlange für die Arena §6" + arena.getName() + " §abetreten!" );
                 }
 
                 return;

@@ -3,6 +3,7 @@ package net.laby.devathlon.game;
 import net.laby.devathlon.Devathlon;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -84,15 +85,21 @@ public class Arena {
     }
 
     public World getWorld() {
-        if( spawns.isEmpty())
+        if ( spawns.isEmpty() )
             return null;
-       return  this.spawns.get( 0 ).getWorld();
+
+        return this.spawns.get( 0 ).getWorld();
     }
 
     public List<UUID> getJoinedPlayers() {
         return joinedPlayers;
     }
 
+    /**
+     * List of fire-blocks (will be set to air later)
+     *
+     * @return list of blocks with Material FIRE
+     */
     public List<Location> getFireBlocks() {
         return fireBlocks;
     }
@@ -121,6 +128,14 @@ public class Arena {
         // Clearing joined players finally
         joinedPlayers.clear();
 
+        // Replacing fire with AIR
+        for ( Location fireBlock : fireBlocks ) {
+            if(fireBlock.getBlock().getType() != Material.FIRE)
+                continue;
+
+            fireBlock.getBlock().setType( Material.AIR );
+        }
+
         // Setting ingame-state
         setIngame( false );
 
@@ -134,8 +149,10 @@ public class Arena {
 
             joinedPlayer.sendMessage( Devathlon.PREFIX + "§6" + player.getName() + " §cist gestorben!" );
             joinedPlayer.setHealth( 20D );
+            joinedPlayer.setFireTicks( 0 );
 
             joinedPlayer.getInventory().clear();
+            joinedPlayer.getInventory().setArmorContents( null );
 
             // Returning player to cached location
             if ( Devathlon.getInstance().getCachedLocations().containsKey( joinedPlayerUUID ) ) {
@@ -149,7 +166,7 @@ public class Arena {
 
 
         new BukkitRunnable() {
-            public void run( ) {
+            public void run() {
                 for ( UUID joinedPlayerUUID : Arrays.asList( lastPlayer, player.getUniqueId() ) ) {
                     Player joinedPlayer = Bukkit.getPlayer( joinedPlayerUUID );
                     joinedPlayer.teleport( Bukkit.getWorlds().get( 0 ).getSpawnLocation() );
