@@ -18,7 +18,7 @@ public class CreeperWand extends Wand {
     private ArrayList<Creeper> creepers = new ArrayList<Creeper>(  );
 
     public CreeperWand( Player player ) {
-        super( player, Material.BLAZE_ROD, 0, "Creeper Wand", "" );
+        super( player, Material.TIPPED_ARROW, 0, "Creeper Wand", "" );
     }
 
     public CreeperWand( ) {

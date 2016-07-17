@@ -3,8 +3,11 @@ package net.laby.devathlon.game;
 import net.laby.devathlon.Devathlon;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -78,6 +81,12 @@ public class Arena {
         updateSigns();
     }
 
+    public World getWorld() {
+        if( spawns.isEmpty())
+            return null;
+       return  this.spawns.get( 0 ).getWorld();
+    }
+
     public List<UUID> getJoinedPlayers() {
         return joinedPlayers;
     }
@@ -109,11 +118,15 @@ public class Arena {
         // Setting ingame-state
         setIngame( false );
 
+        player.setAllowFlight( true );
+        player.setFlying( true );
+        player.setVelocity( new Vector( 0, 2, 0 ) );
+
         // Sending win-message and teleporting to spawn
         for ( UUID joinedPlayerUUID : Arrays.asList( lastPlayer, player.getUniqueId() ) ) {
             Player joinedPlayer = Bukkit.getPlayer( joinedPlayerUUID );
 
-            joinedPlayer.sendMessage( Devathlon.PREFIX + "§6" + joinedPlayer.getName() + " §ahat die Runde gewonnen!" );
+            joinedPlayer.sendMessage( Devathlon.PREFIX + "§6" + joinedPlayer.getName() + " §cist gestorben!" );
             joinedPlayer.setHealth( 20D );
 
             joinedPlayer.getInventory().clear();
@@ -127,6 +140,17 @@ public class Arena {
         }
 
         updateSigns();
+
+
+        new BukkitRunnable() {
+            public void run( ) {
+                for ( UUID joinedPlayerUUID : Arrays.asList( lastPlayer, player.getUniqueId() ) ) {
+                    Player joinedPlayer = Bukkit.getPlayer( joinedPlayerUUID );
+                    joinedPlayer.teleport( Bukkit.getWorlds().get( 0 ).getSpawnLocation() );
+                    joinedPlayer.setAllowFlight( false );
+                }
+            }
+        }.runTaskLater( Devathlon.getInstance(), 20 * 2L );
     }
 
     /**

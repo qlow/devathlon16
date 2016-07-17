@@ -5,12 +5,17 @@ import net.laby.devathlon.game.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Sign;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 
 import java.util.UUID;
 
@@ -53,6 +58,12 @@ public class InteractListener implements Listener {
 
                     arena.updateSigns();
 
+                    for(Entity entity : arena.getWorld().getEntities()) {
+                        if(!(entity instanceof Player)) {
+                            entity.remove();
+                        }
+                    }
+
                     int spawnIndex = 0;
                     for ( UUID joinedPlayer : arena.getJoinedPlayers() ) {
                         if ( spawnIndex == arena.getJoinedPlayers().size() ) {
@@ -73,7 +84,29 @@ public class InteractListener implements Listener {
 
                         joined.teleport( arena.getSpawns().get( spawnIndex ) );
                         joined.setGameMode( GameMode.SURVIVAL );
+                        joined.setAllowFlight( false );
                         joined.setHealth( 20D );
+
+                        for(PotionEffect type : joined.getActivePotionEffects()) {
+                            joined.removePotionEffect( type.getType() );
+
+                        }
+
+                        ItemStack helmet = new ItemStack( Material.DIAMOND_HELMET);
+                        helmet.addUnsafeEnchantment( Enchantment.PROTECTION_EXPLOSIONS, 4 );
+                        joined.getInventory().setHelmet( helmet );
+
+                        ItemStack chestplate = new ItemStack( Material.IRON_CHESTPLATE);
+                        chestplate.addUnsafeEnchantment( Enchantment.PROTECTION_EXPLOSIONS, 4 );
+                        joined.getInventory().setChestplate( chestplate );
+
+                        ItemStack leggings = new ItemStack( Material.DIAMOND_LEGGINGS);
+                        leggings.addUnsafeEnchantment( Enchantment.PROTECTION_EXPLOSIONS, 4 );
+                        joined.getInventory().setLeggings( leggings );
+
+                        ItemStack boots = new ItemStack( Material.IRON_BOOTS);
+                        boots.addUnsafeEnchantment( Enchantment.PROTECTION_EXPLOSIONS, 4 );
+                        joined.getInventory().setBoots( boots );
 
                         spawnIndex++;
                     }

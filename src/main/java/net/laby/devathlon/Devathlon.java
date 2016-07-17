@@ -2,15 +2,7 @@ package net.laby.devathlon;
 
 import net.laby.devathlon.commands.ArenaCommand;
 import net.laby.devathlon.game.ArenaManager;
-import net.laby.devathlon.listener.BlockBreakListener;
-import net.laby.devathlon.listener.EntityDamageListener;
-import net.laby.devathlon.listener.EntityExplodeListener;
-import net.laby.devathlon.listener.FoodLevelChangeListener;
-import net.laby.devathlon.listener.InteractListener;
-import net.laby.devathlon.listener.JoinListener;
-import net.laby.devathlon.listener.PlayerDeathListener;
-import net.laby.devathlon.listener.QuitListener;
-import net.laby.devathlon.listener.SignChangeListener;
+import net.laby.devathlon.listener.*;
 import net.laby.devathlon.wand.WandManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -53,7 +45,6 @@ public class Devathlon extends JavaPlugin {
                 new BlockBreakListener(),
                 new EntityDamageListener(),
                 new PlayerDeathListener(),
-                new EntityExplodeListener()
         };
 
         for ( Listener listener : listeners ) {

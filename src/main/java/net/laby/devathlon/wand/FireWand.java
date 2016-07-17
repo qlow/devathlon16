@@ -1,10 +1,12 @@
 package net.laby.devathlon.wand;
 
+import net.minecraft.server.v1_10_R1.Explosion;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_10_R1.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -60,7 +62,9 @@ public class FireWand extends Wand {
 
                 // Stop the fire
                 if ( level > 15 || this.currentLocation.distance( targetLocation ) < 2 ) {
-                    this.currentLocation.getBlock().getWorld().createExplosion( this.currentLocation, 2f );
+                    //this.currentLocation.getBlock().getWorld().playSound( this.currentLocation, Sound.ENTITY_GENERIC_EXPLODE, 5, 1 );
+                    //this.currentLocation.getBlock().getWorld().playEffect( this.currentLocation, Effect.EXPLOSION_LARGE, 1 );
+                    createExplosion(this.currentLocation);
                     targetLocation = null;
                     currentLocation = null;
                     level = 0;
@@ -100,12 +104,21 @@ public class FireWand extends Wand {
         double distance = range;
         Entity target = null;
         for ( Entity all : location.getWorld().getEntities() ) {
-            double entityDistance = all.getLocation().distance( location );
-            if ( entityDistance < distance ) {
-                distance = entityDistance;
-                target = all;
+            if(all.getWorld().equals( location.getWorld() )) {
+                double entityDistance = all.getLocation().distance( location );
+                if ( entityDistance < distance ) {
+                    distance = entityDistance;
+                    target = all;
+                }
             }
         }
         return target;
+    }
+
+    private void createExplosion(Location location) {
+        net.minecraft.server.v1_10_R1.World world = ((CraftWorld) location.getWorld()).getHandle();
+        Explosion explosion = new Explosion(world, null, location.getX(), location.getY(), location.getZ(), 2.8F, true, false);
+        explosion.a();
+        explosion.a(true);
     }
 }
