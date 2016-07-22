@@ -1,0 +1,27 @@
+# Eclipse
+.classpath
+.project
+.settings/
+
+# IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea/*
+
+# Gradle (but we don't use this)
+build.xml
+
+# Maven
+target/
+dependency-reduced-pom.xml
+deploy/
+
+# Other potential build files
+build/
+bin/
+dist/
+manifest.mf
+
+# Our libraries
+lib
