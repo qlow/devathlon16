@@ -1,4 +1,4 @@
-# devathlon16
+# DevAthlon 2016 - Programmierwettbewerb
 ## Runde 1
 In dieser Runde haben wir ein Bukkit-Plugin erstellt, welches ein 1vs1 mit verschiedenen Zauberstäben ermöglicht. 
 Man kann durch Schilder in die jeweilige Arena joinen. Ein Schild kann man setzen, indem man in die erste Zeile "[mbattle]"
