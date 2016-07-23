@@ -1,17 +1,26 @@
 package net.laby.utils;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
 public class Utils {
-	public static String MD5(String md5) {
-		try {
-			java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
-			byte[] array = md.digest(md5.getBytes());
-			StringBuffer sb = new StringBuffer();
-			for (int i = 0; i < array.length; ++i) {
-				sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1,3));
-			}
-			return sb.toString();
-		} catch (java.security.NoSuchAlgorithmException e) {
-		}
-		return null;
-	}
+    public static String readFile( File file ) throws IOException {
+        String content = null;
+        FileReader reader = null;
+        try {
+            reader = new FileReader( file );
+            char[] chars = new char[ ( int ) file.length() ];
+            reader.read( chars );
+            content = new String( chars );
+            reader.close();
+        } catch ( IOException e ) {
+            e.printStackTrace();
+        } finally {
+            if ( reader != null ) {
+                reader.close();
+            }
+        }
+        return content;
+    }
 }

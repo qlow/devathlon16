@@ -1,10 +1,10 @@
 package net.laby.application;
 
-import java.io.File;
-import java.util.ArrayList;
-
 import net.laby.utils.Connection;
 import net.laby.utils.ConnectionsLoader;
+
+import java.io.File;
+import java.util.ArrayList;
 
 public class Application {
 
@@ -15,6 +15,10 @@ public class Application {
 	public Application() {
 		instance = this;
 		connectionsLoader.loadConnections();
+
+
+		ConnectionsLoader.settings.connections.add( new Connection( "" ) );
+
 	}
 	
 	public static Application getInstance() {
