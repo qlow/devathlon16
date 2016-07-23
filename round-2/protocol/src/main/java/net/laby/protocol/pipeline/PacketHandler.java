@@ -25,6 +25,13 @@ public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
     }
 
     @Override
+    public void exceptionCaught( ChannelHandlerContext ctx, Throwable cause ) throws Exception {
+        super.exceptionCaught( ctx, cause );
+
+        cause.printStackTrace();
+    }
+
+    @Override
     public void channelActive( ChannelHandlerContext ctx ) throws Exception {
         super.channelActive( ctx );
 

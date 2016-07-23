@@ -15,19 +15,15 @@ public class PacketPowerUsage extends Packet {
 
     @Getter
     private byte currentRamUsage;
-    @Getter
-    private byte currentCpuUsage;
 
     @Override
     public void read( ByteBuf byteBuf ) {
         this.currentRamUsage = byteBuf.readByte();
-        this.currentCpuUsage = byteBuf.readByte();
     }
 
     @Override
     public void write( ByteBuf byteBuf ) {
         byteBuf.writeByte( currentRamUsage );
-        byteBuf.writeByte( currentCpuUsage );
     }
 
 }

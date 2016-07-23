@@ -51,6 +51,7 @@ public class Jaby extends Plugin {
                 System.out.println( "[Jaby] Listening on port " + port );
             }
         } );
+
     }
 
     @Override

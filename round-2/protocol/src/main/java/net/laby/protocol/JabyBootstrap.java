@@ -4,6 +4,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -35,7 +36,9 @@ public class JabyBootstrap {
 
     private static Map<Class<? extends Packet>, List<Method>> handlers = new HashMap<>();
     private static Map<Channel, JabyChannel> channels = new HashMap<>();
+
     private static boolean client;
+    private static PacketHandler clientHandler;
 
     private static ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -92,7 +95,7 @@ public class JabyBootstrap {
      * @param clientType        type of the client that connects
      * @param bootstrapCallback callback of Bootstrap
      */
-    public static void runClientBootstrap( String ip, int port, String password, PacketLogin.ClientType clientType,
+    public static void runClientBootstrap( String ip, int port, byte maxRamUsage, String password, PacketLogin.ClientType clientType,
                                            Consumer<Bootstrap> bootstrapCallback ) {
         // I know, that this is kinda ugly :/
         client = true;
@@ -102,23 +105,33 @@ public class JabyBootstrap {
             public void run() {
                 // Constructing Bootstrap
                 final Bootstrap bootstrap = new Bootstrap()
-                        .group( PipelineUtils.getEventLoopGroup( 8,
-                                new ThreadFactoryBuilder().setNameFormat( "TeamLaby Thread #%d" ).build() ) )
+                        .group( PipelineUtils.getEventLoopGroup( 0,
+                                new ThreadFactoryBuilder().setNameFormat( "Jaby Thread #%d" ).build() ) )
                         .channel( PipelineUtils.getSocketChannelClass() )
                         .option( ChannelOption.CONNECT_TIMEOUT_MILLIS, 8000 )
-                        .option( ChannelOption.SO_KEEPALIVE, true )
                         .handler( new ChannelInitializer<SocketChannel>() {
 
                             protected void initChannel( SocketChannel socketChannel ) throws Exception {
                                 PacketHandler packetHandler = preparePipeline( socketChannel );
 
-                                packetHandler.sendPacket( new PacketLogin( password, clientType ) );
+                                clientHandler = packetHandler;
+                                packetHandler.sendPacket( new PacketLogin( password, clientType, maxRamUsage ) );
                             }
 
                         } );
 
                 // Connecting to given ip & port
-                bootstrap.connect( ip, port );
+                ChannelFuture f = bootstrap.connect( ip, port ).awaitUninterruptibly();
+
+                // Checking if the connection was successfully established
+                if(!f.isSuccess()) {
+                    // "Callbacking" null if the client didn't connect successfully
+                    bootstrapCallback.accept( null );
+
+                    // Shutdowning EventLoopGroup
+                    bootstrap.group().shutdownGracefully();
+                    return;
+                }
 
                 // "Callbacking" the Bootstrap
                 bootstrapCallback.accept( bootstrap );
@@ -129,6 +142,7 @@ public class JabyBootstrap {
                         bootstrap.group().shutdownGracefully();
                     }
                 } ) );
+
             }
         } );
     }
@@ -144,10 +158,10 @@ public class JabyBootstrap {
             @Override
             public void run() {
                 // Creating EventLoopGroups
-                EventLoopGroup bossGroup = PipelineUtils.getEventLoopGroup( 8,
-                        new ThreadFactoryBuilder().setNameFormat( "TeamLaby Boss Thread #%d" ).build() );
-                EventLoopGroup workerGroup = PipelineUtils.getEventLoopGroup( 8,
-                        new ThreadFactoryBuilder().setNameFormat( "TeamLaby Worker Thread #%d" ).build() );
+                EventLoopGroup bossGroup = PipelineUtils.getEventLoopGroup( 0,
+                        new ThreadFactoryBuilder().setNameFormat( "Jaby Boss Thread #%d" ).build() );
+                EventLoopGroup workerGroup = PipelineUtils.getEventLoopGroup( 0,
+                        new ThreadFactoryBuilder().setNameFormat( "Jaby Worker Thread #%d" ).build() );
 
                 // Constructing ServerBootstrap
                 ServerBootstrap serverBootstrap = new ServerBootstrap()
@@ -165,7 +179,17 @@ public class JabyBootstrap {
                         .childOption( ChannelOption.SO_KEEPALIVE, true );
 
                 // Binding to given port
-                serverBootstrap.bind( port );
+                ChannelFuture channelFuture = serverBootstrap.bind( port ).awaitUninterruptibly();
+
+                // Checking for successful connection
+                if(!channelFuture.isSuccess()) {
+                    // "Callbacking" null
+                    serverBootstrapConsumer.accept( null );
+
+                    // Shutdowning group(s)
+                    serverBootstrap.group().shutdownGracefully();
+                    return;
+                }
 
                 // "Callbacking" the ServerBootstrap
                 serverBootstrapConsumer.accept( serverBootstrap );
@@ -226,5 +250,22 @@ public class JabyBootstrap {
      */
     public static boolean isClient() {
         return client;
+    }
+
+    /**
+     * The client's connection's handler
+     * @return PacketHandler of the client's connection to the server
+     */
+    public static PacketHandler getClientHandler() {
+        return clientHandler;
+    }
+
+    /**
+     * The executor-service that is used to start threads
+     *
+     * @return cached thread-pool
+     */
+    public static ExecutorService getExecutorService() {
+        return executorService;
     }
 }

@@ -1,34 +1,5 @@
 {
-  "connections": [
-    {
-      "address": "1",
-      "port": 0,
-      "password": "2"
-    },
-    {
-      "address": "1",
-      "port": 0,
-      "password": "2"
-    },
-    {
-      "address": "1",
-      "port": 0,
-      "password": "2"
-    },
-    {
-      "address": "1",
-      "port": 0,
-      "password": "2"
-    },
-    {
-      "address": "1",
-      "port": 0,
-      "password": "2"
-    },
-    {
-      "address": "1",
-      "port": 0,
-      "password": "2"
-    }
-  ]
+  "address": "127.0.0.1",
+  "port": 1337,
+  "maxRamUsage": 60
 }

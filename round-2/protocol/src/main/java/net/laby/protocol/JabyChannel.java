@@ -26,15 +26,10 @@ public class JabyChannel {
     @Setter
     private byte currentRamUsage;
 
-    @Getter
-    @Setter
-    private byte currentCpuUsage;
-
-    public JabyChannel( Channel channel, PacketLogin.ClientType clientType, byte maxRamUsage, byte maxCpuUsage ) {
+    public JabyChannel( Channel channel, PacketLogin.ClientType clientType, byte maxRamUsage ) {
         this.channel = channel;
         this.clientType = clientType;
         this.maxRamUsage = maxRamUsage;
-        this.maxCpuUsage = maxCpuUsage;
     }
 
 }

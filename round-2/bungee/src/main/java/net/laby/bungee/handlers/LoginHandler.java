@@ -27,7 +27,7 @@ public class LoginHandler {
         if ( !JabyBootstrap.isClient() ) {
             // Adding to channel-map
             JabyBootstrap.getChannels().put( ctx.channel(), new JabyChannel( ctx.channel(), packetLogin.getClientType(),
-                    packetLogin.getMaxRamUsage(), packetLogin.getMaxCpuUsage() ) );
+                    packetLogin.getMaxRamUsage() ) );
         }
     }
 
