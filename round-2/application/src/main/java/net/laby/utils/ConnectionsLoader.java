@@ -2,16 +2,14 @@ package net.laby.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.internal.LinkedTreeMap;
 import net.laby.application.Application;
 
 import java.io.*;
-import java.util.ArrayList;
 
 public class ConnectionsLoader {
 
     private File configFile;
-    private static ArrayList<Connection> connections = new ArrayList<Connection>();
+    private static ConnectionList list = new ConnectionList();
     private Application main;
 
     public ConnectionsLoader( Application main, File file ) {
@@ -19,8 +17,8 @@ public class ConnectionsLoader {
         this.configFile = file;
     }
 
-    public static ArrayList<Connection> getConnections( ) {
-        return connections;
+    public static ConnectionList getList( ) {
+        return list;
     }
 
     public void loadConnections( ) {
@@ -40,9 +38,7 @@ public class ConnectionsLoader {
 
             System.out.println( json );
 
-            ArrayList<LinkedTreeMap> map = new Gson().fromJson( json, ArrayList.class );
-
-            map.
+            list =  new Gson().fromJson( json, ConnectionList.class );
 
         } catch ( IOException e ) {
             e.printStackTrace();
@@ -66,7 +62,7 @@ public class ConnectionsLoader {
             Gson gson = gsonBuilder.setPrettyPrinting().create();
             PrintWriter w;
             w = new PrintWriter( new FileOutputStream( this.configFile ) );
-            w.print( gson.toJson( connections ) );
+            w.print( gson.toJson( list ) );
             w.flush();
             w.close();
         } catch ( FileNotFoundException e ) {
