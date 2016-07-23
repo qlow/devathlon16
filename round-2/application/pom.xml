@@ -72,6 +72,7 @@
                             <include>io.netty:netty-all</include>
                             <include>com.google.guava:guava</include>
                             <include>com.google.code.gson:gson</include>
+                            <include>net.laby:protocol</include>
                         </includes>
                     </artifactSet>
                 </configuration>
