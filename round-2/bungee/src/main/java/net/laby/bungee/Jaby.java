@@ -55,6 +55,7 @@ public class Jaby extends Plugin implements Listener {
         configDefaults.put( "port", 1337 );
         configDefaults.put( "motd", Arrays.asList( "Zeile 1", "Zeile 2" ) );
         configDefaults.put( "serverTypes", Arrays.asList() );
+        configDefaults.put( "startServerSeconds", 30 );
 
         this.configLoader = new ConfigLoader( new File( getDataFolder(), "config.yml" ), configDefaults );
         this.password = JabyUtils.convertToMd5( getConfiguration().getString( "password" ) );
@@ -96,15 +97,21 @@ public class Jaby extends Plugin implements Listener {
                 JabyBootstrap.getExecutorService().execute( new Runnable() {
                     @Override
                     public void run() {
+                        try {
+                            Thread.sleep( getConfiguration().getInt( "startServerSeconds" ) * 1000 );
+                        } catch ( InterruptedException e ) {
+                            e.printStackTrace();
+                        }
+
                         while ( true ) {
+                            for ( ServerType serverType : ServerType.getServerTypes() ) {
+                                serverType.startServers();
+                            }
+
                             try {
                                 Thread.sleep( 5000L );
                             } catch ( InterruptedException e ) {
                                 e.printStackTrace();
-                            }
-
-                            for ( ServerType serverType : ServerType.getServerTypes() ) {
-                                serverType.startServers();
                             }
                         }
                     }
