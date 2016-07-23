@@ -2,6 +2,7 @@ package net.laby.protocol.packet;
 
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.laby.protocol.Packet;
 
@@ -13,6 +14,7 @@ import net.laby.protocol.Packet;
 @AllArgsConstructor
 public class PacketDisconnect extends Packet {
 
+    @Getter
     private String disconnectReason;
 
     @Override

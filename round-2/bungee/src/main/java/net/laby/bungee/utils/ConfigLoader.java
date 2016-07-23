@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Class created by qlow | Jan
  */
-public class ConfigUtils {
+public class ConfigLoader {
 
     private ConfigurationProvider configurationProvider;
 
@@ -26,7 +26,7 @@ public class ConfigUtils {
      * @param configFile config's file
      * @param defaults   the default values of the config
      */
-    public ConfigUtils( File configFile, Map<String, Object> defaults ) {
+    public ConfigLoader( File configFile, Map<String, Object> defaults ) {
         this.configurationProvider = ConfigurationProvider.getProvider( YamlConfiguration.class );
         this.configFile = configFile;
         this.defaults = defaults;
@@ -38,6 +38,20 @@ public class ConfigUtils {
      * Loads the config
      */
     private void loadConfig() {
+        // Creating parent-folder if it doesn't exist
+        if(!configFile.getParentFile().exists()) {
+            configFile.getParentFile().mkdirs();
+        }
+
+        // Creating file if it doesn't exist
+        if(!configFile.exists()) {
+            try {
+                configFile.createNewFile();
+            } catch ( IOException e ) {
+                e.printStackTrace();
+            }
+        }
+
         try {
             this.configuration = configurationProvider.load( configFile );
         } catch ( IOException e ) {
