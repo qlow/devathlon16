@@ -24,4 +24,16 @@ public class DaemonConfig {
     @Setter
     private byte maxRamUsage = 60;
 
+    @Getter
+    @Setter
+    private String serverTemplateFolder = "templates";
+
+    @Getter
+    @Setter
+    private String serverFolder = "servers";
+
+    @Getter
+    @Setter
+    private String startScriptName = "start";
+
 }

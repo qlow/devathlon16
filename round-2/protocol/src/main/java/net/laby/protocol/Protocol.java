@@ -1,12 +1,26 @@
 package net.laby.protocol;
 
+import net.laby.protocol.packet.PacketAvailableTypes;
+import net.laby.protocol.packet.PacketDisconnect;
+import net.laby.protocol.packet.PacketExitServer;
+import net.laby.protocol.packet.PacketLogin;
+import net.laby.protocol.packet.PacketLoginSuccessful;
+import net.laby.protocol.packet.PacketPowerUsage;
+import net.laby.protocol.packet.PacketStartServer;
+
 /**
  * Protocol used for getting packets by id & getting ids by packets
  * Class created by qlow | Jan
  */
 public enum Protocol {
 
-    TEST( 0x01, Packet.class );
+    LOGIN( 0x01, PacketLogin.class ),
+    DISCONNECT( 0x02, PacketDisconnect.class ),
+    AVAILABLE_TYPES( 0x03, PacketAvailableTypes.class ),
+    LOGIN_SUCCESSFUL( 0x04, PacketLoginSuccessful.class ),
+    POWER_USAGE( 0x04, PacketPowerUsage.class ),
+    START_SERVER( 0x05, PacketStartServer.class ),
+    EXIT_SERVER( 0x06, PacketExitServer.class );
 
     private int packetId;
     private Class<? extends Packet> packetClass;

@@ -1,6 +1,7 @@
 package net.laby.bungee;
 
 import io.netty.bootstrap.ServerBootstrap;
+import net.laby.bungee.handlers.AvailableTypesHandler;
 import net.laby.bungee.handlers.LoginHandler;
 import net.laby.bungee.handlers.PowerUsageHandler;
 import net.laby.bungee.utils.ConfigLoader;
@@ -40,7 +41,7 @@ public class Jaby extends Plugin {
         int port = getConfiguration().getInt( "port" );
 
         // Registering handlers
-        JabyBootstrap.registerHandler( LoginHandler.class, PowerUsageHandler.class );
+        JabyBootstrap.registerHandler( LoginHandler.class, PowerUsageHandler.class, AvailableTypesHandler.class );
 
         // Running server-bootstrap
         JabyBootstrap.runServerBootstrap( port, new Consumer<ServerBootstrap>() {

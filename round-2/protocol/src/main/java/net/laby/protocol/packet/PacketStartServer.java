@@ -6,25 +6,32 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.laby.protocol.Packet;
 
+import java.util.UUID;
+
 /**
- * Packet sent when the daemon sends the RAM usage (every 2 seconds)
+ * Packet sent when a server with a type starts
  * Class created by qlow | Jan
  */
 @NoArgsConstructor
 @AllArgsConstructor
-public class PacketPowerUsage extends Packet {
+public class PacketStartServer extends Packet {
 
     @Getter
-    private byte currentRamUsage;
+    private String type;
+
+    @Getter
+    private UUID uuid;
 
     @Override
     public void read( ByteBuf byteBuf ) {
-        this.currentRamUsage = byteBuf.readByte();
+        this.type = readString( byteBuf );
+        this.uuid = UUID.fromString( readString( byteBuf ) );
     }
 
     @Override
     public void write( ByteBuf byteBuf ) {
-        byteBuf.writeByte( currentRamUsage );
+        writeString( byteBuf, type );
+        writeString( byteBuf, uuid.toString() );
     }
 
 }
