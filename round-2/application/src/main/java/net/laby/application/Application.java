@@ -17,7 +17,9 @@ public class Application {
 		connectionsLoader.loadConnections();
 
 
-		ConnectionsLoader.settings.connections.add( new Connection( "" ) );
+		ConnectionsLoader.getConnections().add( new Connection( "1", 0, "2" ) );
+
+		connectionsLoader.saveConnections();
 
 	}
 	
@@ -26,7 +28,7 @@ public class Application {
 	}
 	
 	public ArrayList<Connection> getConnectionList() {
-		return ConnectionsLoader.settings.connections;
+		return ConnectionsLoader.getConnections();
 	}
 	
 	public static void main(String[] args) {

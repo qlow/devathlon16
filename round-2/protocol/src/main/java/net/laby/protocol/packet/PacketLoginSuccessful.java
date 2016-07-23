@@ -1,7 +1,6 @@
 package net.laby.protocol.packet;
 
 import io.netty.buffer.ByteBuf;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import net.laby.protocol.Packet;
 
@@ -10,7 +9,6 @@ import net.laby.protocol.Packet;
  * Class created by qlow | Jan
  */
 @NoArgsConstructor
-@AllArgsConstructor
 public class PacketLoginSuccessful extends Packet {
 
     @Override

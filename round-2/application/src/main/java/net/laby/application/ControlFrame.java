@@ -1,26 +1,13 @@
 package net.laby.application;
 
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.Toolkit;
+import net.laby.utils.CellRenderer;
+import net.laby.utils.Connection;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import net.laby.utils.CellRenderer;
-import net.laby.utils.Connection;
-import javax.swing.SpinnerNumberModel;
+import java.awt.*;
 
 @SuppressWarnings("serial")
 public class ControlFrame extends JFrame {
@@ -122,8 +109,10 @@ public class ControlFrame extends JFrame {
 		DefaultListModel dListModel = new DefaultListModel();
 		
 		dListModel.addElement("New connection");
-		for(Connection connection : Application.getInstance().getConnectionList()) {
-			dListModel.addElement(connection.getAddress() + ":" + connection.getPort());
+
+
+		for(Object connection : Application.getInstance().getConnectionList()) {
+			dListModel.addElement(connection);
 		}
 		
 		list = new JList(dListModel);

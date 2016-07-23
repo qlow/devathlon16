@@ -2,16 +2,16 @@ package net.laby.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.internal.LinkedTreeMap;
 import net.laby.application.Application;
 
 import java.io.*;
+import java.util.ArrayList;
 
 public class ConnectionsLoader {
 
-    private Gson gson = new Gson();
     private File configFile;
-    public static Settings settings;
-
+    private static ArrayList<Connection> connections = new ArrayList<Connection>();
     private Application main;
 
     public ConnectionsLoader( Application main, File file ) {
@@ -19,34 +19,42 @@ public class ConnectionsLoader {
         this.configFile = file;
     }
 
+    public static ArrayList<Connection> getConnections( ) {
+        return connections;
+    }
+
     public void loadConnections( ) {
         if ( !this.configFile.exists() ) {
-            saveConnections( true );
+            saveConnections( );
         }
 
+        System.out.println( "Load!" );
         try {
             String json = Utils.readFile( this.configFile );
 
-            if(json == null || json.isEmpty()) {
-                saveConnections( true );
-                error("Config file is broken.");
+            if ( json == null || json.isEmpty() ) {
+                saveConnections( );
+                error( "Config file is broken." );
                 return;
             }
 
-            settings = (Settings) gson.fromJson( json, Settings.class );
+            System.out.println( json );
 
-        } catch (IOException e) {
+            ArrayList<LinkedTreeMap> map = new Gson().fromJson( json, ArrayList.class );
+
+            map.
+
+        } catch ( IOException e ) {
             e.printStackTrace();
         }
     }
 
-    private void saveConnections( ) {
-        saveConnections(false);
-    }
-
-    private void saveConnections( boolean defaultSettings ) {
+    public void saveConnections( ) {
+        System.out.println( "Save!" );
         if ( !this.configFile.exists() ) {
-            this.configFile.getParentFile().mkdirs();
+            if ( this.configFile.getParentFile() != null ) {
+                this.configFile.getParentFile().mkdirs();
+            }
             try {
                 this.configFile.createNewFile();
             } catch ( IOException e ) {
@@ -58,11 +66,7 @@ public class ConnectionsLoader {
             Gson gson = gsonBuilder.setPrettyPrinting().create();
             PrintWriter w;
             w = new PrintWriter( new FileOutputStream( this.configFile ) );
-            if ( defaultSettings ) {
-                w.print( gson.toJson( new Gson().toJson(new Settings()) ) );
-            } else {
-                w.print( gson.toJson( settings ) );
-            }
+            w.print( gson.toJson( connections ) );
             w.flush();
             w.close();
         } catch ( FileNotFoundException e ) {
