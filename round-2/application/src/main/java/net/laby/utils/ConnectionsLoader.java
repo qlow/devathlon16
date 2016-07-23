@@ -2,22 +2,19 @@ package net.laby.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.laby.application.Application;
 
 import java.io.*;
 
 public class ConnectionsLoader {
 
     private File configFile;
-    private static ConnectionList list = new ConnectionList();
-    private Application main;
+    private ConnectionList list = new ConnectionList();
 
-    public ConnectionsLoader( Application main, File file ) {
-        this.main = main;
+    public ConnectionsLoader( File file ) {
         this.configFile = file;
     }
 
-    public static ConnectionList getList( ) {
+    public ConnectionList getList( ) {
         return list;
     }
 
@@ -26,7 +23,7 @@ public class ConnectionsLoader {
             saveConnections( );
         }
 
-        System.out.println( "Load!" );
+        System.out.println( "Load connections.." );
         try {
             String json = Utils.readFile( this.configFile );
 
@@ -36,8 +33,6 @@ public class ConnectionsLoader {
                 return;
             }
 
-            System.out.println( json );
-
             list =  new Gson().fromJson( json, ConnectionList.class );
 
         } catch ( IOException e ) {
@@ -46,7 +41,7 @@ public class ConnectionsLoader {
     }
 
     public void saveConnections( ) {
-        System.out.println( "Save!" );
+        System.out.println( "Save connections.." );
         if ( !this.configFile.exists() ) {
             if ( this.configFile.getParentFile() != null ) {
                 this.configFile.getParentFile().mkdirs();
