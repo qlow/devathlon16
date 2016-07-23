@@ -20,8 +20,8 @@
         <!-- The bungee-plugin that controls the servers etc. -->
         <module>bungee</module>
 
-        <!-- The bukkit-plugin that shutdowns the server if it gets the instruction -->
-        <module>bukkit-plugin</module>
+        <!-- The daemon that starts servers for example -->
+        <module>daemon</module>
 
     </modules>
 

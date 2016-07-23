@@ -3,6 +3,7 @@ package net.laby.protocol;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -33,6 +34,8 @@ import java.util.function.Consumer;
 public class JabyBootstrap {
 
     private static Map<Class<? extends Packet>, List<Method>> handlers = new HashMap<>();
+    private static Map<Channel, JabyChannel> channels = new HashMap<>();
+    private static boolean client;
 
     private static ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -91,6 +94,9 @@ public class JabyBootstrap {
      */
     public static void runClientBootstrap( String ip, int port, String password, PacketLogin.ClientType clientType,
                                            Consumer<Bootstrap> bootstrapCallback ) {
+        // I know, that this is kinda ugly :/
+        client = true;
+
         executorService.submit( new Runnable() {
             @Override
             public void run() {
@@ -202,5 +208,23 @@ public class JabyBootstrap {
      */
     public static Map<Class<? extends Packet>, List<Method>> getHandlers() {
         return handlers;
+    }
+
+    /**
+     * Map with channels as key and JabyChannel as value
+     *
+     * @return HashMap with channels as key and JabyChannel as value
+     */
+    public static Map<Channel, JabyChannel> getChannels() {
+        return channels;
+    }
+
+    /**
+     * State whether the started Bootstrap is a ClientBootstrap
+     *
+     * @return true if a client was started
+     */
+    public static boolean isClient() {
+        return client;
     }
 }

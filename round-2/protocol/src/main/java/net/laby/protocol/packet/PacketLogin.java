@@ -18,21 +18,29 @@ public class PacketLogin extends Packet {
     private String password;
     @Getter
     private ClientType clientType;
+    @Getter
+    private byte maxRamUsage;
+    @Getter
+    private byte maxCpuUsage;
 
     @Override
     public void read( ByteBuf byteBuf ) {
         this.password = readString( byteBuf );
         this.clientType = ClientType.values()[byteBuf.readByte()];
+        this.maxRamUsage = byteBuf.readByte();
+        this.maxCpuUsage = byteBuf.readByte();
     }
 
     @Override
     public void write( ByteBuf byteBuf ) {
         writeString( byteBuf, this.password );
         byteBuf.writeByte( clientType.ordinal() );
+        byteBuf.writeByte( maxRamUsage );
+        byteBuf.writeByte( maxCpuUsage );
     }
 
     public static enum ClientType {
-        APPLICATION, BUKKIT;
+        APPLICATION, DAEMON;
     }
 
 }

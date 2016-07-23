@@ -5,6 +5,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.laby.protocol.JabyBootstrap;
 import net.laby.protocol.Packet;
+import net.laby.protocol.packet.PacketDisconnect;
+import net.laby.protocol.packet.PacketLogin;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -35,9 +37,24 @@ public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
     }
 
     @Override
+    public void channelInactive( ChannelHandlerContext ctx ) throws Exception {
+        super.channelInactive( ctx );
+
+        if ( !JabyBootstrap.isClient() ) {
+            JabyBootstrap.getChannels().remove( ctx.channel() );
+        }
+    }
+
+    @Override
     protected void channelRead0( ChannelHandlerContext channelHandlerContext, Packet packet ) throws Exception {
         if ( !JabyBootstrap.getHandlers().containsKey( packet.getClass() ) )
             return;
+
+        // Checking for client-login
+        if ( !JabyBootstrap.isClient() && !(packet instanceof PacketLogin) && !JabyBootstrap.getChannels().containsKey( channelHandlerContext.channel() ) ) {
+            channelHandlerContext.writeAndFlush( new PacketDisconnect( "You sent packets while you weren't logged in!" ) );
+            return;
+        }
 
         // Calling handlers
         for ( Method method : JabyBootstrap.getHandlers().get( packet.getClass() ) ) {
