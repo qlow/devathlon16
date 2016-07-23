@@ -33,7 +33,7 @@
     </build>
 
     <dependencies>
-        <!-- Protocol dependency -->
+        <!-- JabyBootstrap dependency -->
         <dependency>
             <groupId>net.laby</groupId>
             <artifactId>protocol</artifactId>

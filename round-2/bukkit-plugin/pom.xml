@@ -13,7 +13,7 @@
 
     <dependencies>
 
-        <!-- Protocol -->
+        <!-- JabyBootstrap -->
         <dependency>
             <groupId>net.laby</groupId>
             <artifactId>protocol</artifactId>
