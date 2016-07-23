@@ -8,33 +8,34 @@ import java.util.ArrayList;
 
 public class Application {
 
-	private ConnectionsLoader connectionsLoader = new ConnectionsLoader(this, new File("config.json"));
+	private ConnectionsLoader connectionsLoader = new ConnectionsLoader(new File("config.json"));
 	
 	private static Application instance;
 	
 	public Application() {
 		instance = this;
 		connectionsLoader.loadConnections();
-
-
-		ConnectionsLoader.getList().getConnections().add( new Connection( "1", 0, "2" ) );
-
-		connectionsLoader.saveConnections();
-
 	}
-	
+
 	public static Application getInstance() {
 		return instance;
 	}
-	
-	public ArrayList<Connection> getConnectionList() {
-		return ConnectionsLoader.getList().getConnections();
+
+	public ConnectionsLoader getConnectionsLoader( ) {
+		return connectionsLoader;
 	}
 	
 	public static void main(String[] args) {
 		new Application();
 		ControlFrame.openGUI();
 	}
-	
-	
+
+
+	public ArrayList<Connection> getConnections( ) {
+		return this.connectionsLoader.getList().getConnections();
+	}
+
+	public static void connect( Connection connection ) {
+
+	}
 }

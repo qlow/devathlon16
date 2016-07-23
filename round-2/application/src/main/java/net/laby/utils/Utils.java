@@ -1,5 +1,6 @@
 package net.laby.utils;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -22,5 +23,9 @@ public class Utils {
             }
         }
         return content;
+    }
+
+    public static void showDialog(JFrame frame, String title, String text, Icon icon ) {
+        JOptionPane.showMessageDialog( frame, text, title, JOptionPane.INFORMATION_MESSAGE, icon );
     }
 }
