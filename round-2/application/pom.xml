@@ -17,6 +17,12 @@
             <artifactId>protocol</artifactId>
             <version>1.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.7</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -65,6 +71,7 @@
                         <includes>
                             <include>io.netty:netty-all</include>
                             <include>com.google.guava:guava</include>
+                            <include>com.google.code.gson:gson</include>
                         </includes>
                     </artifactSet>
                 </configuration>
