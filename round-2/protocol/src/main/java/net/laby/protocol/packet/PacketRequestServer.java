@@ -6,31 +6,28 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.laby.protocol.Packet;
 
-import java.util.UUID;
-
 /**
- * Packet sent when a server stops/exits
  * Class created by qlow | Jan
  */
 @NoArgsConstructor
 @AllArgsConstructor
-public class PacketExitServer extends Packet {
+public class PacketRequestServer extends Packet {
 
     @Getter
-    private UUID uuid;
-    @Getter
     private String type;
+    @Getter
+    private int amount;
 
     @Override
     public void read( ByteBuf byteBuf ) {
-        this.uuid = UUID.fromString( readString( byteBuf ) );
         this.type = readString( byteBuf );
+        byteBuf.writeInt( amount );
     }
 
     @Override
     public void write( ByteBuf byteBuf ) {
-        writeString( byteBuf, uuid.toString() );
-        writeString( byteBuf, type );
+        writeString( byteBuf, this.type );
+        byteBuf.writeInt( amount );
     }
 
 }

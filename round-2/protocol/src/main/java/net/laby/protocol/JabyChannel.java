@@ -20,9 +20,6 @@ public class JabyChannel {
     private byte maxRamUsage;
 
     @Getter
-    private byte maxCpuUsage;
-
-    @Getter
     @Setter
     private byte currentRamUsage;
 

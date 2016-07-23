@@ -6,6 +6,8 @@ import net.laby.protocol.packet.PacketExitServer;
 import net.laby.protocol.packet.PacketLogin;
 import net.laby.protocol.packet.PacketLoginSuccessful;
 import net.laby.protocol.packet.PacketPowerUsage;
+import net.laby.protocol.packet.PacketRequestServer;
+import net.laby.protocol.packet.PacketRequestShutdown;
 import net.laby.protocol.packet.PacketStartServer;
 
 /**
@@ -20,7 +22,9 @@ public enum Protocol {
     LOGIN_SUCCESSFUL( 0x04, PacketLoginSuccessful.class ),
     POWER_USAGE( 0x04, PacketPowerUsage.class ),
     START_SERVER( 0x05, PacketStartServer.class ),
-    EXIT_SERVER( 0x06, PacketExitServer.class );
+    EXIT_SERVER( 0x06, PacketExitServer.class ),
+    REQUEST_SERVER( 0x07, PacketRequestServer.class ),
+    REQUEST_SHUTDOWN( 0x08, PacketRequestShutdown.class );
 
     private int packetId;
     private Class<? extends Packet> packetClass;

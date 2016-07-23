@@ -100,7 +100,7 @@ public class JabyBootstrap {
         // I know, that this is kinda ugly :/
         client = true;
 
-        executorService.submit( new Runnable() {
+        executorService.execute( new Runnable() {
             @Override
             public void run() {
                 // Constructing Bootstrap
@@ -154,7 +154,7 @@ public class JabyBootstrap {
      * @param serverBootstrapConsumer callback of ServerBootstrap
      */
     public static void runServerBootstrap( int port, Consumer<ServerBootstrap> serverBootstrapConsumer ) {
-        executorService.submit( new Runnable() {
+        executorService.execute( new Runnable() {
             @Override
             public void run() {
                 // Creating EventLoopGroups

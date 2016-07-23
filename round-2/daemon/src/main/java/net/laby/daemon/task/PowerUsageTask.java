@@ -22,6 +22,10 @@ public class PowerUsageTask implements Runnable {
                 e.printStackTrace();
             }
 
+            if(!JabyDaemon.getInstance().isLoggedIn())
+                continue;
+
+            // Sending RAM usage
             JabyBootstrap.getClientHandler().sendPacket( new PacketPowerUsage( getCurrentRamUsage() ) );
         }
     }

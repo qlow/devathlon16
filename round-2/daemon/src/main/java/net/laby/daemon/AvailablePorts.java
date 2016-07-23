@@ -1,5 +1,7 @@
 package net.laby.daemon;
 
+import net.laby.protocol.JabyBootstrap;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
@@ -37,7 +39,7 @@ public class AvailablePorts {
 
                 // Running thread that removes this port from the used-ports list after 15 minutes
                 int finalI = i;
-                new Thread( new Runnable() {
+                JabyBootstrap.getExecutorService().execute( new Runnable() {
                     @Override
                     public void run() {
                         try {
@@ -48,7 +50,7 @@ public class AvailablePorts {
 
                         alreadyUsedPorts.remove( finalI );
                     }
-                } ).start();
+                } );
 
                 // Returning available port
                 return i;
