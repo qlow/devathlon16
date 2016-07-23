@@ -8,9 +8,21 @@
     <artifactId>bungeecord</artifactId>
     <packaging>pom</packaging>
     <version>1.0</version>
+
     <modules>
+
+        <!-- The protocol of the application, bungee & bukkit-plugin module -->
         <module>protocol</module>
+
+        <!-- The java-application that can control everything -->
         <module>application</module>
+
+        <!-- The bungee-plugin that controls the servers etc. -->
+        <module>bungee</module>
+
+        <!-- The bukkit-plugin that shutdowns the server if it gets the instruction -->
+        <module>bukkit-plugin</module>
+
     </modules>
 
 

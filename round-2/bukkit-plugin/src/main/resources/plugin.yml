@@ -1,0 +1,5 @@
+name: BukkitConnector
+version: 1.0
+authors: [qlow, LabyStudio]
+main: net.laby.bukkit.BukkitClient
+description: Connects bukkit with the bungeecord, so it can send instructions

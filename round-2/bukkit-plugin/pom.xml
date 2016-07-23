@@ -9,14 +9,26 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>application</artifactId>
+    <artifactId>bukkit-plugin</artifactId>
 
     <dependencies>
+
+        <!-- Protocol -->
         <dependency>
             <groupId>net.laby</groupId>
             <artifactId>protocol</artifactId>
             <version>1.0</version>
         </dependency>
+
+        <!-- Spigot and CraftBukkit -->
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.10.2</version>
+            <systemPath>${basedir}/../lib/spigot-1.10.2.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
