@@ -20,8 +20,10 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.event.EventHandler;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -52,6 +54,7 @@ public class Jaby extends Plugin implements Listener {
         configDefaults.put( "password", "verysecurepasswordiswear1337" );
         configDefaults.put( "port", 1337 );
         configDefaults.put( "motd", Arrays.asList( "Zeile 1", "Zeile 2" ) );
+        configDefaults.put( "serverTypes", Arrays.asList() );
 
         this.configLoader = new ConfigLoader( new File( getDataFolder(), "config.yml" ), configDefaults );
         this.password = JabyUtils.convertToMd5( getConfiguration().getString( "password" ) );
@@ -61,6 +64,9 @@ public class Jaby extends Plugin implements Listener {
         for ( String motdElement : motd ) {
             motdString += (motdString.equals( "" ) ? "" : "\n") + motdElement;
         }
+
+        // Loading server-types
+        loadServerTypes();
 
         // Registering handlers
         JabyBootstrap.registerHandler(
@@ -119,6 +125,76 @@ public class Jaby extends Plugin implements Listener {
         response.setDescriptionComponent( new TextComponent( motdString ) );
 
         event.setResponse( response );
+    }
+
+    /**
+     * Loads the server-types in the config
+     */
+    public void loadServerTypes() {
+        // Getting string-list from config
+        List<String> serverTypes = getConfiguration().getStringList( "serverTypes" );
+
+        // Getting current server-type-list
+        List<ServerType> serverTypeList = ServerType.getServerTypes();
+
+        List<String> allTypeNames = new ArrayList<>();
+
+        for ( String serverType : serverTypes ) {
+            // Splitting list-element into three parts
+            String[] splitedServerType = serverType.split( ";" );
+
+            String typeName = splitedServerType[0];
+            int typeAmount = Integer.parseInt( splitedServerType[1] );
+            boolean standby = Boolean.parseBoolean( splitedServerType[2] );
+
+            // Adding to a list with all type-names
+            allTypeNames.add( typeName );
+
+            ServerType type;
+
+            // Checking if the server-type exists
+            if ( (type = ServerType.getByName( typeName )) != null ) {
+                // Changing server-amount & standby
+                type.setServerAmount( typeAmount );
+                type.setStandby( standby );
+                continue;
+            }
+
+            // Adding to server-type list
+            serverTypeList.add( new ServerType( typeName, standby, typeAmount ) );
+        }
+
+        // Iterating through all server-types
+        for ( Iterator<ServerType> serverTypeIterator = serverTypeList.iterator(); serverTypeIterator.hasNext(); ) {
+            ServerType serverType = serverTypeIterator.next();
+
+            // Checking if there is no server-type with this name in the config
+            if ( allTypeNames.contains( serverType.getType() ) )
+                continue;
+
+            // Shutdowning and removing server
+            serverType.shutdown();
+            serverTypeIterator.remove();
+
+            // Log message
+            System.out.println( "[Jaby] Removed server-type " + serverType + "!" );
+        }
+    }
+
+    /**
+     * Saves the server-types into the config
+     */
+    public void saveServerTypes() {
+        // New string-list
+        List<String> serverTypesList = new ArrayList<>();
+
+        for ( ServerType serverType : ServerType.getServerTypes() ) {
+            serverTypesList.add( serverType.getType() + ";" + serverType.getServerAmount() + ";" + serverType.isStandby() );
+        }
+
+        // Setting list to config
+        getConfiguration().set( "serverTypes", serverTypesList );
+        saveServerTypes();
     }
 
     /**

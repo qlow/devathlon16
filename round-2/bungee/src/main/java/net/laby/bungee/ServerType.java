@@ -6,6 +6,7 @@ import net.laby.protocol.JabyBootstrap;
 import net.laby.protocol.JabyChannel;
 import net.laby.protocol.packet.PacketLogin;
 import net.laby.protocol.packet.PacketRequestServer;
+import net.laby.protocol.packet.PacketRequestShutdown;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -101,6 +102,15 @@ public class ServerType {
 
         // Log message if there couldn't start any instance of this type
         System.err.println( "[Jaby] Didn't find a free instance for type " + type );
+    }
+
+    /**
+     * Shutdowns all servers of this type
+     */
+    public void shutdown() {
+        for ( UUID server : servers.keySet() ) {
+            servers.get( server ).getChannel().getChannel().writeAndFlush( new PacketRequestShutdown( server ) );
+        }
     }
 
     /**

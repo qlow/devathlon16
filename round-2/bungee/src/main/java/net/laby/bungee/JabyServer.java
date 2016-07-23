@@ -2,6 +2,7 @@ package net.laby.bungee;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import net.laby.protocol.JabyChannel;
 
 import java.util.UUID;
 
@@ -17,5 +18,7 @@ public class JabyServer {
 
     private String address;
     private int port;
+
+    private JabyChannel channel;
 
 }
