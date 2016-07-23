@@ -111,8 +111,8 @@ public class ControlFrame extends JFrame {
 		dListModel.addElement("New connection");
 
 
-		for(Object connection : Application.getInstance().getConnectionList()) {
-			dListModel.addElement(connection);
+		for(Connection connection : Application.getInstance().getConnectionList()) {
+			dListModel.addElement(connection.getAddress() + ":" + connection.getPort());
 		}
 		
 		list = new JList(dListModel);
