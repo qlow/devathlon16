@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.laby.bungee.handlers.AvailableTypesHandler;
 import net.laby.bungee.handlers.LoginHandler;
+import net.laby.bungee.handlers.MultiServerHandler;
 import net.laby.bungee.handlers.PowerUsageHandler;
 import net.laby.bungee.handlers.ServerExitHandler;
 import net.laby.bungee.handlers.ServerStartHandler;
@@ -83,7 +84,8 @@ public class Jaby extends Plugin implements Listener {
                 PowerUsageHandler.class,
                 AvailableTypesHandler.class,
                 ServerStartHandler.class,
-                ServerExitHandler.class );
+                ServerExitHandler.class,
+                MultiServerHandler.class );
 
         int port = getConfiguration().getInt( "port" );
 

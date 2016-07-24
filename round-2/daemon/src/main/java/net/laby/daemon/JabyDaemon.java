@@ -139,6 +139,13 @@ public class JabyDaemon {
 
         JabyBootstrap.getExecutorService().execute( (queueStartTask = new QueueStartTask()) );
 
+        Runtime.getRuntime().addShutdownHook( new Thread( new Runnable() {
+            @Override
+            public void run() {
+                disable();
+            }
+        } ) );
+
         connect();
     }
 
@@ -208,8 +215,11 @@ public class JabyDaemon {
                 }
 
                 JabyDaemon.this.connected = false;
-                bootstrap.group().shutdownGracefully();
-                JabyBootstrap.getClientHandler().getChannel().close();
+
+                if(bootstrap != null) {
+                    bootstrap.group().shutdownGracefully();
+                    JabyBootstrap.getClientHandler().getChannel().close();
+                }
 
                 try {
                     Thread.sleep( 60000 );

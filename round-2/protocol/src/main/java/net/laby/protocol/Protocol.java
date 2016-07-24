@@ -5,6 +5,7 @@ import net.laby.protocol.packet.PacketDisconnect;
 import net.laby.protocol.packet.PacketExitServer;
 import net.laby.protocol.packet.PacketLogin;
 import net.laby.protocol.packet.PacketLoginSuccessful;
+import net.laby.protocol.packet.PacketMultiServer;
 import net.laby.protocol.packet.PacketPowerUsage;
 import net.laby.protocol.packet.PacketRequestServer;
 import net.laby.protocol.packet.PacketRequestShutdown;
@@ -24,7 +25,8 @@ public enum Protocol {
     START_SERVER( 0x06, PacketStartServer.class ),
     EXIT_SERVER( 0x07, PacketExitServer.class ),
     REQUEST_SERVER( 0x08, PacketRequestServer.class ),
-    REQUEST_SHUTDOWN( 0x09, PacketRequestShutdown.class );
+    REQUEST_SHUTDOWN( 0x09, PacketRequestShutdown.class ),
+    MULTI_SERVER(0x0A, PacketMultiServer.class);
 
     private int packetId;
     private Class<? extends Packet> packetClass;

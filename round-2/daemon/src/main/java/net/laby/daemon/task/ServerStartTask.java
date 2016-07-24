@@ -8,10 +8,8 @@ import net.laby.protocol.packet.PacketExitServer;
 import net.laby.protocol.packet.PacketStartServer;
 import org.apache.commons.io.FileUtils;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.UUID;
 
 /**
@@ -24,6 +22,8 @@ public class ServerStartTask implements Runnable {
     private UUID uuid;
     @Getter
     private Process process;
+    @Getter
+    private int port;
 
     public ServerStartTask( String type ) {
         this.type = type;
@@ -33,7 +33,7 @@ public class ServerStartTask implements Runnable {
     @Override
     public void run() {
         // Getting available port
-        int port = AvailablePorts.getAvailablePort();
+        this.port = AvailablePorts.getAvailablePort();
 
         // Generating server-folder for this server
         File serverFolder = new File( JabyDaemon.getInstance().getServerFolder(), type + "-" + uuid );
@@ -64,23 +64,6 @@ public class ServerStartTask implements Runnable {
 
         // Log message
         System.out.println( "[Jaby] Started " + type + " with port " + port + " (" + uuid.toString() + ")" );
-
-        // Hooking into console
-        JabyBootstrap.getExecutorService().execute( new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    BufferedReader in = new BufferedReader( new InputStreamReader( process.getInputStream() ) );
-                    String line;
-
-                    while ( (line = in.readLine()) != null ) {
-                        System.out.println( line );
-                    }
-                } catch ( Exception ex ) {
-                    ex.printStackTrace();
-                }
-            }
-        } );
 
         // Waiting for exit
         try {
