@@ -74,7 +74,7 @@ public class Jaby extends Plugin implements Listener {
             getConfiguration().set( "serverType.template.amount", 1 );
             getConfiguration().set( "serverType.template.standby", true );
             getConfiguration().set( "serverType.template.motd", Arrays.asList( "&bFirst", "&cepic line" ) );
-            getConfiguration().set( "serverType.template.addresses", "nicedomain.ilovethis.com" );
+            getConfiguration().set( "serverType.template.addresses", Arrays.asList( "nicedomain.ilovethis.com" ) );
             getConfiguration().set( "serverType.template.secondsUntilStopAtNoPlayers", 120 );
             getConfiguration().set( "serverType.template.copyServerContent", false );
 

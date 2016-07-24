@@ -194,6 +194,17 @@ public class JabyDaemon {
             return;
 
         this.disabling = true;
+
+        if ( startedServers.size() == 0 ) {
+            if ( bootstrap != null ) {
+                bootstrap.group().shutdownGracefully();
+                JabyBootstrap.getClientHandler().getChannel().close();
+            }
+
+            System.out.println( "[Jaby] Disabled!" );
+            return;
+        }
+
         System.out.println( "[Jaby] Stopping servers (Disabling daemon in 20 seconds)..." );
 
         for ( Map.Entry<UUID, ServerStartTask> serverEntry : startedServers.entrySet() ) {
