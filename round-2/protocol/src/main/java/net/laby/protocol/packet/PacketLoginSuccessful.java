@@ -13,12 +13,10 @@ public class PacketLoginSuccessful extends Packet {
 
     @Override
     public void read( ByteBuf byteBuf ) {
-
     }
 
     @Override
     public void write( ByteBuf byteBuf ) {
-
     }
 
 }

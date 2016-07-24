@@ -26,7 +26,7 @@ public class ServerStartHandler {
                         JabyBootstrap.getChannels().get( ctx.channel() ) ) );
 
         Object serverInfo = null;
-        String name = startServer.getType() + "-" + startServer.getPort();
+        String name = startServer.getType() + "-" + (startServer.getPort() % 40000);
 
         try {
             serverInfo = Class.forName( "net.md_5.bungee.BungeeServerInfo" )

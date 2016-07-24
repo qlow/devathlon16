@@ -64,7 +64,7 @@ public class JabyBootstrap {
                     continue;
 
                 // Checking for parameter-types
-                if ( !method.getParameterTypes()[0].isInstance( Packet.class )
+                if ( method.getParameterTypes()[0].getSuperclass() != Packet.class
                         || method.getParameterTypes()[1] != ChannelHandlerContext.class )
                     continue;
 
@@ -95,7 +95,7 @@ public class JabyBootstrap {
      * @param clientType        type of the client that connects
      * @param bootstrapCallback callback of Bootstrap
      */
-    public static void runClientBootstrap( String ip, int port, byte maxRamUsage, String password, PacketLogin.ClientType clientType,
+    public static void runClientBootstrap( String ip, int port, int maxRamUsage, String password, PacketLogin.ClientType clientType,
                                            Consumer<Bootstrap> bootstrapCallback ) {
         // I know, that this is kinda ugly :/
         client = true;
@@ -124,7 +124,7 @@ public class JabyBootstrap {
                 ChannelFuture f = bootstrap.connect( ip, port ).awaitUninterruptibly();
 
                 // Checking if the connection was successfully established
-                if(!f.isSuccess()) {
+                if ( !f.isSuccess() ) {
                     // "Callbacking" null if the client didn't connect successfully
                     bootstrapCallback.accept( null );
 
@@ -142,7 +142,6 @@ public class JabyBootstrap {
                         bootstrap.group().shutdownGracefully();
                     }
                 } ) );
-
             }
         } );
     }
@@ -182,7 +181,7 @@ public class JabyBootstrap {
                 ChannelFuture channelFuture = serverBootstrap.bind( port ).awaitUninterruptibly();
 
                 // Checking for successful connection
-                if(!channelFuture.isSuccess()) {
+                if ( !channelFuture.isSuccess() ) {
                     // "Callbacking" null
                     serverBootstrapConsumer.accept( null );
 
@@ -214,9 +213,11 @@ public class JabyBootstrap {
         PacketHandler packetHandler = new PacketHandler( socketChannel );
         ChannelPipeline pipeline = socketChannel.pipeline();
 
+        //pipeline.addLast( new LengthFieldBasedFrameDecoder( Integer.MAX_VALUE, 0, 4 ) );
         pipeline.addLast( new PacketLengthSplitter() );
         pipeline.addLast( new PacketDecoder() );
 
+        //pipeline.addLast( new LengthFieldPrepender( 4 ) );
         pipeline.addLast( new PacketLengthPrepender() );
         pipeline.addLast( new PacketEncoder() );
 
@@ -254,6 +255,7 @@ public class JabyBootstrap {
 
     /**
      * The client's connection's handler
+     *
      * @return PacketHandler of the client's connection to the server
      */
     public static PacketHandler getClientHandler() {

@@ -20,11 +20,11 @@ public enum Protocol {
     DISCONNECT( 0x02, PacketDisconnect.class ),
     AVAILABLE_TYPES( 0x03, PacketAvailableTypes.class ),
     LOGIN_SUCCESSFUL( 0x04, PacketLoginSuccessful.class ),
-    POWER_USAGE( 0x04, PacketPowerUsage.class ),
-    START_SERVER( 0x05, PacketStartServer.class ),
-    EXIT_SERVER( 0x06, PacketExitServer.class ),
-    REQUEST_SERVER( 0x07, PacketRequestServer.class ),
-    REQUEST_SHUTDOWN( 0x08, PacketRequestShutdown.class );
+    POWER_USAGE( 0x05, PacketPowerUsage.class ),
+    START_SERVER( 0x06, PacketStartServer.class ),
+    EXIT_SERVER( 0x07, PacketExitServer.class ),
+    REQUEST_SERVER( 0x08, PacketRequestServer.class ),
+    REQUEST_SHUTDOWN( 0x09, PacketRequestShutdown.class );
 
     private int packetId;
     private Class<? extends Packet> packetClass;

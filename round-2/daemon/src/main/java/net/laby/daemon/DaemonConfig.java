@@ -18,11 +18,11 @@ public class DaemonConfig {
 
     @Getter
     @Setter
-    private String password;
+    private String password = "verysecurepasswordiswear1337";
 
     @Getter
     @Setter
-    private byte maxRamUsage = 60;
+    private int maxRamUsage = 60;
 
     @Getter
     @Setter

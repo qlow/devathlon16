@@ -23,6 +23,8 @@ public class QueueStartTask implements Runnable {
                 for ( ServerStartTask serverStartTask : serverQueue ) {
                     JabyBootstrap.getExecutorService().execute( serverStartTask );
                 }
+
+                serverQueue.clear();
             }
 
             try {

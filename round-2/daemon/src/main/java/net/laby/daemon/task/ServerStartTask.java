@@ -8,8 +8,10 @@ import net.laby.protocol.packet.PacketExitServer;
 import net.laby.protocol.packet.PacketStartServer;
 import org.apache.commons.io.FileUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.UUID;
 
 /**
@@ -17,6 +19,7 @@ import java.util.UUID;
  */
 public class ServerStartTask implements Runnable {
 
+    @Getter
     private String type;
     private UUID uuid;
     @Getter
@@ -42,11 +45,9 @@ public class ServerStartTask implements Runnable {
             e.printStackTrace();
         }
 
-        // Getting server-start script
-        File serverStartScript = new File( serverFolder, JabyDaemon.getInstance().getStartScriptName() );
-
         // Starting with ProcessBuilder & Process
-        ProcessBuilder processBuilder = new ProcessBuilder( serverStartScript.getAbsolutePath(), "--port", String.valueOf( port ) );
+        ProcessBuilder processBuilder = new ProcessBuilder( JabyDaemon.getInstance().getStartScriptName(), "-p", String.valueOf(port) );
+        processBuilder.directory( serverFolder );
 
         try {
             this.process = processBuilder.start();
@@ -63,6 +64,23 @@ public class ServerStartTask implements Runnable {
 
         // Log message
         System.out.println( "[Jaby] Started " + type + " with port " + port + " (" + uuid.toString() + ")" );
+
+        // Hooking into console
+        JabyBootstrap.getExecutorService().execute( new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    BufferedReader in = new BufferedReader( new InputStreamReader( process.getInputStream() ) );
+                    String line;
+
+                    while ( (line = in.readLine()) != null ) {
+                        System.out.println( line );
+                    }
+                } catch ( Exception ex ) {
+                    ex.printStackTrace();
+                }
+            }
+        } );
 
         // Waiting for exit
         try {

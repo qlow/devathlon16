@@ -2,6 +2,7 @@ package net.laby.bungee;
 
 import io.netty.bootstrap.ServerBootstrap;
 import lombok.Getter;
+import lombok.Setter;
 import net.laby.bungee.handlers.AvailableTypesHandler;
 import net.laby.bungee.handlers.LoginHandler;
 import net.laby.bungee.handlers.PowerUsageHandler;
@@ -38,6 +39,11 @@ public class Jaby extends Plugin implements Listener {
 
     @Getter
     private String password;
+
+    @Getter
+    @Setter
+    private int restartServersAfter;
+
     private List<String> motd;
 
     @Getter
@@ -56,10 +62,12 @@ public class Jaby extends Plugin implements Listener {
         configDefaults.put( "motd", Arrays.asList( "Zeile 1", "Zeile 2" ) );
         configDefaults.put( "serverTypes", Arrays.asList() );
         configDefaults.put( "startServerSeconds", 30 );
+        configDefaults.put( "restartServersAfter", 30 );
 
         this.configLoader = new ConfigLoader( new File( getDataFolder(), "config.yml" ), configDefaults );
         this.password = JabyUtils.convertToMd5( getConfiguration().getString( "password" ) );
         this.motd = getConfiguration().getStringList( "motd" );
+        this.restartServersAfter = getConfiguration().getInt( "restartServersAfter" );
 
         // Setting motd-string
         for ( String motdElement : motd ) {

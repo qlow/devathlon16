@@ -1,5 +1,8 @@
 package net.laby.protocol.utils;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+
 /**
  * Class created by qlow | Jan
  */
@@ -21,6 +24,10 @@ public class JabyUtils {
         }
 
         return null;
+    }
+
+    public static String getHostString( SocketAddress socketAddress ) {
+        return ((InetSocketAddress) socketAddress).getHostString();
     }
 
 }

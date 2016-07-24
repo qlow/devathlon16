@@ -1,5 +1,7 @@
 package net.laby.bungee;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import net.laby.protocol.JabyBootstrap;
@@ -15,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Class created by qlow | Jan
@@ -29,6 +32,9 @@ public class ServerType {
 
     @Getter
     private Map<UUID, JabyServer> servers = new HashMap<>();
+
+    @Getter
+    private Cache<UUID, Long> oldServersCache;
 
     @Getter
     @Setter
@@ -49,6 +55,25 @@ public class ServerType {
         this.type = type;
         this.standby = standby;
         this.serverAmount = serverAmount;
+
+        this.oldServersCache = CacheBuilder.newBuilder().expireAfterWrite( Jaby.getInstance().getRestartServersAfter(), TimeUnit.SECONDS ).build();
+    }
+
+    /**
+     * Sets the expire-after-write time of the cache
+     *
+     * @param seconds new expire-time
+     */
+    public void setExpireAfter( int seconds ) {
+        List<UUID> oldEntries = new ArrayList<>();
+        oldEntries.addAll( oldServersCache.asMap().keySet() );
+
+        this.oldServersCache.cleanUp();
+        this.oldServersCache = CacheBuilder.newBuilder().expireAfterWrite( seconds, TimeUnit.SECONDS ).build();
+
+        for ( UUID oldEntry : oldEntries ) {
+            oldServersCache.put( oldEntry, System.currentTimeMillis() );
+        }
     }
 
     /**
@@ -60,7 +85,7 @@ public class ServerType {
             return;
 
         // Calculating required servers
-        int requiredServers = serverAmount - servers.size();
+        int requiredServers = serverAmount - servers.size() - (( int ) oldServersCache.size());
 
         // Returning if there is no server required
         if ( requiredServers < 1 )

@@ -13,7 +13,10 @@ import net.laby.daemon.task.QueueStartTask;
 import net.laby.daemon.task.ServerStartTask;
 import net.laby.daemon.utils.ConfigManager;
 import net.laby.protocol.JabyBootstrap;
+import net.laby.protocol.packet.PacketExitServer;
 import net.laby.protocol.packet.PacketLogin;
+import net.laby.protocol.utils.JabyUtils;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,8 +40,12 @@ public class JabyDaemon {
     @Setter
     private boolean connected;
     @Getter
+    private boolean disabling;
+    @Getter
     @Setter
     private boolean loggedIn;
+
+    private Bootstrap bootstrap;
 
     @Getter
     private ConfigManager<DaemonConfig> configManager;
@@ -86,6 +93,17 @@ public class JabyDaemon {
         this.serverFolder = new File( getConfig().getServerFolder() );
         this.startScriptName = getConfig().getStartScriptName() + (PlatformDependent.isWindows() ? ".bat" : ".sh");
 
+        for ( File serverFile : serverFolder.listFiles() ) {
+            if(!serverFile.isDirectory())
+                continue;
+
+            try {
+                FileUtils.deleteDirectory( serverFile );
+            } catch ( IOException e ) {
+                e.printStackTrace();
+            }
+        }
+
         if ( !serverTemplateFolder.exists() ) {
             serverTemplateFolder.mkdirs();
         } else {
@@ -98,7 +116,14 @@ public class JabyDaemon {
                 availableTypes.add( templateFolder.getName() );
             }
 
-            this.availableTypes = ( String[] ) availableTypes.toArray();
+            this.availableTypes = new String[availableTypes.size()];
+
+            int i = 0;
+            for ( String availableType : availableTypes ) {
+                this.availableTypes[i] = availableType;
+
+                i++;
+            }
         }
 
         // Creating new server-folder if it doesn't exist
@@ -121,10 +146,12 @@ public class JabyDaemon {
      * Connects to the server set in the config
      */
     public void connect() {
-        JabyBootstrap.runClientBootstrap( getConfig().getAddress(), getConfig().getPort(), getConfig().getMaxRamUsage(), getConfig().getPassword(),
+        JabyBootstrap.runClientBootstrap( getConfig().getAddress(), getConfig().getPort(), getConfig().getMaxRamUsage(), JabyUtils.convertToMd5( getConfig().getPassword() ),
                 PacketLogin.ClientType.DAEMON, new Consumer<Bootstrap>() {
                     @Override
                     public void accept( Bootstrap bootstrap ) {
+                        JabyDaemon.this.bootstrap = bootstrap;
+
                         if ( bootstrap == null ) {
                             JabyDaemon.this.connected = false;
                             System.err.println( "[Jaby] Failed connecting to " + getConfig().getAddress() + ":" + getConfig().getPort() + "!" );
@@ -140,7 +167,6 @@ public class JabyDaemon {
                             return;
                         }
 
-
                         JabyDaemon.this.connected = true;
                         System.out.println( "[Jaby] Connected to " + getConfig().getAddress() + ":" + getConfig().getPort() + "!" );
 
@@ -153,10 +179,14 @@ public class JabyDaemon {
      * Called when the client gets a disconnect-packet
      */
     public void disable() {
+        if ( this.disabling )
+            return;
 
+        this.disabling = true;
         System.out.println( "[Jaby] Stopping servers (Disabling daemon in 1 minute)..." );
 
         for ( Map.Entry<UUID, ServerStartTask> serverEntry : startedServers.entrySet() ) {
+            JabyBootstrap.getClientHandler().sendPacket( new PacketExitServer( serverEntry.getKey(), serverEntry.getValue().getType() ) );
             Process process = serverEntry.getValue().getProcess();
 
             try {
@@ -171,6 +201,16 @@ public class JabyDaemon {
         JabyBootstrap.getExecutorService().execute( new Runnable() {
             @Override
             public void run() {
+                try {
+                    Thread.sleep( 1000 );
+                } catch ( InterruptedException e ) {
+                    e.printStackTrace();
+                }
+
+                JabyDaemon.this.connected = false;
+                bootstrap.group().shutdownGracefully();
+                JabyBootstrap.getClientHandler().getChannel().close();
+
                 try {
                     Thread.sleep( 60000 );
                 } catch ( InterruptedException e ) {

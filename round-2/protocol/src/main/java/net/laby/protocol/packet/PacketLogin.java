@@ -19,20 +19,20 @@ public class PacketLogin extends Packet {
     @Getter
     private ClientType clientType;
     @Getter
-    private byte maxRamUsage;
+    private int maxRamUsage;
 
     @Override
     public void read( ByteBuf byteBuf ) {
         this.password = readString( byteBuf );
-        this.clientType = ClientType.values()[byteBuf.readByte()];
-        this.maxRamUsage = byteBuf.readByte();
+        this.clientType = ClientType.values()[byteBuf.readInt()];
+        this.maxRamUsage = byteBuf.readInt();
     }
 
     @Override
     public void write( ByteBuf byteBuf ) {
         writeString( byteBuf, this.password );
-        byteBuf.writeByte( clientType.ordinal() );
-        byteBuf.writeByte( maxRamUsage );
+        byteBuf.writeInt( clientType.ordinal() );
+        byteBuf.writeInt( maxRamUsage );
     }
 
     public static enum ClientType {

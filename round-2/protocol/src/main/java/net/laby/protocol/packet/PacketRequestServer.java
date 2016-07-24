@@ -21,7 +21,7 @@ public class PacketRequestServer extends Packet {
     @Override
     public void read( ByteBuf byteBuf ) {
         this.type = readString( byteBuf );
-        byteBuf.writeInt( amount );
+        this.amount = byteBuf.readInt();
     }
 
     @Override

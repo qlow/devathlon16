@@ -15,16 +15,16 @@ import net.laby.protocol.Packet;
 public class PacketPowerUsage extends Packet {
 
     @Getter
-    private byte currentRamUsage;
+    private int currentRamUsage;
 
     @Override
     public void read( ByteBuf byteBuf ) {
-        this.currentRamUsage = byteBuf.readByte();
+        this.currentRamUsage = byteBuf.readInt();
     }
 
     @Override
     public void write( ByteBuf byteBuf ) {
-        byteBuf.writeByte( currentRamUsage );
+        byteBuf.writeInt( currentRamUsage );
     }
 
 }

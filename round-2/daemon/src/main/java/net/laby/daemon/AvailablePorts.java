@@ -36,6 +36,7 @@ public class AvailablePorts {
             try {
                 // Opening socket (if there is an exception, the port isn't available)
                 ServerSocket serverSocket = new ServerSocket( i );
+                serverSocket.close();
 
                 // Running thread that removes this port from the used-ports list after 15 minutes
                 int finalI = i;

@@ -3,10 +3,12 @@ package net.laby.protocol.pipeline;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import lombok.Getter;
 import net.laby.protocol.JabyBootstrap;
 import net.laby.protocol.Packet;
 import net.laby.protocol.packet.PacketDisconnect;
 import net.laby.protocol.packet.PacketLogin;
+import net.laby.protocol.utils.JabyUtils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ import java.util.List;
  */
 public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
 
+    @Getter
     private Channel channel;
     private List<Packet> sentBeforeChannelActive = new ArrayList<>();
 
@@ -26,8 +29,7 @@ public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
 
     @Override
     public void exceptionCaught( ChannelHandlerContext ctx, Throwable cause ) throws Exception {
-        super.exceptionCaught( ctx, cause );
-
+        System.err.println( "[Jaby] Exception caught (" + JabyUtils.getHostString( ctx.channel().remoteAddress() ) + "):" );
         cause.printStackTrace();
     }
 
@@ -48,7 +50,10 @@ public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
         super.channelInactive( ctx );
 
         if ( !JabyBootstrap.isClient() ) {
+            System.out.println( "[Jaby] " + JabyUtils.getHostString( ctx.channel().remoteAddress() ) + " disconnected!" );
             JabyBootstrap.getChannels().remove( ctx.channel() );
+        } else {
+            System.out.println("[Jaby] Disconnected from server!");
         }
     }
 
@@ -60,6 +65,7 @@ public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
         // Checking for client-login
         if ( !JabyBootstrap.isClient() && !(packet instanceof PacketLogin) && !JabyBootstrap.getChannels().containsKey( channelHandlerContext.channel() ) ) {
             channelHandlerContext.writeAndFlush( new PacketDisconnect( "You sent packets while you weren't logged in!" ) );
+            channelHandlerContext.channel().close();
             return;
         }
 

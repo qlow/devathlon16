@@ -17,17 +17,17 @@ public class JabyChannel {
     private PacketLogin.ClientType clientType;
 
     @Getter
-    private byte maxRamUsage;
+    private int maxRamUsage;
 
     @Getter
     @Setter
-    private byte currentRamUsage;
+    private int currentRamUsage;
 
     @Getter
     @Setter
     private String[] availableTypes;
 
-    public JabyChannel( Channel channel, PacketLogin.ClientType clientType, byte maxRamUsage ) {
+    public JabyChannel( Channel channel, PacketLogin.ClientType clientType, int maxRamUsage ) {
         this.channel = channel;
         this.clientType = clientType;
         this.maxRamUsage = maxRamUsage;

@@ -13,7 +13,7 @@ public class PowerUsageTask implements Runnable {
     @Override
     public void run() {
         while ( true ) {
-            if(!JabyDaemon.getInstance().isConnected())
+            if ( !JabyDaemon.getInstance().isConnected() )
                 return;
 
             try {
@@ -22,7 +22,7 @@ public class PowerUsageTask implements Runnable {
                 e.printStackTrace();
             }
 
-            if(!JabyDaemon.getInstance().isLoggedIn())
+            if ( !JabyDaemon.getInstance().isLoggedIn() )
                 continue;
 
             // Sending RAM usage
@@ -32,9 +32,10 @@ public class PowerUsageTask implements Runnable {
 
     /**
      * Current usage of RAM in percent
+     *
      * @return current usage (0 to 100)
      */
-    private byte getCurrentRamUsage() {
+    private int getCurrentRamUsage() {
         com.sun.management.OperatingSystemMXBean bean =
                 ( com.sun.management.OperatingSystemMXBean )
                         java.lang.management.ManagementFactory.getOperatingSystemMXBean();
