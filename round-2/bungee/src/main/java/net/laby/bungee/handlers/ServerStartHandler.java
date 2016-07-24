@@ -1,6 +1,7 @@
 package net.laby.bungee.handlers;
 
 import io.netty.channel.ChannelHandlerContext;
+import net.laby.bungee.ApplicationUpdater;
 import net.laby.bungee.JabyServer;
 import net.laby.bungee.ServerType;
 import net.laby.protocol.JabyBootstrap;
@@ -41,6 +42,9 @@ public class ServerStartHandler {
 
         // Adding server to bungeecord-list
         ProxyServer.getInstance().getServers().put( name, ( ServerInfo ) serverInfo );
+
+        // Calling update
+        ApplicationUpdater.updateTypes();
     }
 
 }

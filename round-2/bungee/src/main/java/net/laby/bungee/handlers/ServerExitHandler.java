@@ -1,6 +1,7 @@
 package net.laby.bungee.handlers;
 
 import io.netty.channel.ChannelHandlerContext;
+import net.laby.bungee.ApplicationUpdater;
 import net.laby.bungee.ServerType;
 import net.laby.protocol.packet.PacketExitServer;
 import net.md_5.bungee.api.ProxyServer;
@@ -25,6 +26,9 @@ public class ServerExitHandler {
         // Log message
         System.out.println( "[Jaby] Server " + exitServer.getUuid().toString() + " (" +
                 serverType.getType() + ") stopped!" );
+
+        // Calling update
+        ApplicationUpdater.updateTypes();
     }
 
 }

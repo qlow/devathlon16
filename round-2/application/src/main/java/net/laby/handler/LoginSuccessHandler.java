@@ -19,7 +19,6 @@ public class LoginSuccessHandler {
             public void operationComplete( ChannelFuture future ) throws Exception {
                 Application.getInstance().getMainGUI().setVisible( true );
                 Application.getInstance().getControlTable().dispose();
-                Application.getInstance().getMainGUI().allowConnect();
             }
         } );
 

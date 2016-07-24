@@ -1,5 +1,11 @@
 package net.laby.application;
 
+import net.laby.protocol.JabyBootstrap;
+import net.laby.protocol.packet.PacketChangeMaxRam;
+import net.laby.protocol.packet.PacketUpdateDaemons;
+import net.laby.protocol.packet.PacketUpdateType;
+import net.laby.protocol.packet.PacketUpdateTypes;
+import net.laby.protocol.utils.JabyUtils;
 import net.laby.utils.Utils;
 import net.laby.utils.ValueCallback;
 import net.laby.utils.ValueChangeFrame;
@@ -14,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.UUID;
 
 @SuppressWarnings( "serial" )
 public class TableControlFrame extends JFrame {
@@ -35,7 +42,7 @@ public class TableControlFrame extends JFrame {
     /**
      * Launch the application.
      */
-    public static TableControlFrame open( ) {
+    public static TableControlFrame open() {
         try {
             UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName() );
         } catch ( Exception e1 ) {
@@ -49,14 +56,14 @@ public class TableControlFrame extends JFrame {
     /**
      * Create the frame.
      */
-    public TableControlFrame( ) {
+    public TableControlFrame() {
         setResizable( false );
         setDefaultCloseOperation( WindowConstants.EXIT_ON_CLOSE );
         setIconImage( Toolkit.getDefaultToolkit().getImage( MainConnectionsFrame.class.getResource( "/assets/mainIcon.png" ) ) );
         setBounds( 100, 100, 720, 404 );
         contentPane = new JPanel();
         contentPane.setBorder( new EmptyBorder( 5, 5, 5, 5 ) );
-        setTitle( "Connected to <server ip>" );
+        setTitle( "Connected to " + JabyUtils.getHostString( JabyBootstrap.getClientHandler().getChannel().remoteAddress() ) );
         setContentPane( contentPane );
         contentPane.setLayout( null );
         Utils.centreWindow( this );
@@ -75,8 +82,12 @@ public class TableControlFrame extends JFrame {
         motd1.setColumns( 10 );
         motd1.setEnabled( false );
         motd1.addKeyListener( new KeyListener() {
-            public void keyTyped( KeyEvent e ) {}
-            public void keyPressed( KeyEvent e ) {}
+            public void keyTyped( KeyEvent e ) {
+            }
+
+            public void keyPressed( KeyEvent e ) {
+            }
+
             public void keyReleased( KeyEvent e ) {
                 buttonSetMotd.setEnabled( !motd1.getText().replace( " ", "" ).isEmpty() );
             }
@@ -88,9 +99,10 @@ public class TableControlFrame extends JFrame {
         buttonSetMotd.setEnabled( false );
         buttonSetMotd.addActionListener( new ActionListener() {
             public void actionPerformed( ActionEvent arg0 ) {
+                String type = ( String ) serverTable.getModel().getValueAt( serverTable.getSelectedRow(), 0 );
                 String motd = motd1.getText() + "\n" + motd2.getText();
 
-                // SET MOTD
+                JabyBootstrap.getClientHandler().sendPacket( new PacketUpdateType( type, 2, motd ) );
             }
         } );
         contentPane.add( buttonSetMotd );
@@ -116,8 +128,9 @@ public class TableControlFrame extends JFrame {
         buttonKillAll.addActionListener( new ActionListener() {
             public void actionPerformed( ActionEvent arg0 ) {
                 boolean selected = serverTable.getSelectedRow() != -1;
-                if(selected) {
-                    // KILLALL
+                if ( selected ) {
+                    String type = ( String ) serverTable.getModel().getValueAt( serverTable.getSelectedRow(), 0 );
+                    JabyBootstrap.getClientHandler().sendPacket( new PacketUpdateType( type, 1, null ) );
                 }
             }
         } );
@@ -129,8 +142,9 @@ public class TableControlFrame extends JFrame {
         buttonSetStandby.addActionListener( new ActionListener() {
             public void actionPerformed( ActionEvent arg0 ) {
                 boolean selected = serverTable.getSelectedRow() != -1;
-                if(selected) {
-                    // STANDBY
+                if ( selected ) {
+                    String type = ( String ) serverTable.getModel().getValueAt( serverTable.getSelectedRow(), 0 );
+                    JabyBootstrap.getClientHandler().sendPacket( new PacketUpdateType( type, 0, null ) );
                 }
             }
         } );
@@ -152,17 +166,23 @@ public class TableControlFrame extends JFrame {
         buttonSetMaxRam.addActionListener( new ActionListener() {
             public void actionPerformed( ActionEvent arg0 ) {
                 boolean selected = daemonTable.getSelectedRow() != -1;
-                if(selected) {
-                    // MAX RAM
-                    // Important: Use daemonTable!
+                if ( selected ) {
+                    String ip = ( String ) daemonTable.getModel().getValueAt( daemonTable.getSelectedRow(), 0 );
+                    int currentMaxRam = Integer.parseInt(
+                            (( String ) daemonTable.getModel().getValueAt( daemonTable.getSelectedRow(), 1 )) );
+                    UUID uuid = Application.getInstance().getUpdateDaemons().getUuids()[daemonTable.getSelectedRow()];
 
-
-                    new ValueChangeFrame( "Set max RAM for <server ip>", "*currentvalue*", new ValueCallback() {
+                    new ValueChangeFrame( "Set max RAM for " + ip, String.valueOf( currentMaxRam ), new ValueCallback() {
                         public void change( Object obj ) {
-                            // Save changes
-                            refreshDaemonTable();
+                            try {
+                                JabyBootstrap.getClientHandler().getChannel().writeAndFlush(
+                                        new PacketChangeMaxRam( uuid, Integer.parseInt( (( String ) obj) ) ) );
+                            } catch ( NumberFormatException ex ) {
+                                ex.printStackTrace();
+                            }
                         }
-                        public void cancelled( ) {
+
+                        public void cancelled() {
                             // Nothing
                         }
                     } );
@@ -174,60 +194,89 @@ public class TableControlFrame extends JFrame {
     }
 
 
-    public void refreshServerTable( ) {
-        DefaultTableModel model = new DefaultTableModel( new String[]{ "Type", "Started", "Max", "Standby" }, 0 ) {
+    public void refreshServerTable() {
+        DefaultTableModel model = new DefaultTableModel( new String[]{"Type", "Started", "Max", "Standby"}, 0 ) {
             public boolean isCellEditable( int row, int column ) {
                 return false;
             }
         };
 
-        model.addRow( new String[]{ "BungeeCord", "0", "0", "false" } );
+        PacketUpdateTypes updateTypes = Application.getInstance().getUpdateTypes();
 
+        if ( updateTypes == null )
+            return;
+
+        for ( int i = 0; i < updateTypes.getCount(); i++ ) {
+            model.addRow( new String[]{
+                    updateTypes.getTypesNames()[i],
+                    String.valueOf( updateTypes.getStartedServers()[i] ),
+                    String.valueOf( updateTypes.getMaxServers()[i] ),
+                    String.valueOf( updateTypes.getTypesStandby()[i] )
+            } );
+        }
+
+        int oldRowIndex = serverTable.getSelectedRow();
+        int oldColumnIndex = serverTable.getSelectedColumn();
 
         serverTable.setModel( model );
-        /*model.addTableModelListener( new TableModelListener() {
-            public void tableChanged( TableModelEvent e ) {
-                TableModel model = serverTable.getModel();
-                boolean selected = serverTable.getSelectedRow() != -1;
-                buttonSetMotd.setEnabled( selected );
-                buttonKillAll.setEnabled( selected );
-                buttonSetStandby.setEnabled( selected );
-            }
-        } );*/
-        serverTable.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
-            public void valueChanged(ListSelectionEvent event) {
+
+        serverTable.changeSelection( oldRowIndex, oldColumnIndex, false, false );
+
+        serverTable.getSelectionModel().addListSelectionListener( new ListSelectionListener() {
+            public void valueChanged( ListSelectionEvent event ) {
                 boolean selected = serverTable.getSelectedRow() != -1;
                 buttonKillAll.setEnabled( selected );
                 buttonSetStandby.setEnabled( selected );
                 motd1.setEnabled( selected );
                 motd2.setEnabled( selected );
 
+                if ( selected ) {
+                    String motd = Application.getInstance().getUpdateTypes().getMotds()[serverTable.getSelectedRow()];
+                    String[] splitedMotd = motd.split( "\n" );
+
+                    motd1.setText( splitedMotd[0] );
+                    motd2.setText( (splitedMotd.length > 1 ? splitedMotd[1] : "") );
+                } else {
+                    motd1.setText( "" );
+                    motd2.setText( "" );
+                }
 
             }
-        });
+        } );
     }
 
-    public void refreshDaemonTable( ) {
-        DefaultTableModel model = new DefaultTableModel( new String[]{ "IP of Daemon", "Max RAM", "Current RAM" }, 0 ) {
+    public void refreshDaemonTable() {
+        DefaultTableModel model = new DefaultTableModel( new String[]{"IP of Daemon", "Max RAM", "Current RAM"}, 0 ) {
             public boolean isCellEditable( int row, int column ) {
                 return false;
             }
         };
 
-        model.addRow( new String[]{ "127.0.0.1", "50%", "30" } );
+        PacketUpdateDaemons updateDaemons = Application.getInstance().getUpdateDaemons();
+
+        if ( updateDaemons == null )
+            return;
+
+        for ( int i = 0; i < updateDaemons.getCount(); i++ ) {
+            model.addRow( new String[]{
+                    updateDaemons.getIps()[i],
+                    String.valueOf( updateDaemons.getDaemonsMaxRam()[i] ),
+                    String.valueOf( updateDaemons.getDaemonsCurrentRam()[i] ),
+            } );
+        }
+
+        int oldRowIndex = daemonTable.getSelectedRow();
+        int oldColumnIndex = daemonTable.getSelectedColumn();
 
         daemonTable.setModel( model );
-        /*model.addTableModelListener( new TableModelListener() {
-            public void tableChanged( TableModelEvent e ) {
-                TableModel model = daemonTable.getModel();
 
-            }
-        } );*/
-        daemonTable.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
-            public void valueChanged(ListSelectionEvent event) {
+        daemonTable.changeSelection( oldRowIndex, oldColumnIndex, false, false );
+
+        daemonTable.getSelectionModel().addListSelectionListener( new ListSelectionListener() {
+            public void valueChanged( ListSelectionEvent event ) {
                 boolean selected = daemonTable.getSelectedRow() != -1;
                 buttonSetMaxRam.setEnabled( selected );
             }
-        });
+        } );
     }
 }

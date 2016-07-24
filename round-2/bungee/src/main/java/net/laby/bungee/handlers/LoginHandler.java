@@ -1,6 +1,7 @@
 package net.laby.bungee.handlers;
 
 import io.netty.channel.ChannelHandlerContext;
+import net.laby.bungee.ApplicationUpdater;
 import net.laby.bungee.Jaby;
 import net.laby.bungee.ServerType;
 import net.laby.protocol.JabyBootstrap;
@@ -45,6 +46,15 @@ public class LoginHandler {
             // Adding to channel-map
             JabyBootstrap.getChannels().put( ctx.channel(), new JabyChannel( ctx.channel(), packetLogin.getClientType(),
                     packetLogin.getMaxRamUsage() ) );
+
+            if(packetLogin.getClientType() == PacketLogin.ClientType.DAEMON) {
+                // Calling update
+                ApplicationUpdater.updateDaemons();
+            } else {
+                ApplicationUpdater.updateTypes();
+                ApplicationUpdater.updateDaemons();
+            }
+
         }
     }
 

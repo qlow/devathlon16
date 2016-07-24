@@ -4,6 +4,7 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.util.internal.PlatformDependent;
 import lombok.Getter;
 import lombok.Setter;
+import net.laby.daemon.handler.ChangeMaxRamHandler;
 import net.laby.daemon.handler.CopyModeHandler;
 import net.laby.daemon.handler.DisconnectHandler;
 import net.laby.daemon.handler.LoginSuccessfulHanndler;
@@ -139,7 +140,8 @@ public class JabyDaemon {
                 LoginSuccessfulHanndler.class,
                 ServerRequestHandler.class,
                 ServerShutdownRequestHandler.class,
-                CopyModeHandler.class );
+                CopyModeHandler.class,
+                ChangeMaxRamHandler.class );
 
         JabyBootstrap.getExecutorService().execute( (queueStartTask = new QueueStartTask()) );
 
@@ -202,6 +204,7 @@ public class JabyDaemon {
             }
 
             System.out.println( "[Jaby] Disabled!" );
+            System.exit( 0 );
             return;
         }
 

@@ -1,6 +1,7 @@
 package net.laby.bungee.handlers;
 
 import io.netty.channel.ChannelHandlerContext;
+import net.laby.bungee.ApplicationUpdater;
 import net.laby.protocol.JabyBootstrap;
 import net.laby.protocol.JabyChannel;
 import net.laby.protocol.packet.PacketPowerUsage;
@@ -18,6 +19,9 @@ public class PowerUsageHandler {
 
         // Setting usages
         jabyChannel.setCurrentRamUsage( packetPowerUsage.getCurrentRamUsage() );
+
+        // Calling update
+        ApplicationUpdater.updateDaemons();
     }
 
 }

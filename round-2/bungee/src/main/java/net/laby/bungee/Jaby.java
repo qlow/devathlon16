@@ -3,13 +3,16 @@ package net.laby.bungee;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import lombok.Getter;
+import lombok.Setter;
 import net.laby.bungee.handlers.AvailableTypesHandler;
+import net.laby.bungee.handlers.ChangeMaxRamHandler;
 import net.laby.bungee.handlers.LoginHandler;
 import net.laby.bungee.handlers.MultiServerHandler;
 import net.laby.bungee.handlers.PowerUsageHandler;
 import net.laby.bungee.handlers.ServerDoneHandler;
 import net.laby.bungee.handlers.ServerExitHandler;
 import net.laby.bungee.handlers.ServerStartHandler;
+import net.laby.bungee.handlers.UpdateTypeHandler;
 import net.laby.bungee.utils.ConfigLoader;
 import net.laby.protocol.JabyBootstrap;
 import net.laby.protocol.JabyChannel;
@@ -46,12 +49,15 @@ public class Jaby extends Plugin implements Listener {
 
     private static Jaby instance;
     private final static Random random = new Random();
+    @Getter
     private ConfigLoader configLoader;
 
     @Getter
     private String password;
 
     private List<String> motd;
+    @Getter
+    @Setter
     private String motdString = "";
 
     private ServerBootstrap serverBootstrap;
@@ -103,7 +109,10 @@ public class Jaby extends Plugin implements Listener {
                 ServerStartHandler.class,
                 ServerExitHandler.class,
                 MultiServerHandler.class,
-                ServerDoneHandler.class );
+                ServerDoneHandler.class,
+                ChangeMaxRamHandler.class,
+                UpdateTypeHandler.class
+        );
 
         int port = getConfiguration().getInt( "port" );
 
@@ -304,7 +313,16 @@ public class Jaby extends Plugin implements Listener {
         for ( ServerType serverType : ServerType.getServerTypes() ) {
             getConfiguration().set( "serverType." + serverType.getType() + ".amount", serverType.getServerAmount() );
             getConfiguration().set( "serverType." + serverType.getType() + ".standby", serverType.isStandby() );
-            getConfiguration().set( "serverType." + serverType.getType() + ".motd", serverType.getMotd() );
+
+            List<String> motd = new ArrayList<>();
+            for ( String splitedMotd : serverType.getMotd().split( "\n" ) ) {
+                if ( splitedMotd.equals( "" ) )
+                    continue;
+
+                motd.add( splitedMotd );
+            }
+
+            getConfiguration().set( "serverType." + serverType.getType() + ".motd", motd );
             getConfiguration().set( "serverType." + serverType.getType() + ".secondsUntilStopAtNoPlayers",
                     serverType.getSecondsUntilStop() );
             getConfiguration().set( "serverType." + serverType.getType() + ".addresses", serverType.getAddresses() );

@@ -10,6 +10,7 @@ import net.laby.protocol.packet.PacketDisconnect;
 import net.laby.protocol.packet.PacketLogin;
 import net.laby.protocol.utils.JabyUtils;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +30,10 @@ public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
 
     @Override
     public void exceptionCaught( ChannelHandlerContext ctx, Throwable cause ) throws Exception {
-        System.err.println( "[Jaby] Exception caught (" + JabyUtils.getHostString( ctx.channel().remoteAddress() ) + "):" );
-        cause.printStackTrace();
+        if ( !(cause instanceof IOException) ) {
+            System.err.println( "[Jaby] Exception caught (" + JabyUtils.getHostString( ctx.channel().remoteAddress() ) + "):" );
+            cause.printStackTrace();
+        }
     }
 
     @Override
@@ -53,7 +56,7 @@ public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
             System.out.println( "[Jaby] " + JabyUtils.getHostString( ctx.channel().remoteAddress() ) + " disconnected!" );
             JabyBootstrap.getChannels().remove( ctx.channel() );
         } else {
-            System.out.println("[Jaby] Disconnected from server!");
+            System.out.println( "[Jaby] Disconnected from server!" );
         }
     }
 

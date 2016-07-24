@@ -1,6 +1,7 @@
 package net.laby.protocol;
 
 import net.laby.protocol.packet.PacketAvailableTypes;
+import net.laby.protocol.packet.PacketChangeMaxRam;
 import net.laby.protocol.packet.PacketCopyMode;
 import net.laby.protocol.packet.PacketDisconnect;
 import net.laby.protocol.packet.PacketExitServer;
@@ -12,6 +13,9 @@ import net.laby.protocol.packet.PacketRequestServer;
 import net.laby.protocol.packet.PacketRequestShutdown;
 import net.laby.protocol.packet.PacketServerDone;
 import net.laby.protocol.packet.PacketStartServer;
+import net.laby.protocol.packet.PacketUpdateDaemons;
+import net.laby.protocol.packet.PacketUpdateType;
+import net.laby.protocol.packet.PacketUpdateTypes;
 
 /**
  * Protocol used for getting packets by id & getting ids by packets
@@ -30,7 +34,11 @@ public enum Protocol {
     REQUEST_SHUTDOWN( 0x09, PacketRequestShutdown.class ),
     MULTI_SERVER( 0x0A, PacketMultiServer.class ),
     SERVER_DONE( 0x0B, PacketServerDone.class ),
-    COPY_MODE( 0x0C, PacketCopyMode.class );
+    COPY_MODE( 0x0C, PacketCopyMode.class ),
+    UPDATE_DAEMONS( 0x0D, PacketUpdateDaemons.class ),
+    UPDATE_TYPES( 0x0E, PacketUpdateTypes.class ),
+    CHANGE_MAX_RAM( 0x0F, PacketChangeMaxRam.class ),
+    UPDATE_TYPE( 0x10, PacketUpdateType.class );
 
     private int packetId;
     private Class<? extends Packet> packetClass;

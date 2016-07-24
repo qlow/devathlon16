@@ -16,7 +16,6 @@ public class DisconnectHandler {
         Utils.showDialog( null, "Disconnected from server", disconnect.getDisconnectReason(), new ImageIcon( Application.class.getResource( "/assets/connectionError.png" ) ) );
 
         Application.getInstance().getMainGUI().setVisible( true );
-        Application.getInstance().getMainGUI().allowConnect();
     }
 
 }
