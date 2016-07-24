@@ -93,17 +93,6 @@ public class JabyDaemon {
         this.serverFolder = new File( getConfig().getServerFolder() );
         this.startScriptName = getConfig().getStartScriptName() + (PlatformDependent.isWindows() ? ".bat" : ".sh");
 
-        for ( File serverFile : serverFolder.listFiles() ) {
-            if(!serverFile.isDirectory())
-                continue;
-
-            try {
-                FileUtils.deleteDirectory( serverFile );
-            } catch ( IOException e ) {
-                e.printStackTrace();
-            }
-        }
-
         if ( !serverTemplateFolder.exists() ) {
             serverTemplateFolder.mkdirs();
         } else {
@@ -129,6 +118,17 @@ public class JabyDaemon {
         // Creating new server-folder if it doesn't exist
         if ( !serverFolder.exists() ) {
             serverFolder.mkdirs();
+        }
+
+        for ( File serverFile : serverFolder.listFiles() ) {
+            if(!serverFile.isDirectory())
+                continue;
+
+            try {
+                FileUtils.deleteDirectory( serverFile );
+            } catch ( IOException e ) {
+                e.printStackTrace();
+            }
         }
 
         JabyBootstrap.registerHandler(
@@ -222,7 +222,7 @@ public class JabyDaemon {
                 }
 
                 try {
-                    Thread.sleep( 60000 );
+                    Thread.sleep( 20000 );
                 } catch ( InterruptedException e ) {
                     e.printStackTrace();
                 }
