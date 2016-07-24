@@ -53,6 +53,9 @@ public class AvailablePorts {
                     }
                 } );
 
+                // Adding port
+                alreadyUsedPorts.add( i );
+
                 // Returning available port
                 return i;
             } catch ( IOException ex ) {

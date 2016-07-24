@@ -16,7 +16,7 @@ import java.net.InetSocketAddress;
 public class LoginHandler {
 
     public static void handle( PacketLogin packetLogin, ChannelHandlerContext ctx ) {
-        if(JabyBootstrap.getChannels().containsKey( ctx.channel() ))
+        if ( JabyBootstrap.getChannels().containsKey( ctx.channel() ) )
             return;
 
         // Checking for the right password

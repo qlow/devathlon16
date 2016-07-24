@@ -35,7 +35,7 @@ public class PowerUsageTask implements Runnable {
      *
      * @return current usage (0 to 100)
      */
-    private int getCurrentRamUsage() {
+    public static int getCurrentRamUsage() {
         com.sun.management.OperatingSystemMXBean bean =
                 ( com.sun.management.OperatingSystemMXBean )
                         java.lang.management.ManagementFactory.getOperatingSystemMXBean();

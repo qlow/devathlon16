@@ -18,6 +18,7 @@ public class JabyServer {
 
     private String address;
     private int port;
+    private long firstTimeZeroPlayers;
 
     private JabyChannel channel;
 

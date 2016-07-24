@@ -1,7 +1,6 @@
 package net.laby.bungee.handlers;
 
 import io.netty.channel.ChannelHandlerContext;
-import net.laby.bungee.Jaby;
 import net.laby.bungee.JabyServer;
 import net.laby.bungee.ServerType;
 import net.laby.protocol.JabyBootstrap;
@@ -20,9 +19,12 @@ public class ServerStartHandler {
         InetSocketAddress socketAddress = ( InetSocketAddress ) ctx.channel().remoteAddress();
 
         // Adding server to server-type
-        ServerType.getByName( startServer.getType() ).getServers().put( startServer.getUuid(),
+        ServerType serverType = ServerType.getByName( startServer.getType() );
+
+        serverType.getServers().put( startServer.getUuid(),
                 new JabyServer( startServer.getUuid(), startServer.getType(),
                         socketAddress.getHostName(), startServer.getPort(),
+                        -1,
                         JabyBootstrap.getChannels().get( ctx.channel() ) ) );
 
         Object serverInfo = null;
@@ -32,7 +34,7 @@ public class ServerStartHandler {
             serverInfo = Class.forName( "net.md_5.bungee.BungeeServerInfo" )
                     .getConstructor( String.class, InetSocketAddress.class, String.class, boolean.class )
                     .newInstance( name, new InetSocketAddress( socketAddress.getHostName(), startServer.getPort() ),
-                            Jaby.getInstance().getMotdString(), false );
+                            serverType.getMotd(), false );
         } catch ( Exception e ) {
             e.printStackTrace();
         }

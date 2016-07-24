@@ -121,7 +121,7 @@ public class JabyDaemon {
         }
 
         for ( File serverFile : serverFolder.listFiles() ) {
-            if(!serverFile.isDirectory())
+            if ( !serverFile.isDirectory() )
                 continue;
 
             try {
@@ -216,7 +216,7 @@ public class JabyDaemon {
 
                 JabyDaemon.this.connected = false;
 
-                if(bootstrap != null) {
+                if ( bootstrap != null ) {
                     bootstrap.group().shutdownGracefully();
                     JabyBootstrap.getClientHandler().getChannel().close();
                 }

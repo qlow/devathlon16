@@ -1,7 +1,5 @@
 package net.laby.bungee;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import net.laby.protocol.JabyBootstrap;
@@ -9,15 +7,16 @@ import net.laby.protocol.JabyChannel;
 import net.laby.protocol.packet.PacketLogin;
 import net.laby.protocol.packet.PacketRequestServer;
 import net.laby.protocol.packet.PacketRequestShutdown;
+import net.md_5.bungee.api.event.LoginEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Class created by qlow | Jan
@@ -31,10 +30,7 @@ public class ServerType {
     private String type;
 
     @Getter
-    private Map<UUID, JabyServer> servers = new HashMap<>();
-
-    @Getter
-    private Cache<UUID, Long> oldServersCache;
+    private LinkedHashMap<UUID, JabyServer> servers = new LinkedHashMap<>();
 
     @Getter
     @Setter
@@ -44,52 +40,65 @@ public class ServerType {
     @Setter
     private boolean standby;
 
+    @Getter
+    @Setter
+    private String motd;
+
+    @Getter
+    @Setter
+    private int secondsUntilStop;
+
+    @Getter
+    @Setter
+    private List<String> addresses = new ArrayList<>();
+
+    @Getter
+    @Setter
+    private Map<UUID, LoginEvent> joiningPlayers = new HashMap<>();
+
     /**
      * Constructs a new server-type
      *
-     * @param type         type's name
-     * @param standby      state whether the type is in standby-mode
-     * @param serverAmount amount of the servers should be started with this type
+     * @param type             type's name
+     * @param standby          state whether the type is in standby-mode
+     * @param serverAmount     amount of the servers should be started with this type
+     * @param motd             MOTD of this server-type
+     * @param secondsUntilStop Time in seconds the server stops after it reaches 0 players
+     * @param addresses        Addresses of the server-type
      */
-    public ServerType( String type, boolean standby, int serverAmount ) {
+    public ServerType( String type, boolean standby, int serverAmount, String motd, int secondsUntilStop,
+                       List<String> addresses ) {
         this.type = type;
         this.standby = standby;
         this.serverAmount = serverAmount;
-
-        this.oldServersCache = CacheBuilder.newBuilder().expireAfterWrite( Jaby.getInstance().getRestartServersAfter(), TimeUnit.SECONDS ).build();
+        this.motd = motd;
+        this.secondsUntilStop = secondsUntilStop;
+        this.addresses = addresses;
     }
 
     /**
-     * Sets the expire-after-write time of the cache
+     * State whether one server is started
      *
-     * @param seconds new expire-time
+     * @return true if one server is started
      */
-    public void setExpireAfter( int seconds ) {
-        List<UUID> oldEntries = new ArrayList<>();
-        oldEntries.addAll( oldServersCache.asMap().keySet() );
-
-        this.oldServersCache.cleanUp();
-        this.oldServersCache = CacheBuilder.newBuilder().expireAfterWrite( seconds, TimeUnit.SECONDS ).build();
-
-        for ( UUID oldEntry : oldEntries ) {
-            oldServersCache.put( oldEntry, System.currentTimeMillis() );
-        }
+    public boolean isStarted() {
+        return servers.size() > 0;
     }
 
     /**
      * Starts the required servers if there are servers required
      */
-    public void startServers() {
+    public boolean startServers() {
         // Checking for standby-mode
         if ( standby )
-            return;
+            return false;
 
         // Calculating required servers
-        int requiredServers = serverAmount - servers.size() - (( int ) oldServersCache.size());
+        int requiredServers = serverAmount - servers.size();
 
         // Returning if there is no server required
         if ( requiredServers < 1 )
-            return;
+            return true;
 
         // List of JabyChannels
         List<JabyChannel> jabyChannels = new ArrayList<>();
@@ -122,20 +131,23 @@ public class ServerType {
 
             // Log message
             System.out.println( "[Jaby] Starting " + requiredServers + " servers of type " + type );
-            return;
+            return true;
         }
 
         // Log message if there couldn't start any instance of this type
         System.err.println( "[Jaby] Didn't find a free instance for type " + type );
+        return false;
     }
 
     /**
-     * Shutdowns all servers of this type
+     * Shutdowns all servers
      */
     public void shutdown() {
         for ( UUID server : servers.keySet() ) {
             servers.get( server ).getChannel().getChannel().writeAndFlush( new PacketRequestShutdown( server ) );
         }
+
+        servers.clear();
     }
 
     /**
@@ -147,6 +159,23 @@ public class ServerType {
     public static ServerType getByName( String typeName ) {
         for ( ServerType serverType : serverTypes ) {
             if ( !serverType.getType().equalsIgnoreCase( typeName ) )
+                continue;
+
+            return serverType;
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets a server-type by the address
+     *
+     * @param address one of the address of the wanted server-type
+     * @return ServerType object with the given address
+     */
+    public static ServerType getByAddress( String address ) {
+        for ( ServerType serverType : serverTypes ) {
+            if ( !serverType.getAddresses().contains( address.toLowerCase() ) )
                 continue;
 
             return serverType;

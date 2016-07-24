@@ -13,7 +13,6 @@ public class ServerExitHandler {
     public static void handle( PacketExitServer exitServer, ChannelHandlerContext ctx ) {
         // Removing server
         ServerType serverType = ServerType.getByName( exitServer.getType() );
-        serverType.getOldServersCache().put( exitServer.getUuid(), System.currentTimeMillis() );
 
         ProxyServer.getInstance().getServers().remove( serverType.getType() + "-"
                 + ((serverType.getServers().get( exitServer.getUuid() )).getPort() % 40000) );

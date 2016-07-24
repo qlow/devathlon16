@@ -2,20 +2,23 @@ package net.laby.bungee;
 
 import io.netty.bootstrap.ServerBootstrap;
 import lombok.Getter;
-import lombok.Setter;
 import net.laby.bungee.handlers.AvailableTypesHandler;
 import net.laby.bungee.handlers.LoginHandler;
 import net.laby.bungee.handlers.MultiServerHandler;
 import net.laby.bungee.handlers.PowerUsageHandler;
+import net.laby.bungee.handlers.ServerDoneHandler;
 import net.laby.bungee.handlers.ServerExitHandler;
 import net.laby.bungee.handlers.ServerStartHandler;
 import net.laby.bungee.utils.ConfigLoader;
 import net.laby.protocol.JabyBootstrap;
 import net.laby.protocol.utils.JabyUtils;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
+import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
@@ -28,6 +31,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
@@ -36,18 +41,13 @@ import java.util.function.Consumer;
 public class Jaby extends Plugin implements Listener {
 
     private static Jaby instance;
+    private final static Random random = new Random();
     private ConfigLoader configLoader;
 
     @Getter
     private String password;
 
-    @Getter
-    @Setter
-    private int restartServersAfter;
-
     private List<String> motd;
-
-    @Getter
     private String motdString = "";
 
     private ServerBootstrap serverBootstrap;
@@ -61,18 +61,15 @@ public class Jaby extends Plugin implements Listener {
         configDefaults.put( "password", "verysecurepasswordiswear1337" );
         configDefaults.put( "port", 1337 );
         configDefaults.put( "motd", Arrays.asList( "Zeile 1", "Zeile 2" ) );
-        configDefaults.put( "serverTypes", Arrays.asList() );
-        configDefaults.put( "startServerSeconds", 30 );
-        configDefaults.put( "restartServersAfter", 30 );
+        configDefaults.put( "messages.no-servers-found", "&cEs wurde kein Server gefunden!" );
 
         this.configLoader = new ConfigLoader( new File( getDataFolder(), "config.yml" ), configDefaults );
         this.password = JabyUtils.convertToMd5( getConfiguration().getString( "password" ) );
         this.motd = getConfiguration().getStringList( "motd" );
-        this.restartServersAfter = getConfiguration().getInt( "restartServersAfter" );
 
-        // Setting motd-string
-        for ( String motdElement : motd ) {
-            motdString += (motdString.equals( "" ) ? "" : "\n") + motdElement;
+        // Building MOTD
+        for ( String motdEntry : motd ) {
+            motdString += ChatColor.translateAlternateColorCodes( '&', motdEntry ) + "\n";
         }
 
         // Loading server-types
@@ -85,7 +82,8 @@ public class Jaby extends Plugin implements Listener {
                 AvailableTypesHandler.class,
                 ServerStartHandler.class,
                 ServerExitHandler.class,
-                MultiServerHandler.class );
+                MultiServerHandler.class,
+                ServerDoneHandler.class );
 
         int port = getConfiguration().getInt( "port" );
 
@@ -102,30 +100,6 @@ public class Jaby extends Plugin implements Listener {
                 Jaby.this.serverBootstrap = serverBootstrap;
 
                 System.out.println( "[Jaby] Listening on port " + port );
-
-                // Running server-request task
-                JabyBootstrap.getExecutorService().execute( new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep( getConfiguration().getInt( "startServerSeconds" ) * 1000 );
-                        } catch ( InterruptedException e ) {
-                            e.printStackTrace();
-                        }
-
-                        while ( true ) {
-                            for ( ServerType serverType : ServerType.getServerTypes() ) {
-                                serverType.startServers();
-                            }
-
-                            try {
-                                Thread.sleep( 5000L );
-                            } catch ( InterruptedException e ) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                } );
             }
         } );
 
@@ -139,9 +113,95 @@ public class Jaby extends Plugin implements Listener {
     @EventHandler
     public void onPing( ProxyPingEvent event ) {
         ServerPing response = event.getResponse();
-        response.setDescriptionComponent( new TextComponent( motdString ) );
+        ServerType serverType = ServerType.getByAddress(
+                event.getConnection().getVirtualHost().getHostString().toLowerCase() );
+
+        System.out.println( event.getConnection().getVirtualHost().getHostString().toLowerCase() );
+        if ( serverType == null ) {
+            response.setDescriptionComponent( new TextComponent( motdString ) );
+        } else {
+            System.out.println( "Someone pinged " + serverType.getType() );
+            response.setDescriptionComponent( new TextComponent( serverType.getMotd() ) );
+        }
 
         event.setResponse( response );
+    }
+
+    @EventHandler
+    public void onLogin( LoginEvent event ) {
+        String hostName = event.getConnection().getVirtualHost().getHostString();
+        ServerType serverType = ServerType.getByAddress( hostName.toLowerCase() );
+
+        if ( serverType == null ) {
+            return;
+        }
+
+        if ( serverType.isStarted() )
+            return;
+
+        if ( !serverType.startServers() ) {
+            event.setCancelled( true );
+            event.setCancelReason( ChatColor.translateAlternateColorCodes( '&', getConfiguration().getString( "messages.no-servers-found" ) ) );
+            return;
+        }
+
+        event.registerIntent( this );
+        serverType.getJoiningPlayers().put( event.getConnection().getUniqueId(), event );
+    }
+
+    @EventHandler
+    public void onJoin( ServerConnectEvent event ) {
+        String hostname = event.getPlayer().getPendingConnection().getVirtualHost().getHostString();
+        ServerType serverType = ServerType.getByAddress( hostname.toLowerCase() );
+
+        if ( serverType == null )
+            return;
+
+        if ( !serverType.getJoiningPlayers().containsKey( event.getPlayer().getUniqueId() ) ) {
+            if ( serverType.getServers().size() != 0 ) {
+                // Sending to server
+                event.setTarget( ProxyServer.getInstance().getServerInfo( serverType.getType() + "-"
+                        + (getServerByIndex( serverType, random.nextInt( serverType.getServers().size() ) )
+                        .getPort() % 40000) ) );
+            } else {
+                if ( event.getTarget() == null ) {
+                    // Kicking because there is no server with this type
+                    event.getPlayer().disconnect( new TextComponent( ChatColor.translateAlternateColorCodes( '&',
+                            getConfiguration().getString( "messages.no-servers-found" ) ) ) );
+                } else {
+                    event.getPlayer().sendMessage( new TextComponent( ChatColor.translateAlternateColorCodes( '&',
+                            getConfiguration().getString( "messages.no-servers-found" ) ) ) );
+                }
+            }
+
+            return;
+        }
+
+        if ( serverType.getServers().size() == 0 ) {
+            event.getPlayer().sendMessage( new TextComponent( ChatColor.translateAlternateColorCodes( '&',
+                    getConfiguration().getString( "messages.no-servers-found" ) ) ) );
+            return;
+        }
+
+        String serverName = serverType.getType() + "-"
+                + (getServerByIndex( serverType, serverType.getServers().size() - 1 ).getPort() % 40000);
+        // Setting target & removing from joining players
+        event.setTarget( ProxyServer.getInstance().getServerInfo( serverName ) );
+        serverType.getJoiningPlayers().remove( event.getPlayer().getUniqueId() );
+    }
+
+    private JabyServer getServerByIndex( ServerType serverType, int index ) {
+        int i = 0;
+
+        for ( UUID serverKey : serverType.getServers().keySet() ) {
+            if ( i == index ) {
+                return serverType.getServers().get( serverKey );
+            }
+
+            i++;
+        }
+
+        return null;
     }
 
     /**
@@ -149,36 +209,47 @@ public class Jaby extends Plugin implements Listener {
      */
     public void loadServerTypes() {
         // Getting string-list from config
-        List<String> serverTypes = getConfiguration().getStringList( "serverTypes" );
+        Configuration serverTypes = getConfiguration().getSection( "serverType" );
 
         // Getting current server-type-list
         List<ServerType> serverTypeList = ServerType.getServerTypes();
 
         List<String> allTypeNames = new ArrayList<>();
 
-        for ( String serverType : serverTypes ) {
-            // Splitting list-element into three parts
-            String[] splitedServerType = serverType.split( ";" );
-
-            String typeName = splitedServerType[0];
-            int typeAmount = Integer.parseInt( splitedServerType[1] );
-            boolean standby = Boolean.parseBoolean( splitedServerType[2] );
+        for ( String serverTypeKey : serverTypes.getKeys() ) {
+            int typeAmount = getConfiguration().getInt( "serverType." + serverTypeKey + ".amount" );
+            boolean standby = getConfiguration().getBoolean( "serverType." + serverTypeKey + ".standby" );
+            List<String> motd = getConfiguration().getStringList( "serverType." + serverTypeKey + ".motd" );
+            List<String> addresses = getConfiguration().getStringList( "serverType." + serverTypeKey + ".addresses" );
+            int secondsUntilStopAtNoPlayers = getConfiguration().getInt( "serverType."
+                    + serverTypeKey + ".secondsUntilStopAtNoPlayers" );
 
             // Adding to a list with all type-names
-            allTypeNames.add( typeName );
+            allTypeNames.add( serverTypeKey );
+
+            // Buildung MOTD
+            String motdString = "";
+
+            for ( String motdEntry : motd ) {
+                motdString += ChatColor.translateAlternateColorCodes( '&', motdEntry ) + "\n";
+            }
 
             ServerType type;
 
             // Checking if the server-type exists
-            if ( (type = ServerType.getByName( typeName )) != null ) {
+            if ( (type = ServerType.getByName( serverTypeKey )) != null ) {
                 // Changing server-amount & standby
                 type.setServerAmount( typeAmount );
                 type.setStandby( standby );
+                type.setMotd( motdString );
+                type.setSecondsUntilStop( secondsUntilStopAtNoPlayers );
+                type.setAddresses( addresses );
                 continue;
             }
 
             // Adding to server-type list
-            serverTypeList.add( new ServerType( typeName, standby, typeAmount ) );
+            serverTypeList.add( new ServerType( serverTypeKey, standby, typeAmount, motdString,
+                    secondsUntilStopAtNoPlayers, addresses ) );
         }
 
         // Iterating through all server-types
@@ -202,15 +273,15 @@ public class Jaby extends Plugin implements Listener {
      * Saves the server-types into the config
      */
     public void saveServerTypes() {
-        // New string-list
-        List<String> serverTypesList = new ArrayList<>();
-
         for ( ServerType serverType : ServerType.getServerTypes() ) {
-            serverTypesList.add( serverType.getType() + ";" + serverType.getServerAmount() + ";" + serverType.isStandby() );
+            getConfiguration().set( "serverType." + serverType.getType() + ".amount", serverType.getServerAmount() );
+            getConfiguration().set( "serverType." + serverType.getType() + ".standby", serverType.isStandby() );
+            getConfiguration().set( "serverType." + serverType.getType() + ".motd", serverType.getMotd() );
+            getConfiguration().set( "serverType." + serverType.getType() + ".secondsUntilStopAtNoPlayers",
+                    serverType.getSecondsUntilStop() );
+            getConfiguration().set( "serverType." + serverType.getType() + ".addresses", serverType.getAddresses() );
         }
 
-        // Setting list to config
-        getConfiguration().set( "serverTypes", serverTypesList );
         saveServerTypes();
     }
 

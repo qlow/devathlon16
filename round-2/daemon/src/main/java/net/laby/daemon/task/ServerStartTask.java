@@ -5,11 +5,16 @@ import net.laby.daemon.AvailablePorts;
 import net.laby.daemon.JabyDaemon;
 import net.laby.protocol.JabyBootstrap;
 import net.laby.protocol.packet.PacketExitServer;
+import net.laby.protocol.packet.PacketServerDone;
 import net.laby.protocol.packet.PacketStartServer;
 import org.apache.commons.io.FileUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 /**
@@ -25,6 +30,8 @@ public class ServerStartTask implements Runnable {
     @Getter
     private int port;
 
+    private boolean isDone;
+
     public ServerStartTask( String type ) {
         this.type = type;
         this.uuid = UUID.randomUUID();
@@ -39,14 +46,10 @@ public class ServerStartTask implements Runnable {
         File serverFolder = new File( JabyDaemon.getInstance().getServerFolder(), type + "-" + uuid );
 
         // Copying server-template to server
-        try {
-            FileUtils.copyDirectory( new File( JabyDaemon.getInstance().getServerTemplateFolder(), type ), serverFolder );
-        } catch ( IOException e ) {
-            e.printStackTrace();
-        }
+        copyDirectoryWithPermissions( new File( JabyDaemon.getInstance().getServerTemplateFolder(), type ), serverFolder );
 
         // Starting with ProcessBuilder & Process
-        ProcessBuilder processBuilder = new ProcessBuilder( JabyDaemon.getInstance().getStartScriptName(), "-p", String.valueOf(port) );
+        ProcessBuilder processBuilder = new ProcessBuilder( JabyDaemon.getInstance().getStartScriptName(), "-p", String.valueOf( port ) );
         processBuilder.directory( serverFolder );
 
         try {
@@ -65,6 +68,32 @@ public class ServerStartTask implements Runnable {
         // Log message
         System.out.println( "[Jaby] Started " + type + " with port " + port + " (" + uuid.toString() + ")" );
 
+        // Log messages for the server
+        JabyBootstrap.getExecutorService().execute( new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    BufferedReader reader = new BufferedReader( new InputStreamReader( process.getInputStream() ) );
+
+                    String line;
+
+                    while ( (line = reader.readLine()) != null ) {
+                        if ( isDone )
+                            continue;
+
+                        if ( !line.contains( "Done" ) || !line.contains( "For help, type \"help\" or" ) )
+                            continue;
+
+                        isDone = true;
+                        JabyBootstrap.getClientHandler().sendPacket( new PacketServerDone( type, uuid ) );
+                        System.out.println("[Jaby] Server " + type.toString() + " (" + uuid.toString() + ") is done!");
+                    }
+                } catch ( Exception ex ) {
+                    ex.printStackTrace();
+                }
+            }
+        } );
+
         // Waiting for exit
         try {
             this.process.waitFor();
@@ -82,6 +111,9 @@ public class ServerStartTask implements Runnable {
         // Sending packet
         JabyBootstrap.getClientHandler().sendPacket( new PacketExitServer( uuid, type ) );
 
+        // Removing server from list
+        JabyDaemon.getInstance().getStartedServers().remove( this.uuid );
+
         // Log message
         System.out.println( "[Jaby] Server " + uuid.toString() + " exited!" );
     }
@@ -89,4 +121,25 @@ public class ServerStartTask implements Runnable {
     public UUID getUuid() {
         return uuid;
     }
+
+    private static void copyDirectoryWithPermissions( File src, File dest ) {
+        if ( !dest.exists() ) {
+            dest.mkdirs();
+        }
+
+        for ( File srcFiles : src.listFiles() ) {
+            if ( srcFiles.isDirectory() ) {
+                copyDirectoryWithPermissions( srcFiles, new File( dest, srcFiles.getName() ) );
+                continue;
+            }
+
+            try {
+                Files.copy( srcFiles.toPath(), new File( dest, srcFiles.getName() ).toPath(),
+                        StandardCopyOption.COPY_ATTRIBUTES );
+            } catch ( IOException e ) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
