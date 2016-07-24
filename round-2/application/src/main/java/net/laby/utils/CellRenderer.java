@@ -10,7 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
-import net.laby.application.ControlFrame;
+import net.laby.application.MainConnectionsFrame;
 
 @SuppressWarnings("rawtypes")
 public class CellRenderer implements ListCellRenderer {
@@ -20,7 +20,7 @@ public class CellRenderer implements ListCellRenderer {
 	public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 		JLabel renderer = (JLabel) defaultRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 		try {
-			renderer.setIcon(new ImageIcon(ImageIO.read(ControlFrame.class.getResource("/assets/connectionIcon.png"))));
+			renderer.setIcon(new ImageIcon(ImageIO.read(MainConnectionsFrame.class.getResource("/assets/connectionIcon.png"))));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

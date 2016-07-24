@@ -16,7 +16,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 @SuppressWarnings( "serial" )
-public class ControlFrame extends JFrame {
+public class MainConnectionsFrame extends JFrame {
 
     private JPanel contentPane;
 
@@ -25,6 +25,7 @@ public class ControlFrame extends JFrame {
     private JSpinner spinnerPort;
 
     private JButton btnSave;
+    private JButton btnConnect;
 
     @SuppressWarnings( "rawtypes" )
     private JList list;
@@ -32,31 +33,24 @@ public class ControlFrame extends JFrame {
     /**
      * Launch the application.
      */
-    public static void openGUI( ) {
+    public static MainConnectionsFrame open( ) {
         try {
             UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName() );
         } catch ( Exception e1 ) {
             e1.printStackTrace();
         }
-        EventQueue.invokeLater( new Runnable() {
-            public void run( ) {
-                try {
-                    ControlFrame frame = new ControlFrame();
-                    frame.setVisible( true );
-                } catch ( Exception e ) {
-                    e.printStackTrace();
-                }
-            }
-        } );
+        MainConnectionsFrame frame = new MainConnectionsFrame();
+        frame.setVisible( true );
+        return frame;
     }
 
     /**
      * Create the frame.
      */
-    public ControlFrame( ) {
-        setIconImage( Toolkit.getDefaultToolkit().getImage( ControlFrame.class.getResource( "/assets/icon.png" ) ) );
+    public MainConnectionsFrame( ) {
+        setIconImage( Toolkit.getDefaultToolkit().getImage( MainConnectionsFrame.class.getResource( "/assets/mainIcon.png" ) ) );
         setResizable( false );
-        setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+        setDefaultCloseOperation( WindowConstants.EXIT_ON_CLOSE );
         setBounds( 100, 100, 664, 339 );
         setTitle( "Connect to server" );
 
@@ -65,6 +59,8 @@ public class ControlFrame extends JFrame {
         contentPane.setBorder( new EmptyBorder( 5, 5, 5, 5 ) );
         setContentPane( contentPane );
         contentPane.setLayout( null );
+
+        Utils.centreWindow( this );
 
         // Spinner Port
         spinnerPort = new JSpinner();
@@ -100,13 +96,16 @@ public class ControlFrame extends JFrame {
         contentPane.add( passwordInput );
 
         // Buttons
-        JButton btnConnect = new JButton( "Connect" );
+        btnConnect = new JButton( "Connect" );
         btnConnect.setBounds( 476, 262, 162, 30 );
         btnConnect.addActionListener( new ActionListener() {
             public void actionPerformed( ActionEvent e ) {
-                System.out.print( e.getModifiers() );
                 if ( e.getModifiers() == 16 ) {
-                    Application.connect( null );
+                    if ( list.getSelectedIndex() <= 0) {
+                        Application.getInstance().connect( createConnection() );
+                    } else {
+                        Application.getInstance().connect( Application.getInstance().getConnections().get( list.getSelectedIndex() - 1 ) );
+                    }
                 }
             }
         } );
@@ -160,7 +159,7 @@ public class ControlFrame extends JFrame {
                     }
                 }
             }
-    } );
+        } );
         refreshList();
         this.list.setSelectedIndex( 0 );
         contentPane.add( list );
@@ -177,14 +176,14 @@ public class ControlFrame extends JFrame {
     }
 
     private void fillForm( Connection connection ) {
-        if ( connection != null  && connection.getAddress() != null) {
+        if ( connection != null && connection.getAddress() != null ) {
             this.addressInput.setText( connection.getAddress() );
             this.spinnerPort.setValue( connection.getPort() );
             this.passwordInput.setText( connection.getPassword().isEmpty() ? "" : "******" );
         }
     }
 
-    private void saveConnection( ) {
+    private Connection createConnection( ) {
         if ( addressInput.getText().replace( " ", "" ).isEmpty() || passwordInput.getText().replace( " ", "" ).isEmpty() ) {
             try {
                 System.out.println( "Error: Invalid connection" );
@@ -192,11 +191,14 @@ public class ControlFrame extends JFrame {
             } catch ( IOException e ) {
                 e.printStackTrace();
             }
-            return;
+            return null;
         }
 
-        Connection connection = new Connection( addressInput.getText(), ( int ) spinnerPort.getValue(), JabyUtils.convertToMd5( passwordInput.getText() ) );
-        Application.getInstance().getConnections().add( connection );
+        return new Connection( addressInput.getText(), ( int ) spinnerPort.getValue(), JabyUtils.convertToMd5( passwordInput.getText() ) );
+    }
+
+    private void saveConnection( ) {
+        Application.getInstance().getConnections().add( createConnection() );
         Application.getInstance().getConnectionsLoader().saveConnections();
 
         refreshList();

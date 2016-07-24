@@ -1,0 +1,9 @@
+{
+  "connections": [
+    {
+      "address": "devathlon.labystudio.de",
+      "port": 1337,
+      "password": "f4105fd7b796157cad62543e69878f81"
+    }
+  ]
+}
