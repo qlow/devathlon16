@@ -4,6 +4,7 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.util.internal.PlatformDependent;
 import lombok.Getter;
 import lombok.Setter;
+import net.laby.daemon.handler.CopyModeHandler;
 import net.laby.daemon.handler.DisconnectHandler;
 import net.laby.daemon.handler.LoginSuccessfulHanndler;
 import net.laby.daemon.handler.ServerRequestHandler;
@@ -61,6 +62,8 @@ public class JabyDaemon {
     private Map<UUID, ServerStartTask> startedServers = new HashMap<>();
     @Getter
     private QueueStartTask queueStartTask;
+    @Getter
+    private List<String> copyTypes = new ArrayList<>();
 
     public JabyDaemon() {
         instance = this;
@@ -135,7 +138,8 @@ public class JabyDaemon {
                 DisconnectHandler.class,
                 LoginSuccessfulHanndler.class,
                 ServerRequestHandler.class,
-                ServerShutdownRequestHandler.class );
+                ServerShutdownRequestHandler.class,
+                CopyModeHandler.class );
 
         JabyBootstrap.getExecutorService().execute( (queueStartTask = new QueueStartTask()) );
 

@@ -1,6 +1,7 @@
 package net.laby.bungee;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.Channel;
 import lombok.Getter;
 import net.laby.bungee.handlers.AvailableTypesHandler;
 import net.laby.bungee.handlers.LoginHandler;
@@ -11,6 +12,9 @@ import net.laby.bungee.handlers.ServerExitHandler;
 import net.laby.bungee.handlers.ServerStartHandler;
 import net.laby.bungee.utils.ConfigLoader;
 import net.laby.protocol.JabyBootstrap;
+import net.laby.protocol.JabyChannel;
+import net.laby.protocol.packet.PacketCopyMode;
+import net.laby.protocol.packet.PacketLogin;
 import net.laby.protocol.utils.JabyUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
@@ -65,7 +69,8 @@ public class Jaby extends Plugin implements Listener {
 
         this.configLoader = new ConfigLoader( new File( getDataFolder(), "config.yml" ), configDefaults );
 
-        if(getConfiguration().getSection( "serverType" ) == null) {
+        if ( getConfiguration().getSection( "serverType" ) == null
+                || getConfiguration().getSection( "serverType" ).getKeys().size() == 0 ) {
             getConfiguration().set( "serverType.template.amount", 1 );
             getConfiguration().set( "serverType.template.standby", true );
             getConfiguration().set( "serverType.template.motd", Arrays.asList( "&bFirst", "&cepic line" ) );
@@ -259,6 +264,14 @@ public class Jaby extends Plugin implements Listener {
                 type.setSecondsUntilStop( secondsUntilStopAtNoPlayers );
                 type.setAddresses( addresses );
                 type.setCopyServerContent( copyServerContent );
+
+                for ( Map.Entry<Channel, JabyChannel> channelEntry : JabyBootstrap.getChannels().entrySet() ) {
+                    if ( channelEntry.getValue().getClientType() != PacketLogin.ClientType.DAEMON )
+                        continue;
+
+                    channelEntry.getKey().writeAndFlush( new PacketCopyMode( type.getType(), type.isCopyServerContent() ) );
+                }
+
                 continue;
             }
 

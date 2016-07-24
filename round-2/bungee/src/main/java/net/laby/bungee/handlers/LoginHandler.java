@@ -2,8 +2,10 @@ package net.laby.bungee.handlers;
 
 import io.netty.channel.ChannelHandlerContext;
 import net.laby.bungee.Jaby;
+import net.laby.bungee.ServerType;
 import net.laby.protocol.JabyBootstrap;
 import net.laby.protocol.JabyChannel;
+import net.laby.protocol.packet.PacketCopyMode;
 import net.laby.protocol.packet.PacketDisconnect;
 import net.laby.protocol.packet.PacketLogin;
 import net.laby.protocol.packet.PacketLoginSuccessful;
@@ -31,6 +33,13 @@ public class LoginHandler {
 
         // Sending PacketLoginSuccessful if the login was successful
         ctx.channel().writeAndFlush( new PacketLoginSuccessful() );
+
+        for ( ServerType serverType : ServerType.getServerTypes() ) {
+            if ( !serverType.isCopyServerContent() )
+                continue;
+
+            ctx.channel().writeAndFlush( new PacketCopyMode( serverType.getType(), true ) );
+        }
 
         if ( !JabyBootstrap.isClient() ) {
             // Adding to channel-map
