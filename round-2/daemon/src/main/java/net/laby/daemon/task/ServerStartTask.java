@@ -45,8 +45,11 @@ public class ServerStartTask implements Runnable {
         // Generating server-folder for this server
         File serverFolder = new File( JabyDaemon.getInstance().getServerFolder(), type + "-" + uuid );
 
+        // Template-folder
+        File templateFolder = new File( JabyDaemon.getInstance().getServerTemplateFolder(), type );
+
         // Copying server-template to server
-        copyDirectoryWithPermissions( new File( JabyDaemon.getInstance().getServerTemplateFolder(), type ), serverFolder );
+        copyDirectoryWithPermissions( templateFolder, serverFolder );
 
         // Starting with ProcessBuilder & Process
         ProcessBuilder processBuilder = new ProcessBuilder( JabyDaemon.getInstance().getStartScriptName(), "-p", String.valueOf( port ) );
@@ -86,7 +89,7 @@ public class ServerStartTask implements Runnable {
 
                         isDone = true;
                         JabyBootstrap.getClientHandler().sendPacket( new PacketServerDone( type, uuid ) );
-                        System.out.println("[Jaby] Server " + type.toString() + " (" + uuid.toString() + ") is done!");
+                        System.out.println( "[Jaby] Server " + type.toString() + " (" + uuid.toString() + ") is done!" );
                     }
                 } catch ( Exception ex ) {
                     ex.printStackTrace();
@@ -99,6 +102,16 @@ public class ServerStartTask implements Runnable {
             this.process.waitFor();
         } catch ( InterruptedException e ) {
             e.printStackTrace();
+        }
+
+        if ( JabyDaemon.getInstance().getCopyTypes().contains( type ) ) {
+            try {
+                FileUtils.deleteDirectory( templateFolder );
+            } catch ( IOException e ) {
+                e.printStackTrace();
+            }
+
+            copyDirectoryWithPermissions( serverFolder, templateFolder );
         }
 
         // Removing folder

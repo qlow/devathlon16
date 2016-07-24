@@ -1,6 +1,7 @@
 package net.laby.protocol;
 
 import net.laby.protocol.packet.PacketAvailableTypes;
+import net.laby.protocol.packet.PacketCopyMode;
 import net.laby.protocol.packet.PacketDisconnect;
 import net.laby.protocol.packet.PacketExitServer;
 import net.laby.protocol.packet.PacketLogin;
@@ -27,8 +28,9 @@ public enum Protocol {
     EXIT_SERVER( 0x07, PacketExitServer.class ),
     REQUEST_SERVER( 0x08, PacketRequestServer.class ),
     REQUEST_SHUTDOWN( 0x09, PacketRequestShutdown.class ),
-    MULTI_SERVER(0x0A, PacketMultiServer.class),
-    SERVER_DONE(0x0B, PacketServerDone.class);
+    MULTI_SERVER( 0x0A, PacketMultiServer.class ),
+    SERVER_DONE( 0x0B, PacketServerDone.class ),
+    COPY_MODE( 0x0C, PacketCopyMode.class );
 
     private int packetId;
     private Class<? extends Packet> packetClass;
