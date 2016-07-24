@@ -64,6 +64,18 @@ public class Jaby extends Plugin implements Listener {
         configDefaults.put( "messages.no-servers-found", "&cEs wurde kein Server gefunden!" );
 
         this.configLoader = new ConfigLoader( new File( getDataFolder(), "config.yml" ), configDefaults );
+
+        if(getConfiguration().getSection( "serverType" ) == null) {
+            getConfiguration().set( "serverType.template.amount", 1 );
+            getConfiguration().set( "serverType.template.standby", true );
+            getConfiguration().set( "serverType.template.motd", Arrays.asList( "&bFirst", "&cepic line" ) );
+            getConfiguration().set( "serverType.template.addresses", "nicedomain.ilovethis.com" );
+            getConfiguration().set( "serverType.template.secondsUntilStopAtNoPlayers", 120 );
+            getConfiguration().set( "serverType.template.copyServerContent", false );
+
+            configLoader.saveConfig();
+        }
+
         this.password = JabyUtils.convertToMd5( getConfiguration().getString( "password" ) );
         this.motd = getConfiguration().getStringList( "motd" );
 
@@ -74,6 +86,9 @@ public class Jaby extends Plugin implements Listener {
 
         // Loading server-types
         loadServerTypes();
+
+        // Running KillTask
+        new KillTask();
 
         // Registering handlers
         JabyBootstrap.registerHandler(
@@ -116,11 +131,9 @@ public class Jaby extends Plugin implements Listener {
         ServerType serverType = ServerType.getByAddress(
                 event.getConnection().getVirtualHost().getHostString().toLowerCase() );
 
-        System.out.println( event.getConnection().getVirtualHost().getHostString().toLowerCase() );
         if ( serverType == null ) {
             response.setDescriptionComponent( new TextComponent( motdString ) );
         } else {
-            System.out.println( "Someone pinged " + serverType.getType() );
             response.setDescriptionComponent( new TextComponent( serverType.getMotd() ) );
         }
 
@@ -223,6 +236,7 @@ public class Jaby extends Plugin implements Listener {
             List<String> addresses = getConfiguration().getStringList( "serverType." + serverTypeKey + ".addresses" );
             int secondsUntilStopAtNoPlayers = getConfiguration().getInt( "serverType."
                     + serverTypeKey + ".secondsUntilStopAtNoPlayers" );
+            boolean copyServerContent = getConfiguration().getBoolean( "serverType." + serverTypeKey + ".copyServerContent" );
 
             // Adding to a list with all type-names
             allTypeNames.add( serverTypeKey );
@@ -244,12 +258,13 @@ public class Jaby extends Plugin implements Listener {
                 type.setMotd( motdString );
                 type.setSecondsUntilStop( secondsUntilStopAtNoPlayers );
                 type.setAddresses( addresses );
+                type.setCopyServerContent( copyServerContent );
                 continue;
             }
 
             // Adding to server-type list
             serverTypeList.add( new ServerType( serverTypeKey, standby, typeAmount, motdString,
-                    secondsUntilStopAtNoPlayers, addresses ) );
+                    secondsUntilStopAtNoPlayers, addresses, copyServerContent ) );
         }
 
         // Iterating through all server-types
@@ -280,9 +295,11 @@ public class Jaby extends Plugin implements Listener {
             getConfiguration().set( "serverType." + serverType.getType() + ".secondsUntilStopAtNoPlayers",
                     serverType.getSecondsUntilStop() );
             getConfiguration().set( "serverType." + serverType.getType() + ".addresses", serverType.getAddresses() );
+            getConfiguration().set( "serverType." + serverType.getType() + ".copyServerContent",
+                    serverType.isCopyServerContent() );
         }
 
-        saveServerTypes();
+        configLoader.saveConfig();
     }
 
     /**

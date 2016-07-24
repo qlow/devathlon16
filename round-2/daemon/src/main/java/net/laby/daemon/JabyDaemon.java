@@ -190,10 +190,11 @@ public class JabyDaemon {
             return;
 
         this.disabling = true;
-        System.out.println( "[Jaby] Stopping servers (Disabling daemon in 1 minute)..." );
+        System.out.println( "[Jaby] Stopping servers (Disabling daemon in 20 seconds)..." );
 
         for ( Map.Entry<UUID, ServerStartTask> serverEntry : startedServers.entrySet() ) {
-            JabyBootstrap.getClientHandler().sendPacket( new PacketExitServer( serverEntry.getKey(), serverEntry.getValue().getType() ) );
+            JabyBootstrap.getClientHandler().sendPacket( new PacketExitServer( serverEntry.getKey(),
+                    serverEntry.getValue().getType(), serverEntry.getValue().getPort() ) );
             Process process = serverEntry.getValue().getProcess();
 
             try {

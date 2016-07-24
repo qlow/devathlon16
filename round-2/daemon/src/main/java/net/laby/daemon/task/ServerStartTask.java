@@ -109,7 +109,7 @@ public class ServerStartTask implements Runnable {
         }
 
         // Sending packet
-        JabyBootstrap.getClientHandler().sendPacket( new PacketExitServer( uuid, type ) );
+        JabyBootstrap.getClientHandler().sendPacket( new PacketExitServer( uuid, type, port ) );
 
         // Removing server from list
         JabyDaemon.getInstance().getStartedServers().remove( this.uuid );

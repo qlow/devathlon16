@@ -54,6 +54,10 @@ public class ServerType {
 
     @Getter
     @Setter
+    private boolean copyServerContent;
+
+    @Getter
+    @Setter
     private Map<UUID, LoginEvent> joiningPlayers = new HashMap<>();
 
     /**
@@ -67,13 +71,14 @@ public class ServerType {
      * @param addresses        Addresses of the server-type
      */
     public ServerType( String type, boolean standby, int serverAmount, String motd, int secondsUntilStop,
-                       List<String> addresses ) {
+                       List<String> addresses, boolean copyServerContent ) {
         this.type = type;
         this.standby = standby;
         this.serverAmount = serverAmount;
         this.motd = motd;
         this.secondsUntilStop = secondsUntilStop;
         this.addresses = addresses;
+        this.copyServerContent = copyServerContent;
     }
 
     /**

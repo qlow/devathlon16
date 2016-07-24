@@ -15,14 +15,16 @@ public class ServerExitHandler {
         ServerType serverType = ServerType.getByName( exitServer.getType() );
 
         ProxyServer.getInstance().getServers().remove( serverType.getType() + "-"
-                + ((serverType.getServers().get( exitServer.getUuid() )).getPort() % 40000) );
+                + (exitServer.getPort() % 40000) );
 
-        // Removing server from bungeecord
-        serverType.getServers().remove( exitServer.getUuid() );
+        if ( serverType.getServers().containsKey( exitServer.getUuid() ) ) {
+            // Removing server from bungeecord
+            serverType.getServers().remove( exitServer.getUuid() );
+        }
 
         // Log message
-        System.out.println("[Jaby] Server " + exitServer.getUuid().toString() + " (" +
-                serverType.getType() + ") stopped!");
+        System.out.println( "[Jaby] Server " + exitServer.getUuid().toString() + " (" +
+                serverType.getType() + ") stopped!" );
     }
 
 }

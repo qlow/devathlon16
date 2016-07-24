@@ -39,7 +39,7 @@ public class AvailablePorts {
                 serverSocket.close();
 
                 // Running thread that removes this port from the used-ports list after 15 minutes
-                int finalI = i;
+                Integer finalI = i;
                 JabyBootstrap.getExecutorService().execute( new Runnable() {
                     @Override
                     public void run() {
@@ -54,7 +54,7 @@ public class AvailablePorts {
                 } );
 
                 // Adding port
-                alreadyUsedPorts.add( i );
+                alreadyUsedPorts.add( finalI );
 
                 // Returning available port
                 return i;

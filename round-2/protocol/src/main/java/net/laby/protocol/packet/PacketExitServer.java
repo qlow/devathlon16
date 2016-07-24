@@ -20,17 +20,21 @@ public class PacketExitServer extends Packet {
     private UUID uuid;
     @Getter
     private String type;
+    @Getter
+    private int port;
 
     @Override
     public void read( ByteBuf byteBuf ) {
         this.uuid = UUID.fromString( readString( byteBuf ) );
         this.type = readString( byteBuf );
+        this.port = byteBuf.readInt();
     }
 
     @Override
     public void write( ByteBuf byteBuf ) {
         writeString( byteBuf, uuid.toString() );
         writeString( byteBuf, type );
+        byteBuf.writeInt( port );
     }
 
 }

@@ -24,7 +24,7 @@ public class ServerStartHandler {
         serverType.getServers().put( startServer.getUuid(),
                 new JabyServer( startServer.getUuid(), startServer.getType(),
                         socketAddress.getHostName(), startServer.getPort(),
-                        -1,
+                        System.currentTimeMillis(),
                         JabyBootstrap.getChannels().get( ctx.channel() ) ) );
 
         Object serverInfo = null;
