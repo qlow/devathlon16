@@ -56,6 +56,13 @@ public class TestingClass implements Listener {
                     float addX = 0;
                     float addZ = 0;
 
+                    if ( entityPlayer.bg != 0F ) {
+                        float distance = entityPlayer.bg * -1;
+
+                        addX += ( float ) (distance * Math.cos( Math.toRadians( vehicle.getLocation().getYaw() + 90 * 1 ) ));
+                        addZ += ( float ) (distance * Math.sin( Math.toRadians( vehicle.getLocation().getYaw() + 90 * 1 ) ));
+                    }
+
                     if ( entityPlayer.bf != 0F ) {
                         float distance = entityPlayer.bf * -1;
 
