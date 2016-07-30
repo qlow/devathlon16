@@ -70,54 +70,51 @@ public class ShipModel {
                 double sideMotion = entityPlayer.bf;
                 double forwardMotion = entityPlayer.bg;
 
-                double yVelocity = armorStand.getVelocity().getY();
-
-                final Material type = armorStand.getLocation().clone().add(0.0, 0.3, 0.0).getBlock().getType();
-
-                if(type == Material.WALL_BANNER || type == Material.STATIONARY_WATER) {
-                    yVelocity = 0.01;
-                }
-
-                // TODO: Check whether the block of the armorstand-location is water
+                final Material type = armorStand.getLocation().getBlock().getType();
+                double yVelocity = type == Material.WATER || type == Material.STATIONARY_WATER ? 0.01
+                        : armorStand.getVelocity().getY();
 
                 final Vector direction = armorStand.getLocation().getDirection();
 
-                // Calculating the velocity-things
-                if ( forwardMotion > 0 ) {
-                    // Calculating if the player drives forwards
-                    final double x = direction.getX();
-                    final double z = direction.getZ();
+                // Moving ship only if it is on water
+                if(type == Material.WATER || type == Material.STATIONARY_WATER) {
+                    // Calculating the velocity-things
+                    if ( forwardMotion > 0 ) {
+                        // Calculating if the player drives forwards
+                        final double x = direction.getX();
+                        final double z = direction.getZ();
 
-                    if ( x * this.addX < MAX_SPEED && z * this.addZ < MAX_SPEED && x * this.addX > -MAX_SPEED && z * this.addZ > -MAX_SPEED ) {
-                        this.addX += SPEED;
-                        this.addZ += SPEED;
-                    }
-                } else {
-                    // Calculating if the player doesn't drive or he drives backwards
-                    if ( this.addX > 0.0 ) {
-                        this.addX -= 0.007;
-
-                        // Backwards driving
-                        if ( forwardMotion < 0.0 ) {
-                            this.addX -= 0.01;
+                        if ( x * this.addX < MAX_SPEED && z * this.addZ < MAX_SPEED && x * this.addX > -MAX_SPEED && z * this.addZ > -MAX_SPEED ) {
+                            this.addX += SPEED;
+                            this.addZ += SPEED;
                         }
-                    }
+                    } else {
+                        // Calculating if the player doesn't drive or he drives backwards
+                        if ( this.addX > 0.0 ) {
+                            this.addX -= 0.007;
 
-                    if ( this.addX < 0.0 ) {
-                        this.addX = 0.0;
-                    }
-
-                    if ( this.addZ > 0.0 ) {
-                        this.addZ -= 0.007;
-
-                        // Backwards driving
-                        if ( forwardMotion < 0.0 ) {
-                            this.addZ -= 0.01;
+                            // Backwards driving
+                            if ( forwardMotion < 0.0 ) {
+                                this.addX -= 0.01;
+                            }
                         }
-                    }
 
-                    if ( this.addZ < 0.0 ) {
-                        this.addZ = 0.0;
+                        if ( this.addX < 0.0 ) {
+                            this.addX = 0.0;
+                        }
+
+                        if ( this.addZ > 0.0 ) {
+                            this.addZ -= 0.007;
+
+                            // Backwards driving
+                            if ( forwardMotion < 0.0 ) {
+                                this.addZ -= 0.01;
+                            }
+                        }
+
+                        if ( this.addZ < 0.0 ) {
+                            this.addZ = 0.0;
+                        }
                     }
                 }
 
