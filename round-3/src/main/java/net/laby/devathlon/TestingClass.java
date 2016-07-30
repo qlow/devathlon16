@@ -82,6 +82,7 @@ public class TestingClass implements Listener {
             return;
 
         event.getRightClicked().setPassenger( event.getPlayer() );
+        vehiclePlayers.add( event.getPlayer().getUniqueId() );
     }
 
 }
