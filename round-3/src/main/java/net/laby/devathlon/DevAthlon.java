@@ -1,13 +1,12 @@
 package net.laby.devathlon;
 
+import net.laby.game.Game;
 import net.laby.ship.ShipModelStarter;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -22,19 +21,12 @@ public class DevAthlon extends JavaPlugin implements Listener {
         instance = this;
 
         Bukkit.getPluginManager().registerEvents( this, this );
+
+        // Initializing game
+        new Game();
     }
 
-    // DEBUGGING
-    @EventHandler
-    public void onInteractAtEntity( PlayerInteractAtEntityEvent event ) {
-        Player player = event.getPlayer();
-
-        if ( !(event.getRightClicked() instanceof ArmorStand) )
-            return;
-
-
-    }
-
+    // TODO: REMOVE
     @EventHandler
     public void onChat( AsyncPlayerChatEvent event ) {
         Player player = event.getPlayer();
