@@ -2,14 +2,14 @@ package net.laby.devathlon;
 
 import net.minecraft.server.v1_10_R1.EntityPlayer;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-import org.bukkit.event.vehicle.VehicleEnterEvent;
-import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
@@ -50,30 +50,35 @@ public class TestingClass implements Listener {
                         continue;
                     }
 
+                    Entity vehicle = player.getVehicle();
                     EntityPlayer entityPlayer = (( CraftPlayer ) player).getHandle();
 
-                    Bukkit.broadcastMessage( player.getName() + ": §cbf: " + entityPlayer.bf + "§abg: " + entityPlayer.bg );
+                    Location newLocation = null;
+
+                    if ( entityPlayer.bf != 0F ) {
+                        if ( newLocation == null ) {
+                            newLocation = vehicle.getLocation().clone();
+                        }
+
+                        boolean left = entityPlayer.bf > 0F;
+
+                        float newX = ( float ) (vehicle.getLocation().getX() + (1 * Math.cos( Math.toRadians( vehicle.getLocation().getYaw() + 90 * 0 ) )));
+                        float newZ = ( float ) (vehicle.getLocation().getZ() + (1 * Math.sin( Math.toRadians( vehicle.getLocation().getYaw() + 90 * 0 ) )));
+
+                        newLocation.setX( newX );
+                        newLocation.setZ( newZ );
+                    }
+
+                    if ( newLocation != null )
+                        vehicle.teleport( newLocation );
+
+
+                    Bukkit.broadcastMessage( player.getName() + ": §cbf: " + entityPlayer.bf + " §abg: " + entityPlayer.bg );
                 }
 
                 vehiclePlayers.removeAll( removeAll );
             }
         }.runTaskTimer( plugin, 20L, 5L );
-    }
-
-    @EventHandler
-    public void onVehicleEnter( VehicleEnterEvent event ) {
-        if ( !(event.getEntered() instanceof Player) )
-            return;
-
-        vehiclePlayers.add( event.getEntered().getUniqueId() );
-    }
-
-    @EventHandler
-    public void onVehicleExit( VehicleExitEvent event ) {
-        if ( !(event.getExited() instanceof Player) )
-            return;
-
-        vehiclePlayers.remove( event.getExited().getUniqueId() );
     }
 
     @EventHandler
