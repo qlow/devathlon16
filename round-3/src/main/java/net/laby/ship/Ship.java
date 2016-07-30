@@ -205,11 +205,15 @@ public abstract class Ship {
         return this.player.getWorld();
     }
 
-    public void add(double x, double y, double z, Material material, int data) {
+    public void add(double x, double y, double z, float yaw, Material material, int data) {
         this.blocksArmorStand.add( new ArmorStandBlock( this.player.getLocation(), new Location( getWorld(), x * 0.7d, y * 0.7d, z * 0.7d ), material, data, false) );
     }
 
     public void add(double x, double y, double z, Material material) {
-        add( x, y, z, material, 0 );
+        add( x, y, z, 0, material, 0 );
+    }
+
+    public void add(double x, double y, double z, float yaw, Material material) {
+        add( x, y, z, yaw, material, 0 );
     }
 }

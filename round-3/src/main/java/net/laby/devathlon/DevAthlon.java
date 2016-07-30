@@ -1,6 +1,7 @@
 package net.laby.devathlon;
 
 import net.laby.game.Game;
+import net.laby.schematic.SchematicCreator;
 import net.laby.ship.ShipModelStarter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -21,6 +22,7 @@ public class DevAthlon extends JavaPlugin implements Listener {
         instance = this;
 
         Bukkit.getPluginManager().registerEvents( this, this );
+        Bukkit.getPluginManager().registerEvents( new SchematicCreator(), this );
 
         // Initializing game
         new Game();
