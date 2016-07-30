@@ -87,29 +87,23 @@ public class Game implements Listener {
         Player player = event.getPlayer();
         GamePlayer gamePlayer = GamePlayer.getPlayer( player.getUniqueId() );
 
-        Bukkit.broadcastMessage( "1" );
         if ( gamePlayer.isIngame() )
             return;
 
-        Bukkit.broadcastMessage( "2" );
         if ( !region.isValid() )
             return;
 
-        Bukkit.broadcastMessage( "3" );
         if ( !(event.getClickedBlock().getState() instanceof Sign) )
             return;
 
-        Bukkit.broadcastMessage( "4" );
         Location signLocation = getConfig().getGameJoinSign().getLocation();
 
         if ( signLocation == null )
             return;
 
-        Bukkit.broadcastMessage( "5" );
-        if ( signLocation != event.getClickedBlock().getLocation() )
+        if ( !signLocation.equals( event.getClickedBlock().getLocation() ) )
             return;
 
-        Bukkit.broadcastMessage( "6" );
         // Setting some values
         gamePlayer.setIngame( true );
         gamePlayer.setLevel( 0 );
