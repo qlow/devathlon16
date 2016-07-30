@@ -7,6 +7,7 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -20,7 +21,15 @@ public class GameScoreboardManager {
             "Benötigte Kills"
     };
 
-    public void updateScoreboard( Player player, Map<String, Integer> playerScores ) {
+    public void updateScoreboard( Player player ) {
+        Map<String, String> playerScores = new HashMap();
+        GamePlayer gamePlayer = GamePlayer.getPlayer( player.getUniqueId() );
+
+        playerScores.put( "Level", String.valueOf( gamePlayer.getLevel() ) );
+        playerScores.put( "Maximales Level", String.valueOf( Level.getMaxLevels() ) );
+        playerScores.put( "Benötigte Kills", (gamePlayer.getLevel() == Level.getMaxLevels() ? "/" :
+                String.valueOf( Level.values()[gamePlayer.getLevel()].getNeededKillStreak() - gamePlayer.getKillStreak() )) );
+
         Scoreboard scoreboard = player.getScoreboard();
 
         Team team = getOrCreate( scoreboard, "colorTeam" );
@@ -62,7 +71,7 @@ public class GameScoreboardManager {
                 spaceTeam.addEntry( spaceString );
 
             // Setting prefix of space-team
-            spaceTeam.setPrefix( String.valueOf( playerScores.get( score ) ) );
+            spaceTeam.setPrefix( "§7" + playerScores.get( score ) );
 
             // Adding space score
             objective.getScore( spaceString ).setScore( highestScore-- );

@@ -22,8 +22,16 @@ public class GamePlayer {
     @Setter
     private int level, killStreak;
 
+    @Getter
+    @Setter
+    private boolean ingame;
+
     public GamePlayer( UUID uuid ) {
         this.uuid = uuid;
+    }
+
+    public static GamePlayer getPlayer( UUID uuid ) {
+        return players.get( uuid );
     }
 
 }

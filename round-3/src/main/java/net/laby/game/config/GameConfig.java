@@ -17,7 +17,7 @@ import java.io.File;
 public class GameConfig extends YamlConfig {
 
     public GameConfig() {
-        CONFIG_FILE = new File( DevAthlon.getInstance().getDataFolder(), "config.yml");
+        CONFIG_FILE = new File( DevAthlon.getInstance().getDataFolder(), "config.yml" );
 
         try {
             init();
@@ -29,7 +29,13 @@ public class GameConfig extends YamlConfig {
     @Comment( "The lobby's spawn" )
     private SimpleLocation lobbySpawn = new SimpleLocation();
 
-    @Comment( "The game's region's points" )
+    @Comment( "The game's region's points (In this area the ships will spawn)" )
     private SimpleLocation gameRegionFirstPoint, gameRegionSecondPoint = new SimpleLocation();
+
+    @Comment( "The highest water position for spawning the ships" )
+    private int highestWaterY = 60;
+
+    @Comment( "The game-join sign" )
+    private SimpleLocation gameJoinSign = new SimpleLocation();
 
 }

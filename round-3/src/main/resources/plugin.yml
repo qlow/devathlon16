@@ -2,4 +2,9 @@ name: DevAthlon
 version: 1.0
 authors: [qlow, LabyStudio]
 main: net.laby.devathlon.DevAthlon
-description: We don't know the topic yet.
+description: Do fights with your ship(s) and get better ships!
+
+commands:
+  game:
+    description: Game-setup command
+    usage: /<command>

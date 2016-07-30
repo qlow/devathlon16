@@ -19,10 +19,7 @@ public enum Level {
     private Class<? extends Ship> shipModel;
 
     @Getter
-    private int level;
-
-    @Getter
-    private int neededKillStreak;
+    private int level, neededKillStreak;
 
     Level( Class<? extends Ship> shipModel ) {
         try {
