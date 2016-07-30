@@ -1,6 +1,6 @@
 package net.laby.devathlon;
 
-import net.laby.ship.ShipModel;
+import net.laby.ship.ShipModelStarter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -45,7 +45,7 @@ public class DevAthlon extends JavaPlugin implements Listener {
         Bukkit.getScheduler().runTask( this, new Runnable() {
             @Override
             public void run() {
-                ShipModel.spawnShipModel( player.getLocation(), player );
+                new ShipModelStarter( player );
             }
         } );
     }

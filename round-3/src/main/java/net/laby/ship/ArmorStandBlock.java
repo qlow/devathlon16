@@ -18,10 +18,10 @@ public class ArmorStandBlock {
 
     private Location blockAtShipLocation;
 
-    public ArmorStandBlock(Location blockAtShopLocation, Material material, int data) {
-        this.armorStand = ( ArmorStand ) blockAtShopLocation.getWorld().spawnEntity(  new Location(blockAtShopLocation.getWorld(), 0, 0, 0), EntityType.ARMOR_STAND );
+    public ArmorStandBlock(Location shipLocation, Location blockAtShopLocation, Material material, int data, boolean gravity) {
+        this.armorStand = ( ArmorStand ) blockAtShopLocation.getWorld().spawnEntity(  shipLocation, EntityType.ARMOR_STAND );
         this.armorStand.setVisible( false );
-        this.armorStand.setGravity( false );
+         this.armorStand.setGravity( gravity );
         this.armorStand.setHelmet( new ItemStack( material, 1, (byte) data ) );
 
         this.blockMaterial = material;
@@ -55,10 +55,11 @@ public class ArmorStandBlock {
         this.blockDataId = blockDataId;
     }
 
-    public void updatePosition(Location location) {
-        this.armorStand.teleport( location.add( this.blockAtShipLocation ) );
+    public void updatePosition(Location mainStand) {
+
     }
 
+    
     public void setVector(Vector vector) {
         this.armorStand.setVelocity( vector );
     }
