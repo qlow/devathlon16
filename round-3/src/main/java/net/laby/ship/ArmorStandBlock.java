@@ -56,9 +56,14 @@ public class ArmorStandBlock {
     }
 
     public void updatePosition(Location mainStand) {
-
+        Location loc = mainStand.clone();
+        Location zDirection = loc.clone();
+        zDirection.setYaw( zDirection.getYaw() + 90f );
+        loc.add( mainStand.getDirection().multiply( blockAtShipLocation.getX() ) );
+        loc.add( zDirection.getDirection().multiply( blockAtShipLocation.getZ() ) );
+        loc.setY( mainStand.getY() + blockAtShipLocation.getY() );
+        armorStand.teleport( loc );
     }
-
     
     public void setVector(Vector vector) {
         this.armorStand.setVelocity( vector );

@@ -206,7 +206,7 @@ public abstract class Ship {
     }
 
     public void add(double x, double y, double z, Material material, int data) {
-        this.blocksArmorStand.add( new ArmorStandBlock( this.player.getLocation(), new Location( getWorld(), x / 2, y / 2, z / 2 ), material, data, false) );
+        this.blocksArmorStand.add( new ArmorStandBlock( this.player.getLocation(), new Location( getWorld(), x * 0.7d, y * 0.7d, z * 0.7d ), material, data, false) );
     }
 
     public void add(double x, double y, double z, Material material) {
