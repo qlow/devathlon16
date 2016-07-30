@@ -60,13 +60,14 @@ public class TestingClass implements Listener {
                             newLocation = vehicle.getLocation().clone();
                         }
 
-                        boolean left = entityPlayer.bf > 0F;
+                        int distance = (entityPlayer.bf > 0F ? -10 : 10);
 
-                        float newX = ( float ) (vehicle.getLocation().getX() + (1 * Math.cos( Math.toRadians( vehicle.getLocation().getYaw() + 90 * 0 ) )));
-                        float newZ = ( float ) (vehicle.getLocation().getZ() + (1 * Math.sin( Math.toRadians( vehicle.getLocation().getYaw() + 90 * 0 ) )));
+                        float newX = ( float ) (vehicle.getLocation().getX() + (distance * Math.cos( Math.toRadians( vehicle.getLocation().getYaw() + 90 * 0 ) )));
+                        float newZ = ( float ) (vehicle.getLocation().getZ() + (distance * Math.sin( Math.toRadians( vehicle.getLocation().getYaw() + 90 * 0 ) )));
 
                         newLocation.setX( newX );
                         newLocation.setZ( newZ );
+                        Bukkit.broadcastMessage( String.valueOf( entityPlayer.bf > 0F ) );
                     }
 
                     if ( newLocation != null )
