@@ -50,8 +50,12 @@ public class GamePlayer {
         setIngame( false );
     }
 
-    public static GamePlayer getPlayer( UUID uuid ) {
-        return players.get( uuid );
+    public float getAttackDamage() {
+        return Level.values()[level].getAttackDamage();
+    }
+
+    public int getRequiredKills() {
+        return ((level + 1) == Level.values().length) ? -1 : Level.values()[level + 1].getNeededKillStreak() - getKillStreak();
     }
 
     public String getHeartString( boolean info ) {
@@ -72,6 +76,10 @@ public class GamePlayer {
         }
 
         return heartString;
+    }
+
+    public static GamePlayer getPlayer( UUID uuid ) {
+        return players.get( uuid );
     }
 
 

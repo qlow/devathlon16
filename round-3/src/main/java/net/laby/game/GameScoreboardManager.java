@@ -27,8 +27,10 @@ public class GameScoreboardManager {
 
         playerScores.put( "Level", String.valueOf( gamePlayer.getLevel() ) );
         playerScores.put( "Maximales Level", String.valueOf( Level.getMaxLevels() - 1 ) );
-        playerScores.put( "Benötigte Kills", (gamePlayer.getLevel() == (Level.getMaxLevels() - 1) ? "/" :
-                String.valueOf( Level.values()[gamePlayer.getLevel()].getNeededKillStreak() - gamePlayer.getKillStreak() )) );
+
+        int requiredKills = gamePlayer.getRequiredKills();
+
+        playerScores.put( "Benötigte Kills", String.valueOf( (requiredKills == -1 ? "/" : requiredKills) ) );
 
         Scoreboard scoreboard = player.getScoreboard();
 

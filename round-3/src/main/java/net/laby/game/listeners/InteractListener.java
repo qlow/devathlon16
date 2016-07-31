@@ -1,16 +1,25 @@
 package net.laby.game.listeners;
 
+import net.laby.devathlon.DevAthlon;
 import net.laby.game.Game;
 import net.laby.game.GamePlayer;
 import net.laby.game.GameRegion;
 import net.laby.game.Level;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftFireball;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Class created by qlow | Jan
@@ -22,11 +31,61 @@ public class InteractListener implements Listener {
         Player player = event.getPlayer();
         GamePlayer gamePlayer = GamePlayer.getPlayer( player.getUniqueId() );
 
-        if(event.getAction() == Action.PHYSICAL)
+        if ( event.getAction() == Action.PHYSICAL )
             return;
 
         if ( gamePlayer.isIngame() ) {
             event.setCancelled( true );
+
+            Fireball fireball = player.launchProjectile( Fireball.class );
+
+            new BukkitRunnable() {
+
+                @Override
+                public void run() {
+                    if ( (( CraftFireball ) fireball).getHandle().ticksLived >= 200 ) {
+                        fireball.remove();
+                        cancel();
+                        return;
+                    }
+
+                    List<Entity> entityList = fireball.getNearbyEntities( 2D, 2D, 2D );
+
+                    for ( Entity entity : entityList ) {
+                        if ( !(entity instanceof ArmorStand) )
+                            continue;
+
+                        ArmorStand armorStand = ( ArmorStand ) entity;
+
+                        if ( armorStand.getCustomName() == null || !armorStand.getCustomName().startsWith( "Ship" ) )
+                            continue;
+
+                        UUID playerUuid = UUID.fromString( armorStand.getCustomName().split( ";" )[1] );
+
+                        if ( playerUuid == player.getUniqueId() )
+                            continue;
+
+                        GamePlayer hitPlayer = GamePlayer.getPlayer( playerUuid );
+
+                        if ( hitPlayer == null )
+                            continue;
+
+                        hitPlayer.setLife( hitPlayer.getLife() - gamePlayer.getAttackDamage() );
+
+                        if ( hitPlayer.getLife() <= 0 ) {
+                            hitPlayer.leaveGame();
+                            gamePlayer.setKillStreak( gamePlayer.getKillStreak() + 1 );
+
+                            if ( gamePlayer.getRequiredKills() == 0 ) {
+                                gamePlayer.setLevel( gamePlayer.getLevel() + 1 );
+
+                                player.getVehicle().setPassenger( null );
+                                spawnShip( player, Level.values()[gamePlayer.getLevel()] );
+                            }
+                        }
+                    }
+                }
+            }.runTaskTimer( DevAthlon.getInstance(), 1L, 1L );
 
             return;
         }
@@ -63,8 +122,12 @@ public class InteractListener implements Listener {
                 region.getRandomX(), Game.getGame().getConfig().getHighestWaterY() + 5, region.getRandomZ() ) );
 
         // Constructing ship
+        spawnShip( player, Level.values()[0] );
+    }
+
+    private void spawnShip( Player player, Level level ) {
         try {
-            Level.values()[0].getShipModel().getConstructor( Player.class ).newInstance( player );
+            DevAthlon.getInstance().getShips().add( level.getShipModel().getConstructor( Player.class ).newInstance( player ) );
         } catch ( Exception e ) {
             e.printStackTrace();
         }

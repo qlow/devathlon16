@@ -60,17 +60,31 @@ public abstract class Ship {
             private Location lastLocation = mainArmorStand.getLocation();
             private int stayTicks;
 
+            private int lastLevel;
+
             @Override
             public void run() {
                 if ( mainSeatStand.getPassenger() == null ) {
-                    dismount();
+                    GamePlayer gamePlayer = GamePlayer.getPlayer( player.getUniqueId() );
+
+                    boolean newLevel = false;
+
+                    if ( gamePlayer != null ) {
+                        newLevel = gamePlayer.getLevel() != lastLevel;
+                    }
+
+                    dismount( !newLevel );
                     cancel();
+
+                    DevAthlon.getInstance().getShips().remove( this );
                     return;
                 }
 
                 if ( !player.isOnline() ) {
                     dismount();
                     cancel();
+
+                    DevAthlon.getInstance().getShips().remove( this );
                     return;
                 }
 
@@ -170,6 +184,8 @@ public abstract class Ship {
                     blocks.updatePosition( location );
                 }
 
+                lastLevel = gamePlayer.getLevel();
+
             }
 
         }.runTaskTimer( DevAthlon.getInstance(), 1L, 1L );
@@ -222,6 +238,10 @@ public abstract class Ship {
     }
 
     public void dismount() {
+        dismount( true );
+    }
+
+    public void dismount( boolean leave ) {
         this.player.removePotionEffect( PotionEffectType.INVISIBILITY );
 
         mainArmorStand.remove();
@@ -235,7 +255,7 @@ public abstract class Ship {
 
         GamePlayer gamePlayer = GamePlayer.getPlayer( player.getUniqueId() );
 
-        if ( gamePlayer != null ) {
+        if ( leave && gamePlayer != null ) {
             gamePlayer.leaveGame();
         }
     }
