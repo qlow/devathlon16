@@ -33,6 +33,10 @@ public class GamePlayer {
 
     @Getter
     @Setter
+    private long joined;
+
+    @Getter
+    @Setter
     private float life = 20F;
 
     public GamePlayer( UUID uuid ) {

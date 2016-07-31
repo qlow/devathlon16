@@ -34,7 +34,7 @@ public class InteractListener implements Listener {
         if ( event.getAction() == Action.PHYSICAL )
             return;
 
-        if ( gamePlayer.isIngame() ) {
+        if ( gamePlayer.isIngame() && (System.currentTimeMillis() - gamePlayer.getJoined()) >= 2000 ) {
             event.setCancelled( true );
 
             Fireball fireball = player.launchProjectile( Fireball.class );
@@ -105,6 +105,7 @@ public class InteractListener implements Listener {
 
         // Setting some values
         gamePlayer.setIngame( true );
+        gamePlayer.setJoined( System.currentTimeMillis() );
         gamePlayer.setLevel( 0 );
         gamePlayer.setKillStreak( 0 );
         gamePlayer.setLife( 20F );
