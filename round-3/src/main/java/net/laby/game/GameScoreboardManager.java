@@ -26,24 +26,25 @@ public class GameScoreboardManager {
         GamePlayer gamePlayer = GamePlayer.getPlayer( player.getUniqueId() );
 
         playerScores.put( "Level", String.valueOf( gamePlayer.getLevel() ) );
-        playerScores.put( "Maximales Level", String.valueOf( Level.getMaxLevels() ) );
-        playerScores.put( "Benötigte Kills", (gamePlayer.getLevel() == Level.getMaxLevels() ? "/" :
+        playerScores.put( "Maximales Level", String.valueOf( Level.getMaxLevels() - 1 ) );
+        playerScores.put( "Benötigte Kills", (gamePlayer.getLevel() == (Level.getMaxLevels() - 1) ? "/" :
                 String.valueOf( Level.values()[gamePlayer.getLevel()].getNeededKillStreak() - gamePlayer.getKillStreak() )) );
 
         Scoreboard scoreboard = player.getScoreboard();
-
-        Team team = getOrCreate( scoreboard, "colorTeam" );
-        team.setPrefix( "§a" );
 
         if ( scoreboard == null || scoreboard == Bukkit.getScoreboardManager().getMainScoreboard() ) {
             scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 
             Objective objective = scoreboard.registerNewObjective( "mainObjective", "dummy" );
+            objective.setDisplayName( "§a§lShipBattles" );
             objective.setDisplaySlot( DisplaySlot.SIDEBAR );
 
             // Setting scoreboard to player
             player.setScoreboard( scoreboard );
         }
+
+        Team team = getOrCreate( scoreboard, "colorTeam" );
+        team.setPrefix( "§a" );
 
         // Getting main-objective
         Objective objective = scoreboard.getObjective( "mainObjective" );
@@ -55,8 +56,9 @@ public class GameScoreboardManager {
             String score = scores[i];
 
             // Adding score-name to colorTeam
-            if ( !team.getEntries().contains( score ) )
+            if ( !team.getEntries().contains( score ) ) {
                 team.addEntry( score );
+            }
 
             // Setting score of colored score
             objective.getScore( score ).setScore( highestScore-- );

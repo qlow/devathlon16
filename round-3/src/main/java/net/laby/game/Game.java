@@ -16,6 +16,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.vehicle.VehicleExitEvent;
 
 /**
  * Class created by qlow | Jan
@@ -114,7 +115,7 @@ public class Game implements Listener {
 
         // Teleporting player
         player.teleport( new Location( config.getGameRegionFirstPoint().getLocation().getWorld(),
-                region.getRandomX(), config.getHighestWaterY() + 2, region.getRandomZ() ) );
+                region.getRandomX(), config.getHighestWaterY() + 5, region.getRandomZ() ) );
 
         // Constructing ship
         try {
@@ -132,6 +133,23 @@ public class Game implements Listener {
     @EventHandler
     public void onFoodLevelChange( FoodLevelChangeEvent event ) {
         event.setCancelled( true );
+    }
+
+    @EventHandler
+    public void onVehicleExit( VehicleExitEvent event ) {
+        if ( !(event.getExited() instanceof Player) )
+            return;
+
+        Player player = ( Player ) event.getExited();
+        GamePlayer gamePlayer = GamePlayer.getPlayer( player.getUniqueId() );
+
+        if(!gamePlayer.isIngame())
+            return;
+
+        // Teleporting back to lobby-spawn
+        player.setScoreboard( Bukkit.getScoreboardManager().getMainScoreboard() );
+        player.teleport( config.getLobbySpawn().getLocationAtMid() );
+        gamePlayer.setIngame( false );
     }
 
 }
