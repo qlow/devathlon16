@@ -70,6 +70,9 @@ public class InteractListener implements Listener {
                         if ( hitPlayer == null )
                             continue;
 
+                        fireball.remove();
+                        cancel();
+
                         hitPlayer.setLife( hitPlayer.getLife() - gamePlayer.getAttackDamage() );
 
                         if ( hitPlayer.getLife() <= 0 ) {
