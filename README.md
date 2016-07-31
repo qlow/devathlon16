@@ -11,5 +11,5 @@ und in die zweite Zeile den Arenennamen schreibt.
 * /arena addspawn <Arena> - Fügt einen Spawn zu einer Arena hinzu
 * /arena tptomap <Weltname> - Teleportiert dich zu dieser Welt
 
-## Runde 2
-Coming soon!
+## Runde 3
+https://www.gommehd.net/forum/threads/devathlon-3-shipbattles.523852/
