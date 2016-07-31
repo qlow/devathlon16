@@ -32,6 +32,7 @@ public abstract class Ship {
     protected ArmorStand mainArmorStand;
     protected ArmorStand mainSeatStand;
     protected ArmorStand mainMovilityStand;
+    protected ArmorStand mainHologram;
 
     protected double maxSpeed = 0.2D;
     protected double speed = 0.006;
@@ -72,6 +73,9 @@ public abstract class Ship {
                     cancel();
                     return;
                 }
+
+                mainHologram.teleport( player.getLocation() );
+                updateHologram( "§c" + player.getHealth() + " HERZEN" );
 
                 if ( lastLocation.distance( mainArmorStand.getLocation() ) == 0 ) {
                     if ( ++stayTicks > 3 ) {
@@ -181,6 +185,12 @@ public abstract class Ship {
         seatStand.setVisible( false );
         seatStand.setCustomName( "ShipPart;" + player.getUniqueId() );
 
+        ArmorStand hologram = ( ArmorStand ) location.getWorld().spawnEntity( location, EntityType.ARMOR_STAND );
+        setGravity( hologram, false );
+        hologram.setVisible( false );
+        hologram.setCustomNameVisible( true );
+        hologram.setCustomName( "" );
+
         // Setting passenger
         movilityStand.setPassenger( seatStand );
 
@@ -193,6 +203,7 @@ public abstract class Ship {
         this.mainArmorStand = mainStand;
         this.mainSeatStand = seatStand;
         this.mainMovilityStand = movilityStand;
+        this.mainHologram = hologram;
     }
 
     public void buildModel( ) {
@@ -201,12 +212,17 @@ public abstract class Ship {
         }
     }
 
+    public void updateHologram(String text) {
+        this.mainHologram.setCustomName( text );
+    }
+
     private void dismount( ) {
         this.player.removePotionEffect( PotionEffectType.INVISIBILITY );
 
         mainArmorStand.remove();
         mainMovilityStand.remove();
         mainSeatStand.remove();
+        mainHologram.remove();
 
         for(ArmorStandBlock model : blocksArmorStand) {
             model.getArmorStand().remove();
