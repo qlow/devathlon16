@@ -74,6 +74,10 @@ public class GamePlayer {
         String heartString = "§a";
 
         for ( int i = 0; i < 10; i++ ) {
+            if ( hearts == 0 && i == 0 ) {
+                heartString += "§c";
+            }
+
             heartString += "❤";
 
             if ( (i + 1) == hearts ) {
