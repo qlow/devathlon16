@@ -8,15 +8,11 @@ import net.laby.schematic.SchematicCreator;
 import net.laby.schematic.SchematicLoader;
 import net.laby.schematic.ShipModel;
 import net.laby.ship.Ship;
-import net.laby.ship.ShipModel1;
 import net.minecraft.server.v1_10_R1.ChatComponentText;
 import net.minecraft.server.v1_10_R1.PacketPlayOutChat;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -24,6 +20,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Class created by qlow | Jan
@@ -31,6 +28,7 @@ import java.util.List;
 public class DevAthlon extends JavaPlugin implements Listener {
 
     public static File SCHEMATIC_FOLDER;
+    @Getter private static Random random = new Random( );
     private HashMap<String, ShipModel> schematicModels = new HashMap<String, ShipModel>();
     private static DevAthlon instance;
 
@@ -83,22 +81,6 @@ public class DevAthlon extends JavaPlugin implements Listener {
         for ( Ship ship : ships ) {
             ship.dismount();
         }
-    }
-
-    // TODO: REMOVE
-    @EventHandler
-    public void onChat( AsyncPlayerChatEvent event ) {
-        Player player = event.getPlayer();
-
-        if ( !event.getMessage().equalsIgnoreCase( "spawnship" ) )
-            return;
-
-        Bukkit.getScheduler().runTask( this, new Runnable() {
-            @Override
-            public void run() {
-                new ShipModel1( player );
-            }
-        } );
     }
 
     public static DevAthlon getInstance() {

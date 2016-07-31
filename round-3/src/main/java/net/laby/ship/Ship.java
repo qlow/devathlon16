@@ -4,10 +4,13 @@ import net.laby.devathlon.DevAthlon;
 import net.laby.game.GamePlayer;
 import net.laby.schematic.ModelPart;
 import net.laby.schematic.ShipModel;
+import net.laby.schematic.Utils;
 import net.minecraft.server.v1_10_R1.EntityArmorStand;
 import net.minecraft.server.v1_10_R1.EntityPlayer;
+import net.minecraft.server.v1_10_R1.PacketPlayOutEntityDestroy;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftArmorStand;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
@@ -39,6 +42,8 @@ public abstract class Ship {
     protected double maxSpeed = 0.2D;
     protected double speed = 0.006;
 
+    private long lastUpdate = 0;
+
     public Ship( Player player, String modelName ) {
         this.player = player;
 
@@ -52,6 +57,8 @@ public abstract class Ship {
         }
 
         updateHologramName( "§7" + player.getName() );
+
+        player.playSound( player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 3, DevAthlon.getRandom().nextFloat() + 0.5f );
 
         new BukkitRunnable() {
 
@@ -92,9 +99,17 @@ public abstract class Ship {
                 if ( !player.hasPotionEffect( PotionEffectType.INVISIBILITY ) )
                     player.addPotionEffect( new PotionEffect( PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1 ) );
 
-                mainHologramHearts.teleport( player.getLocation().clone().add( 0, 0.4, 0 ) );
+                mainHologramHearts.teleport( player.getLocation().clone().add( 0, -0.4, 0 ) );
                 mainHologramName.teleport( player.getLocation() );
                 mainHologramLevel.teleport( player.getLocation().clone().add( 0, -0.8, 0 ) );
+
+                if ( lastUpdate < System.currentTimeMillis() ) {
+                    lastUpdate = System.currentTimeMillis() + 1000;
+                    Player target = Utils.getNearestPlayer( player );
+                    if ( target != null ) {
+                        player.setCompassTarget( target.getLocation() );
+                    }
+                }
 
                 GamePlayer gamePlayer = GamePlayer.getPlayer( player.getUniqueId() );
 
@@ -218,18 +233,21 @@ public abstract class Ship {
         hologramHearts.setVisible( false );
         hologramHearts.setCustomNameVisible( true );
         hologramHearts.setCustomName( "" );
+        destroyArmorStand( hologramHearts.getEntityId(), player );
 
         ArmorStand hologramName = ( ArmorStand ) location.getWorld().spawnEntity( location, EntityType.ARMOR_STAND );
         setGravity( hologramName, false );
         hologramName.setVisible( false );
         hologramName.setCustomNameVisible( true );
         hologramName.setCustomName( "" );
+        destroyArmorStand( hologramName.getEntityId(), player );
 
         ArmorStand hologramLevel = ( ArmorStand ) location.getWorld().spawnEntity( location, EntityType.ARMOR_STAND );
         setGravity( hologramLevel, false );
         hologramLevel.setVisible( false );
         hologramLevel.setCustomNameVisible( true );
         hologramLevel.setCustomName( "" );
+        destroyArmorStand( hologramLevel.getEntityId(), player );
 
 
         // Setting passenger
@@ -267,6 +285,11 @@ public abstract class Ship {
         this.mainHologramLevel.setCustomName( text );
     }
 
+    private void destroyArmorStand( int entityId, Player forPlayer ) {
+        PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy( entityId );
+        CraftPlayer cp = ( CraftPlayer ) forPlayer;
+        cp.getHandle().playerConnection.sendPacket( packet );
+    }
 
     public void dismount( ) {
         dismount( true );

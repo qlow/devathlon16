@@ -55,6 +55,8 @@ public class GamePlayer {
         // Teleporting back to lobby-spawn
         player.setScoreboard( Bukkit.getScoreboardManager().getMainScoreboard() );
         player.teleport( Game.getGame().getConfig().getLobbySpawn().getLocationAtMid() );
+        player.getInventory().clear();
+        player.setCompassTarget( player.getLocation() );
         setIngame( false );
     }
 

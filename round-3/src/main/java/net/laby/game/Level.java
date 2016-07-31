@@ -14,8 +14,11 @@ public enum Level {
     LEVEL3( ShipModel3.class ),
     LEVEL4( ShipModel4.class ),
     LEVEL5( ShipModel5.class ),
-    LEVEL6( ShipModel6.class );
-
+    LEVEL6( ShipModel6.class ),
+    LEVEL7( ShipModel7.class ),
+    LEVEL8( ShipModel8.class ),
+    LEVEL9( ShipModel9.class ),
+    LEVEL10( ShipModel10.class );
 
     @Getter
     private static int maxLevels = Level.values().length;
@@ -41,7 +44,7 @@ public enum Level {
 
         this.level = ordinal() + 1;
         this.shipModel = shipModel;
-        this.neededKillStreak = ((ordinal() + 1) * 15) + ((ordinal() - 1) * 5);
+        this.neededKillStreak = ordinal() + 1;//((ordinal() + 1) * 15) + ((ordinal() - 1) * 5);
         this.maxHearts = 20F + (ordinal() * 5F);
         this.attackDamage = (ordinal() + 1) * 2F;
     }

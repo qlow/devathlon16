@@ -5,7 +5,10 @@ import net.laby.game.Game;
 import net.laby.game.GamePlayer;
 import net.laby.game.GameRegion;
 import net.laby.game.Level;
+import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftFireball;
 import org.bukkit.entity.ArmorStand;
@@ -16,6 +19,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
@@ -29,34 +33,40 @@ public class InteractListener implements Listener {
     @EventHandler
     public void onInteract( PlayerInteractEvent event ) {
         Player player = event.getPlayer();
+
         GamePlayer gamePlayer = GamePlayer.getPlayer( player.getUniqueId() );
 
         if ( event.getAction() == Action.PHYSICAL )
             return;
 
         if ( gamePlayer.isIngame()
-                && (System.currentTimeMillis() - gamePlayer.getJoined()) >= 2000
-                && (System.currentTimeMillis() - gamePlayer.getLastShooted()) >= 1000 ) {
+                && ( System.currentTimeMillis() - gamePlayer.getJoined() ) >= 2000
+                && ( System.currentTimeMillis() - gamePlayer.getLastShooted() ) >= 1000 ) {
             event.setCancelled( true );
 
             gamePlayer.setLastShooted( System.currentTimeMillis() );
             Fireball fireball = player.launchProjectile( Fireball.class );
             fireball.setVelocity( player.getLocation().getDirection().multiply( 3 ) );
 
+            player.getWorld().playSound( player.getLocation(), Sound.ENTITY_BLAZE_SHOOT, 2, DevAthlon.getRandom().nextFloat() + 0.5f );
+            player.getWorld().playEffect( player.getLocation(), Effect.EXPLOSION, 1 );
+
             new BukkitRunnable() {
 
                 @Override
-                public void run() {
-                    if ( (( CraftFireball ) fireball).getHandle().ticksLived >= 200 ) {
+                public void run( ) {
+                    if ( ( ( CraftFireball ) fireball ).getHandle().ticksLived >= 200 || fireball.isDead() ) {
                         fireball.remove();
                         cancel();
                         return;
                     }
 
+                    fireball.getWorld().playEffect( fireball.getLocation(), Effect.LAVA_POP, 1 );
+
                     List<Entity> entityList = fireball.getNearbyEntities( 2D, 2D, 2D );
 
                     for ( Entity entity : entityList ) {
-                        if ( !(entity instanceof ArmorStand) )
+                        if ( !( entity instanceof ArmorStand ) )
                             continue;
 
                         ArmorStand armorStand = ( ArmorStand ) entity;
@@ -64,7 +74,7 @@ public class InteractListener implements Listener {
                         if ( armorStand.getCustomName() == null || !armorStand.getCustomName().startsWith( "Ship" ) )
                             continue;
 
-                        UUID playerUuid = UUID.fromString( armorStand.getCustomName().split( ";" )[1] );
+                        UUID playerUuid = UUID.fromString( armorStand.getCustomName().split( ";" )[ 1 ] );
 
                         if ( playerUuid.toString().equals( player.getUniqueId().toString() ) )
                             continue;
@@ -74,6 +84,9 @@ public class InteractListener implements Listener {
                         if ( hitPlayer == null )
                             continue;
 
+                        fireball.getWorld().playEffect( fireball.getLocation(), Effect.EXPLOSION_HUGE, 1 );
+                        fireball.getWorld().playSound( fireball.getLocation(), Sound.ITEM_SHIELD_BREAK, 5, DevAthlon.getRandom().nextFloat() + 0.5f );
+                        player.playSound( player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 3, DevAthlon.getRandom().nextFloat() + 0.5f );
                         fireball.remove();
                         cancel();
 
@@ -92,12 +105,14 @@ public class InteractListener implements Listener {
                             hitPlayer.getPlayer().getVehicle().setPassenger( null );
                             hitPlayer.leaveGame();
 
+                            hitPlayer.setIngame( false );
+
                             gamePlayer.setKillStreak( gamePlayer.getKillStreak() + 1 );
 
                             // Checking for new level
                             if ( gamePlayer.getRequiredKills() == 0 ) {
                                 gamePlayer.setLevel( gamePlayer.getLevel() + 1 );
-                                Level level = Level.values()[gamePlayer.getLevel()];
+                                Level level = Level.values()[ gamePlayer.getLevel() ];
 
                                 // Setting new level
                                 player.getVehicle().setPassenger( null );
@@ -105,7 +120,7 @@ public class InteractListener implements Listener {
                             }
 
                             // Healing and updating scoreboard
-                            gamePlayer.setLife( Level.values()[gamePlayer.getLevel()].getMaxHearts() );
+                            gamePlayer.setLife( Level.values()[ gamePlayer.getLevel() ].getMaxHearts() );
                             Game.getGame().getGameScoreboardManager().updateScoreboard( player );
                         }
 
@@ -122,7 +137,7 @@ public class InteractListener implements Listener {
         if ( event.getClickedBlock() == null )
             return;
 
-        if ( !(event.getClickedBlock().getState() instanceof Sign) )
+        if ( !( event.getClickedBlock().getState() instanceof Sign ) )
             return;
 
         Location signLocation = Game.getGame().getConfig().getGameJoinSign().getLocation();
@@ -150,7 +165,7 @@ public class InteractListener implements Listener {
         GameRegion region = Game.getGame().getRegion();
 
         Location location = new Location( Game.getGame().getConfig().getGameRegionFirstPoint().getLocation().getWorld(),
-                region.getRandomX(), Game.getGame().getConfig().getHighestWaterY() + 5, region.getRandomZ() );
+                region.getRandomX(), Game.getGame().getConfig().getHighestWaterY() + 8, region.getRandomZ() );
 
         // Loading chunk
         location.getChunk().load();
@@ -158,14 +173,29 @@ public class InteractListener implements Listener {
         player.teleport( location );
 
         // Constructing ship
-        spawnShip( player, Level.values()[0] );
+        spawnShip( player, Level.values()[ 0 ] );
+
+        // Give compass
+        player.getInventory().setItem( 0, new ItemStack( Material.COMPASS ) );
     }
 
     private void spawnShip( Player player, Level level ) {
-        try {
-            DevAthlon.getInstance().getShips().add( level.getShipModel().getConstructor( Player.class ).newInstance( player ) );
-        } catch ( Exception e ) {
-            e.printStackTrace();
+        if(level == Level.LEVEL1) {
+            new BukkitRunnable() {
+                public void run( ) {
+                    try {
+                        DevAthlon.getInstance().getShips().add( level.getShipModel().getConstructor( Player.class ).newInstance( player ) );
+                    } catch ( Exception e ) {
+                        e.printStackTrace();
+                    }
+                }
+            }.runTaskLater( DevAthlon.getInstance(), 10 );
+        } else {
+            try {
+                DevAthlon.getInstance().getShips().add( level.getShipModel().getConstructor( Player.class ).newInstance( player ) );
+            } catch ( Exception e ) {
+                e.printStackTrace();
+            }
         }
     }
 

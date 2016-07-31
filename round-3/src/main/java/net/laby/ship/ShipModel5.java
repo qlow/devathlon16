@@ -9,7 +9,7 @@ public class ShipModel5 extends Ship {
 
     public ShipModel5( Player player ) {
         super( player, "level5" );
-
+        setMaxSpeed( 0.6 );
     }
 
 }

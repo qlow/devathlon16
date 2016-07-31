@@ -5,12 +5,7 @@ import lombok.Setter;
 import net.laby.devathlon.DevAthlon;
 import net.laby.game.command.GameCommand;
 import net.laby.game.config.GameConfig;
-import net.laby.game.listeners.DamageListener;
-import net.laby.game.listeners.EntityExplodeListener;
-import net.laby.game.listeners.FoodLevelChangeListener;
-import net.laby.game.listeners.InteractListener;
-import net.laby.game.listeners.JoinListener;
-import net.laby.game.listeners.QuitListener;
+import net.laby.game.listeners.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -59,7 +54,9 @@ public class Game implements Listener {
                 new InteractListener(),
                 new JoinListener(),
                 new QuitListener(),
-                new EntityExplodeListener()
+                new EntityExplodeListener(),
+                new PlayerBlockListener(),
+                new InventoryListener()
         };
 
         for ( Listener listener : listeners ) {
