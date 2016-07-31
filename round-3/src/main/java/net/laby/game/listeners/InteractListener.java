@@ -62,7 +62,7 @@ public class InteractListener implements Listener {
 
                         UUID playerUuid = UUID.fromString( armorStand.getCustomName().split( ";" )[1] );
 
-                        if ( playerUuid.equals( player.getUniqueId() ) )
+                        if ( playerUuid.toString().equals( player.getUniqueId().toString() ) )
                             continue;
 
                         GamePlayer hitPlayer = GamePlayer.getPlayer( playerUuid );
@@ -76,15 +76,21 @@ public class InteractListener implements Listener {
                         hitPlayer.setLife( hitPlayer.getLife() - gamePlayer.getAttackDamage() );
 
                         if ( hitPlayer.getLife() <= 0 ) {
+                            player.sendMessage( "§7Du hast §6" + player.getName() + " §7getötet!" );
+
                             hitPlayer.leaveGame();
                             gamePlayer.setKillStreak( gamePlayer.getKillStreak() + 1 );
+                            Game.getGame().getGameScoreboardManager().updateScoreboard( player );
 
                             if ( gamePlayer.getRequiredKills() == 0 ) {
                                 gamePlayer.setLevel( gamePlayer.getLevel() + 1 );
+                                Level level = Level.values()[gamePlayer.getLevel()];
 
                                 player.getVehicle().setPassenger( null );
-                                spawnShip( player, Level.values()[gamePlayer.getLevel()] );
+                                spawnShip( player, level );
                             }
+                        } else {
+                            player.sendMessage( "§7" + player.getName() + ": \n" + hitPlayer.getHeartString( true ) );
                         }
                     }
                 }
