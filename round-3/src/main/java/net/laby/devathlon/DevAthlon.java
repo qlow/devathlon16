@@ -6,9 +6,9 @@ import net.laby.game.command.SchematicCommand;
 import net.laby.schematic.SchematicCreator;
 import net.laby.schematic.SchematicLoader;
 import net.laby.schematic.ShipModel;
+import net.laby.ship.Ship;
 import net.laby.ship.ShipModelStarter;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,7 +16,9 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Class created by qlow | Jan
@@ -29,6 +31,9 @@ public class DevAthlon extends JavaPlugin implements Listener {
 
     @Getter
     private SchematicCreator schematicCreator;
+
+    @Getter
+    private List<Ship> ships = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -50,13 +55,8 @@ public class DevAthlon extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        for ( Player players : Bukkit.getOnlinePlayers() ) {
-            Entity vehicle = players.getVehicle();
-
-            if ( vehicle == null )
-                continue;
-
-            vehicle.setPassenger( null );
+        for ( Ship ship : ships ) {
+            ship.dismount();
         }
     }
 

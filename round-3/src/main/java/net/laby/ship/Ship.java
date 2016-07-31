@@ -216,7 +216,7 @@ public abstract class Ship {
         this.mainHologram.setCustomName( text );
     }
 
-    private void dismount( ) {
+    public void dismount( ) {
         this.player.removePotionEffect( PotionEffectType.INVISIBILITY );
 
         mainArmorStand.remove();

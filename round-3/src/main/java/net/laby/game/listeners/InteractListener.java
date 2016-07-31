@@ -21,9 +21,11 @@ public class InteractListener implements Listener {
         Player player = event.getPlayer();
         GamePlayer gamePlayer = GamePlayer.getPlayer( player.getUniqueId() );
 
-        if ( gamePlayer.isIngame() )
-            return;
+        if ( gamePlayer.isIngame() ) {
+            event.setCancelled( true );
 
+            return;
+        }
         if ( !Game.getGame().getRegion().isValid() )
             return;
 
