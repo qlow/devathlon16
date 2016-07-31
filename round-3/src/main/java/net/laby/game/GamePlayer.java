@@ -2,6 +2,8 @@ package net.laby.game;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +20,8 @@ public class GamePlayer {
     @Getter
     private UUID uuid;
 
+    private Player player;
+
     @Getter
     @Setter
     private int level, killStreak;
@@ -28,6 +32,17 @@ public class GamePlayer {
 
     public GamePlayer( UUID uuid ) {
         this.uuid = uuid;
+        this.player = Bukkit.getPlayer( uuid );
+    }
+
+    public void leaveGame() {
+        if(!isIngame())
+            return;
+
+        // Teleporting back to lobby-spawn
+        player.setScoreboard( Bukkit.getScoreboardManager().getMainScoreboard() );
+        player.teleport( Game.getGame().getConfig().getLobbySpawn().getLocationAtMid() );
+        setIngame( false );
     }
 
     public static GamePlayer getPlayer( UUID uuid ) {

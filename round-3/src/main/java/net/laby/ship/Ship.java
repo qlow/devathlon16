@@ -1,6 +1,9 @@
 package net.laby.ship;
 
 import net.laby.devathlon.DevAthlon;
+import net.laby.game.GamePlayer;
+import net.laby.schematic.ModelPart;
+import net.laby.schematic.ShipModel;
 import net.minecraft.server.v1_10_R1.EntityArmorStand;
 import net.minecraft.server.v1_10_R1.EntityPlayer;
 import org.bukkit.Location;
@@ -11,6 +14,8 @@ import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -22,20 +27,29 @@ import java.util.ArrayList;
 public abstract class Ship {
 
     private Player player;
+    private ShipModel shipModel;
     protected ArrayList<ArmorStandBlock> blocksArmorStand = new ArrayList<ArmorStandBlock>();
     protected ArmorStand mainArmorStand;
     protected ArmorStand mainSeatStand;
     protected ArmorStand mainMovilityStand;
 
-    protected double maxSpeed = 1D;
+    protected double maxSpeed = 0.2D;
     protected double speed = 0.006;
 
-    public Ship( Player player ) {
+    public Ship( Player player, String modelName ) {
+
+        player.addPotionEffect( new PotionEffect( PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1 ) );
 
         this.player = player;
 
-        spawnMainArmorStands( player.getLocation() , player );
-        buildModel();
+        if ( DevAthlon.getInstance().getSchematicModels().containsKey( modelName ) ) {
+            this.shipModel = DevAthlon.getInstance().getSchematicModels().get( modelName );
+        }
+
+        spawnMainArmorStands( player.getLocation(), player );
+        if ( this.shipModel != null ) {
+            buildModel();
+        }
 
         new BukkitRunnable() {
 
@@ -46,14 +60,16 @@ public abstract class Ship {
             private int stayTicks;
 
             @Override
-            public void run() {
+            public void run( ) {
                 if ( mainSeatStand.getPassenger() == null ) {
                     dismount();
+                    cancel();
                     return;
                 }
 
                 if ( !player.isOnline() ) {
                     dismount();
+                    cancel();
                     return;
                 }
 
@@ -67,7 +83,7 @@ public abstract class Ship {
                     stayTicks = 0;
                 }
 
-                EntityPlayer entityPlayer = (( CraftPlayer ) player).getHandle();
+                EntityPlayer entityPlayer = ( ( CraftPlayer ) player ).getHandle();
 
                 double sideMotion = entityPlayer.bf;
                 double forwardMotion = entityPlayer.bg;
@@ -79,7 +95,7 @@ public abstract class Ship {
                 final Vector direction = mainArmorStand.getLocation().getDirection();
 
                 // Moving ship only if it is on water
-                if(type == Material.WATER || type == Material.STATIONARY_WATER) {
+                if ( type == Material.WATER || type == Material.STATIONARY_WATER ) {
                     // Calculating the velocity-things
                     if ( forwardMotion > 0 ) {
                         // Calculating if the player drives forwards
@@ -124,11 +140,11 @@ public abstract class Ship {
                 mainArmorStand.setVelocity( new Vector( direction.getX() * this.addX, yVelocity, direction.getZ() * this.addZ ) );
 
                 // Getting handles of main-armorstand & seatstand
-                EntityArmorStand entityArmorStand = (( CraftArmorStand ) mainArmorStand).getHandle();
-                EntityArmorStand entitySeatStand = (( CraftArmorStand ) mainSeatStand).getHandle();
+                EntityArmorStand entityArmorStand = ( ( CraftArmorStand ) mainArmorStand ).getHandle();
+                EntityArmorStand entitySeatStand = ( ( CraftArmorStand ) mainSeatStand ).getHandle();
 
                 // Calculating new yaw by side motion
-                float newYaw = ( float ) (entityArmorStand.yaw - (sideMotion * 3));
+                float newYaw = ( float ) ( entityArmorStand.yaw - ( sideMotion * 3 ) );
 
                 // Setting yaw
                 entityArmorStand.yaw = newYaw;
@@ -137,12 +153,12 @@ public abstract class Ship {
                 // Setting locations
                 Location location = mainArmorStand.getLocation();
 
-                ((CraftArmorStand) mainMovilityStand).getHandle().setLocation(
+                ( ( CraftArmorStand ) mainMovilityStand ).getHandle().setLocation(
                         location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch() );
                 entitySeatStand.setLocation( location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch() );
 
-                for(ArmorStandBlock blocks : Ship.this.blocksArmorStand) {
-                    blocks.updatePosition(location);
+                for ( ArmorStandBlock blocks : Ship.this.blocksArmorStand ) {
+                    blocks.updatePosition( location );
                 }
 
             }
@@ -158,18 +174,18 @@ public abstract class Ship {
         ArmorStand movilityStand = ( ArmorStand ) location.getWorld().spawnEntity( location, EntityType.ARMOR_STAND );
         setGravity( movilityStand, false );
         movilityStand.setVisible( false );
-        movilityStand.setCustomName( "ShipPart;" + mainStand.getUniqueId() );
+        movilityStand.setCustomName( "ShipPart;" + player.getUniqueId() );
 
         ArmorStand seatStand = ( ArmorStand ) location.getWorld().spawnEntity( location, EntityType.ARMOR_STAND );
         setGravity( seatStand, false );
         seatStand.setVisible( false );
-        seatStand.setCustomName( "ShipPart;" + mainStand.getUniqueId() );
+        seatStand.setCustomName( "ShipPart;" + player.getUniqueId() );
 
         // Setting passenger
         movilityStand.setPassenger( seatStand );
 
         // Setting name of main-stand
-        mainStand.setCustomName( "Ship;" + movilityStand.getUniqueId() + ";" + seatStand.getUniqueId() );
+        mainStand.setCustomName( "Ship;" + player.getUniqueId() + ";" + seatStand.getUniqueId() );
 
         // Setting player-passenger
         seatStand.setPassenger( player );
@@ -179,18 +195,33 @@ public abstract class Ship {
         this.mainMovilityStand = movilityStand;
     }
 
-    public void buildModel() {}
+    public void buildModel( ) {
+        for ( ModelPart part : this.shipModel.getModelParts() ) {
+            add( part.getX(), part.getY(), part.getZ(), part.getRotation(), part.getMaterial(), part.getData() );
+        }
+    }
 
-    private void dismount() {
-        this.player = null;
+    private void dismount( ) {
+        this.player.removePotionEffect( PotionEffectType.INVISIBILITY );
 
-        setGravity( mainMovilityStand, false );
-        setGravity( mainArmorStand, false );
+        mainArmorStand.remove();
+        mainMovilityStand.remove();
+        mainSeatStand.remove();
+
+        for(ArmorStandBlock model : blocksArmorStand) {
+            model.getArmorStand().remove();
+        }
+
+        GamePlayer gamePlayer = GamePlayer.getPlayer( player.getUniqueId() );
+
+        if(gamePlayer != null) {
+            gamePlayer.leaveGame();
+        }
     }
 
     private static void setGravity( ArmorStand armorStand, boolean gravity ) {
         armorStand.setGravity( gravity );
-        ((CraftArmorStand ) armorStand).getHandle().noclip = !gravity;
+        ( ( CraftArmorStand ) armorStand ).getHandle().noclip = !gravity;
     }
 
     public void setSpeed( double speed ) {
@@ -201,19 +232,11 @@ public abstract class Ship {
         this.maxSpeed = maxSpeed;
     }
 
-    public World getWorld() {
+    public World getWorld( ) {
         return this.player.getWorld();
     }
 
-    public void add(double x, double y, double z, float yaw, Material material, int data) {
-        this.blocksArmorStand.add( new ArmorStandBlock( this.player.getLocation(), new Location( getWorld(), x * 0.7d, y * 0.7d, z * 0.7d ), material, data, false) );
-    }
-
-    public void add(double x, double y, double z, Material material) {
-        add( x, y, z, 0, material, 0 );
-    }
-
-    public void add(double x, double y, double z, float yaw, Material material) {
-        add( x, y, z, yaw, material, 0 );
+    public void add( double x, double y, double z, float rotation, Material material, int data ) {
+        this.blocksArmorStand.add( new ArmorStandBlock( this.player.getLocation(), new Location( getWorld(), x * 0.7d, y * 0.7d, z * 0.7d, rotation, 0 ), material, data, false ) );
     }
 }

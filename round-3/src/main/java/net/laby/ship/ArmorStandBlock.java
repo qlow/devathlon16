@@ -62,6 +62,7 @@ public class ArmorStandBlock {
         loc.add( mainStand.getDirection().multiply( blockAtShipLocation.getX() ) );
         loc.add( zDirection.getDirection().multiply( blockAtShipLocation.getZ() ) );
         loc.setY( mainStand.getY() + blockAtShipLocation.getY() );
+        loc.setYaw( loc.getYaw() + blockAtShipLocation.getYaw() );
         armorStand.teleport( loc );
     }
     

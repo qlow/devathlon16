@@ -1,12 +1,12 @@
 package net.laby.schematic;
 
+import net.laby.devathlon.DevAthlon;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.io.BufferedWriter;
@@ -23,87 +23,69 @@ public class SchematicCreator implements Listener {
     private Location pos2 = null;
 
     @EventHandler
-    public void selection( PlayerInteractEvent event) {
-        if(event.getItem() == null || event.getItem().getType() != Material.GOLD_HOE) {
+    public void selection( PlayerInteractEvent event ) {
+        if ( event.getItem() == null || event.getItem().getType() != Material.GOLD_HOE ) {
             return;
         }
-
-        if(event.getClickedBlock() == null) {
+        if ( event.getClickedBlock() == null ) {
             return;
         }
-
-        if(event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+        if ( event.getAction() == Action.RIGHT_CLICK_BLOCK ) {
             pos1 = event.getClickedBlock().getLocation();
             event.getPlayer().sendMessage( "§5First position set!" );
         }
-
-        if(event.getAction() == Action.LEFT_CLICK_BLOCK) {
+        if ( event.getAction() == Action.LEFT_CLICK_BLOCK ) {
             pos2 = event.getClickedBlock().getLocation();
             event.getPlayer().sendMessage( "§5Second position set!" );
         }
         event.setCancelled( true );
     }
 
-    // Das wird wieder entfernt!!!!
-    @EventHandler
-    public void onCommand( PlayerCommandPreprocessEvent event) {
-        if(event.getMessage().toLowerCase().startsWith( "/saveschematic" )) {
-            if(pos1 != null && pos2 != null) {
-                save(event.getPlayer(), pos1, pos2);
-            }
-            event.setCancelled( true );
-        }
-    }
+    private void save( Player p, Location position1, Location position2, String name ) {
+        double xMin = Math.min( position1.getBlockX(), position2.getBlockX() );
+        double xMax = Math.max( position1.getBlockX(), position2.getBlockX() );
+        double yMin = Math.min( position1.getBlockY(), position2.getBlockY() );
+        double yMax = Math.max( position1.getBlockY(), position2.getBlockY() );
+        double zMin = Math.min( position1.getBlockZ(), position2.getBlockZ() );
+        double zMax = Math.max( position1.getBlockZ(), position2.getBlockZ() );
 
-    private void save( Player p, Location position1, Location position2) {
-        double xMin = Math.min(position1.getBlockX(), position2.getBlockX());
-        double xMax = Math.max(position1.getBlockX(), position2.getBlockX());
-        double yMin = Math.min(position1.getBlockY(), position2.getBlockY());
-        double yMax = Math.max(position1.getBlockY(), position2.getBlockY());
-        double zMin = Math.min(position1.getBlockZ(), position2.getBlockZ());
-        double zMax = Math.max(position1.getBlockZ(), position2.getBlockZ());
-
-        int i = 0;
+        int amount = 0;
 
         int px = p.getLocation().getBlockX();
         int py = p.getLocation().getBlockY();
         int pz = p.getLocation().getBlockZ();
 
-        BufferedWriter output = null;
+        BufferedWriter bufferedWriter = null;
         try {
-            File file = new File("schematic.txt");
-            output = new BufferedWriter(new FileWriter(file));
-
-            for (double y = yMin; y <= yMax; y++) {
+            File file = new File( DevAthlon.SCHEMATIC_FOLDER, name + ".schem" );
+            bufferedWriter = new BufferedWriter( new FileWriter( file ) );
+            for ( double y = yMin; y <= yMax; y++ ) {
                 for ( double x = xMin; x <= xMax; x++ ) {
                     for ( double z = zMin; z <= zMax; z++ ) {
                         Location loc = new Location( position1.getWorld(), x, y, z );
-                        output.write("add( "+(x-px)+", "+(y-py)+", "+(z-pz)+", Material."+loc.getBlock().getType().name()+"," +
-                                ""+loc.getBlock().getData()+", "+ dataToFloat(loc.getBlock().getData())+" );\n");
-                        output.flush();
-                        i++;
+                        String line = ( int ) ( x - px ) + ";" + ( int ) ( y - py ) + ";" + ( int ) ( z - pz ) + ";"
+                                + Utils.dataToYaw( loc.getBlock().getData() )
+                                + ";" + loc.getBlock().getType().name()
+                                + ";" + loc.getBlock().getData() + "\n";
+                        bufferedWriter.write( line );
+                        bufferedWriter.flush();
+                        amount++;
                     }
                 }
             }
-
-            output.close();
+            bufferedWriter.close();
         } catch ( IOException e ) {
             e.printStackTrace();
         }
-
-        p.sendMessage( "§5Saved §e" + i + " blocks!");
+        p.sendMessage( "§5Saved §e" + amount + "§5 blocks as §e" + name + "§5!" );
     }
 
 
-    private float dataToFloat(byte data) {
-        switch(data) {
-            case 1:
-                return 180;
-            case 2:
-                return 90;
-            case 3:
-                return -90;
+    public void createSchematic( Player p, String name ) {
+        if ( pos1 != null && pos2 != null ) {
+            save( p, pos1, pos2, name );
+        } else {
+            p.sendMessage( "§cNo selection found! (Create a selection with a gold hoe)" );
         }
-        return 0;
     }
 }

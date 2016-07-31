@@ -8,3 +8,6 @@ commands:
   game:
     description: Game-setup command
     usage: /<command>
+  shipmatic:
+    description: create schematics
+    usage: /<command> save <name>

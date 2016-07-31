@@ -16,7 +16,6 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.vehicle.VehicleExitEvent;
 
 /**
  * Class created by qlow | Jan
@@ -80,6 +79,7 @@ public class Game implements Listener {
 
     @EventHandler
     public void onQuit( PlayerQuitEvent event ) {
+        GamePlayer.getPlayer( event.getPlayer().getUniqueId() ).leaveGame();
         GamePlayer.getPlayers().remove( event.getPlayer().getUniqueId() );
     }
 
@@ -133,23 +133,6 @@ public class Game implements Listener {
     @EventHandler
     public void onFoodLevelChange( FoodLevelChangeEvent event ) {
         event.setCancelled( true );
-    }
-
-    @EventHandler
-    public void onVehicleExit( VehicleExitEvent event ) {
-        if ( !(event.getExited() instanceof Player) )
-            return;
-
-        Player player = ( Player ) event.getExited();
-        GamePlayer gamePlayer = GamePlayer.getPlayer( player.getUniqueId() );
-
-        if(!gamePlayer.isIngame())
-            return;
-
-        // Teleporting back to lobby-spawn
-        player.setScoreboard( Bukkit.getScoreboardManager().getMainScoreboard() );
-        player.teleport( config.getLobbySpawn().getLocationAtMid() );
-        gamePlayer.setIngame( false );
     }
 
 }

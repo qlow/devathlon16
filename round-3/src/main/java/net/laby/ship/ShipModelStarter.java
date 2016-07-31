@@ -7,14 +7,9 @@ import org.bukkit.entity.Player;
  */
 public class ShipModelStarter extends Ship {
 
-
     public ShipModelStarter( Player player ) {
-        super( player );
+        super( player, "starter" );
 
     }
 
-    public void buildModel( ) {
-
-
-    }
 }
