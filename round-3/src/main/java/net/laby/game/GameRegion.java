@@ -40,13 +40,17 @@ public class GameRegion {
     }
 
     private int randomBetween( int min, int max ) {
+        boolean reversed = false;
+
         if(max < min) {
             final int tmpMin = min;
             min = max;
             max = tmpMin;
+
+            reversed = true;
         }
 
-        return RANDOM.nextInt( max - min ) + min;
+        return RANDOM.nextInt( max - min ) + (min * (reversed ? -1 : 1));
     }
 
 }
