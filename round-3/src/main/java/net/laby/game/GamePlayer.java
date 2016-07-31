@@ -63,7 +63,7 @@ public class GamePlayer {
     }
 
     public int getRequiredKills() {
-        return ((level + 1) == Level.values().length) ? -1 : Level.values()[level + 1].getNeededKillStreak() - getKillStreak();
+        return ((level + 1) == Level.values().length) ? -1 : Level.values()[level].getNeededKillStreak() - getKillStreak();
     }
 
     public String getHeartString( boolean info ) {
