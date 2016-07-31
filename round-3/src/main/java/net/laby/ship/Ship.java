@@ -40,9 +40,6 @@ public abstract class Ship {
     protected double speed = 0.006;
 
     public Ship( Player player, String modelName ) {
-        if ( !player.hasPotionEffect( PotionEffectType.INVISIBILITY ) )
-            player.addPotionEffect( new PotionEffect( PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1 ) );
-
         this.player = player;
 
         if ( DevAthlon.getInstance().getSchematicModels().containsKey( modelName ) ) {
@@ -91,6 +88,9 @@ public abstract class Ship {
                     DevAthlon.getInstance().getShips().remove( this );
                     return;
                 }
+
+                if ( !player.hasPotionEffect( PotionEffectType.INVISIBILITY ) )
+                    player.addPotionEffect( new PotionEffect( PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1 ) );
 
                 mainHologramHearts.teleport( player.getLocation() );
                 mainHologramName.teleport( player.getLocation().clone().add( 0, 0.4, 0 ) );
