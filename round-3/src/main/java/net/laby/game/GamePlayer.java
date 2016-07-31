@@ -37,6 +37,10 @@ public class GamePlayer {
 
     @Getter
     @Setter
+    private long lastShooted;
+
+    @Getter
+    @Setter
     private float life = 20F;
 
     public GamePlayer( UUID uuid ) {

@@ -17,6 +17,7 @@ public class GameScoreboardManager {
 
     private final String[] scores = new String[]{
             "Level",
+            "Killstreak",
             "Maximales Level",
             "Benötigte Kills"
     };
@@ -26,6 +27,7 @@ public class GameScoreboardManager {
         GamePlayer gamePlayer = GamePlayer.getPlayer( player.getUniqueId() );
 
         playerScores.put( "Level", String.valueOf( gamePlayer.getLevel() ) );
+        playerScores.put( "Killstreak", String.valueOf( gamePlayer.getKillStreak() ) );
         playerScores.put( "Maximales Level", String.valueOf( Level.getMaxLevels() - 1 ) );
 
         int requiredKills = gamePlayer.getRequiredKills();
@@ -51,8 +53,8 @@ public class GameScoreboardManager {
         // Getting main-objective
         Objective objective = scoreboard.getObjective( "mainObjective" );
 
-        int highestScore = 8;
-        int spaceBetweenScoresCounter = 9;
+        int highestScore = 11;
+        int spaceBetweenScoresCounter = 12;
 
         for ( int i = 0; i < scores.length; i++ ) {
             String score = scores[i];
