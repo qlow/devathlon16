@@ -36,7 +36,7 @@ public class GameRegion {
     }
 
     public int getRandomZ() {
-        return randomBetween( maxX, maxZ );
+        return randomBetween( minZ, maxZ );
     }
 
     private int randomBetween( int min, int max ) {
