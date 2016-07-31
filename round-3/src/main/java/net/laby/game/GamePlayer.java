@@ -20,6 +20,7 @@ public class GamePlayer {
     @Getter
     private UUID uuid;
 
+    @Getter
     private Player player;
 
     @Getter
@@ -30,13 +31,17 @@ public class GamePlayer {
     @Setter
     private boolean ingame;
 
+    @Getter
+    @Setter
+    private float life = 20F;
+
     public GamePlayer( UUID uuid ) {
         this.uuid = uuid;
         this.player = Bukkit.getPlayer( uuid );
     }
 
     public void leaveGame() {
-        if(!isIngame())
+        if ( !isIngame() )
             return;
 
         // Teleporting back to lobby-spawn
@@ -48,5 +53,22 @@ public class GamePlayer {
     public static GamePlayer getPlayer( UUID uuid ) {
         return players.get( uuid );
     }
+
+    public String getHeartString() {
+        int hearts = ( int ) (((100F / Level.values()[level].getMaxHearts()) * life) / 10F);
+
+        String heartString = "§a";
+
+        for ( int i = 0; i < 10; i++ ) {
+            heartString += "♥";
+
+            if((i + 1) == hearts) {
+                heartString += "§c";
+            }
+        }
+
+        return heartString;
+    }
+
 
 }

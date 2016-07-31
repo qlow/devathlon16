@@ -44,6 +44,7 @@ public class InteractListener implements Listener {
         gamePlayer.setIngame( true );
         gamePlayer.setLevel( 0 );
         gamePlayer.setKillStreak( 0 );
+        gamePlayer.setLife( 20F );
 
         // Updating scoreboard
         Game.getGame().getGameScoreboardManager().updateScoreboard( player );

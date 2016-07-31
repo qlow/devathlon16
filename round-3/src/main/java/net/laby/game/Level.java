@@ -21,6 +21,9 @@ public enum Level {
     @Getter
     private int level, neededKillStreak;
 
+    @Getter
+    private float maxHearts;
+
     Level( Class<? extends Ship> shipModel ) {
         try {
             shipModel.getConstructor( Player.class );
@@ -31,6 +34,7 @@ public enum Level {
         this.level = ordinal() + 1;
         this.shipModel = shipModel;
         this.neededKillStreak = ((ordinal() + 1) * 15) + ((ordinal() - 1) * 5);
+        this.maxHearts = maxHearts + (ordinal() * 5F);
     }
 
 }

@@ -75,7 +75,12 @@ public abstract class Ship {
                 }
 
                 mainHologram.teleport( player.getLocation() );
-                updateHologram( "§c" + player.getHealth() + " HERZEN" );
+
+                GamePlayer gamePlayer = GamePlayer.getPlayer( player.getUniqueId() );
+
+                if(gamePlayer != null) {
+                    updateHologram( gamePlayer.getHeartString() );
+                }
 
                 if ( lastLocation.distance( mainArmorStand.getLocation() ) == 0 ) {
                     if ( ++stayTicks > 3 ) {
