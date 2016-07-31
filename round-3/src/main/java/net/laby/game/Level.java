@@ -1,9 +1,7 @@
 package net.laby.game;
 
 import lombok.Getter;
-import net.laby.ship.Ship;
-import net.laby.ship.ShipModel1;
-import net.laby.ship.ShipModel2;
+import net.laby.ship.*;
 import org.bukkit.entity.Player;
 
 /**
@@ -12,7 +10,12 @@ import org.bukkit.entity.Player;
 public enum Level {
 
     LEVEL1( ShipModel1.class ),
-    LEVEL2( ShipModel2.class );
+    LEVEL2( ShipModel2.class ),
+    LEVEL3( ShipModel3.class ),
+    LEVEL4( ShipModel4.class ),
+    LEVEL5( ShipModel5.class ),
+    LEVEL6( ShipModel6.class );
+
 
     @Getter
     private static int maxLevels = Level.values().length;
@@ -38,7 +41,7 @@ public enum Level {
 
         this.level = ordinal() + 1;
         this.shipModel = shipModel;
-        this.neededKillStreak = ordinal() + 1;//((ordinal() + 1) * 15) + ((ordinal() - 1) * 5);
+        this.neededKillStreak = ((ordinal() + 1) * 15) + ((ordinal() - 1) * 5);
         this.maxHearts = 20F + (ordinal() * 5F);
         this.attackDamage = (ordinal() + 1) * 2F;
     }

@@ -56,7 +56,7 @@ public class SchematicCreator implements Listener {
         int pz = p.getLocation().getBlockZ();
 
         // Fixed y position;
-        py = (int) yMin + 1;
+        py = (int) yMin + 3;
 
         BufferedWriter bufferedWriter = null;
         try {

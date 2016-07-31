@@ -80,7 +80,7 @@ public class GamePlayer {
         }
 
         if ( info ) {
-            heartString += " §7[" + life + "/" + Level.values()[level].getMaxHearts() + "]";
+            heartString += " §7[" + (life < 10 ? "0" + life : life) + "/" + Level.values()[level].getMaxHearts() + "]";
         }
 
         return heartString;
