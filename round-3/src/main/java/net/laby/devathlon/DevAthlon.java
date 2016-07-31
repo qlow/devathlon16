@@ -8,6 +8,7 @@ import net.laby.schematic.SchematicLoader;
 import net.laby.schematic.ShipModel;
 import net.laby.ship.ShipModelStarter;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,24 +27,37 @@ public class DevAthlon extends JavaPlugin implements Listener {
     private HashMap<String, ShipModel> schematicModels = new HashMap<String, ShipModel>();
     private static DevAthlon instance;
 
-    @Getter private SchematicCreator schematicCreator;
+    @Getter
+    private SchematicCreator schematicCreator;
 
     @Override
     public void onEnable() {
         instance = this;
 
-        SCHEMATIC_FOLDER = new File(getInstance().getDataFolder(), "schematics");
+        SCHEMATIC_FOLDER = new File( getInstance().getDataFolder(), "schematics" );
 
         Bukkit.getPluginManager().registerEvents( this, this );
         Bukkit.getPluginManager().registerEvents( schematicCreator = new SchematicCreator(), this );
 
-        new SchematicLoader(SCHEMATIC_FOLDER).load();
+        new SchematicLoader( SCHEMATIC_FOLDER ).load();
 
         // Initializing game
         new Game();
 
         // Registering command
         new SchematicCommand();
+    }
+
+    @Override
+    public void onDisable() {
+        for ( Player players : Bukkit.getOnlinePlayers() ) {
+            Entity vehicle = players.getVehicle();
+
+            if ( vehicle == null )
+                continue;
+
+            vehicle.setPassenger( null );
+        }
     }
 
     // TODO: REMOVE
@@ -66,7 +80,7 @@ public class DevAthlon extends JavaPlugin implements Listener {
         return instance;
     }
 
-    public HashMap<String, ShipModel> getSchematicModels( ) {
+    public HashMap<String, ShipModel> getSchematicModels() {
         return schematicModels;
     }
 }
