@@ -3,7 +3,6 @@ version: 1.0
 authors: [qlow, LabyStudio]
 main: net.laby.devathlon.DevAthlon
 description: Do fights with your ship(s) and get better ships!
-softdepend: [Yamler]
 
 commands:
   game:
