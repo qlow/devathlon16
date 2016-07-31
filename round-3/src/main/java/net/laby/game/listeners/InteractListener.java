@@ -9,6 +9,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 /**
@@ -20,6 +21,9 @@ public class InteractListener implements Listener {
     public void onInteract( PlayerInteractEvent event ) {
         Player player = event.getPlayer();
         GamePlayer gamePlayer = GamePlayer.getPlayer( player.getUniqueId() );
+
+        if(event.getAction() == Action.PHYSICAL)
+            return;
 
         if ( gamePlayer.isIngame() ) {
             event.setCancelled( true );

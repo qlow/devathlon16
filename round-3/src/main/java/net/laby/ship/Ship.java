@@ -61,7 +61,7 @@ public abstract class Ship {
             private int stayTicks;
 
             @Override
-            public void run( ) {
+            public void run() {
                 if ( mainSeatStand.getPassenger() == null ) {
                     dismount();
                     cancel();
@@ -78,8 +78,8 @@ public abstract class Ship {
 
                 GamePlayer gamePlayer = GamePlayer.getPlayer( player.getUniqueId() );
 
-                if(gamePlayer != null) {
-                    updateHologram( gamePlayer.getHeartString() );
+                if ( gamePlayer != null ) {
+                    updateHologram( gamePlayer.getHeartString( false ) );
                 }
 
                 if ( lastLocation.distance( mainArmorStand.getLocation() ) == 0 ) {
@@ -92,7 +92,7 @@ public abstract class Ship {
                     stayTicks = 0;
                 }
 
-                EntityPlayer entityPlayer = ( ( CraftPlayer ) player ).getHandle();
+                EntityPlayer entityPlayer = (( CraftPlayer ) player).getHandle();
 
                 double sideMotion = entityPlayer.bf;
                 double forwardMotion = entityPlayer.bg;
@@ -149,11 +149,11 @@ public abstract class Ship {
                 mainArmorStand.setVelocity( new Vector( direction.getX() * this.addX, yVelocity, direction.getZ() * this.addZ ) );
 
                 // Getting handles of main-armorstand & seatstand
-                EntityArmorStand entityArmorStand = ( ( CraftArmorStand ) mainArmorStand ).getHandle();
-                EntityArmorStand entitySeatStand = ( ( CraftArmorStand ) mainSeatStand ).getHandle();
+                EntityArmorStand entityArmorStand = (( CraftArmorStand ) mainArmorStand).getHandle();
+                EntityArmorStand entitySeatStand = (( CraftArmorStand ) mainSeatStand).getHandle();
 
                 // Calculating new yaw by side motion
-                float newYaw = ( float ) ( entityArmorStand.yaw - ( sideMotion * 3 ) );
+                float newYaw = ( float ) (entityArmorStand.yaw - (sideMotion * 3));
 
                 // Setting yaw
                 entityArmorStand.yaw = newYaw;
@@ -162,7 +162,7 @@ public abstract class Ship {
                 // Setting locations
                 Location location = mainArmorStand.getLocation();
 
-                ( ( CraftArmorStand ) mainMovilityStand ).getHandle().setLocation(
+                (( CraftArmorStand ) mainMovilityStand).getHandle().setLocation(
                         location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch() );
                 entitySeatStand.setLocation( location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch() );
 
@@ -211,17 +211,17 @@ public abstract class Ship {
         this.mainHologram = hologram;
     }
 
-    public void buildModel( ) {
+    public void buildModel() {
         for ( ModelPart part : this.shipModel.getModelParts() ) {
             add( part.getX(), part.getY(), part.getZ(), part.getRotation(), part.getMaterial(), part.getData() );
         }
     }
 
-    public void updateHologram(String text) {
+    public void updateHologram( String text ) {
         this.mainHologram.setCustomName( text );
     }
 
-    public void dismount( ) {
+    public void dismount() {
         this.player.removePotionEffect( PotionEffectType.INVISIBILITY );
 
         mainArmorStand.remove();
@@ -229,20 +229,20 @@ public abstract class Ship {
         mainSeatStand.remove();
         mainHologram.remove();
 
-        for(ArmorStandBlock model : blocksArmorStand) {
+        for ( ArmorStandBlock model : blocksArmorStand ) {
             model.getArmorStand().remove();
         }
 
         GamePlayer gamePlayer = GamePlayer.getPlayer( player.getUniqueId() );
 
-        if(gamePlayer != null) {
+        if ( gamePlayer != null ) {
             gamePlayer.leaveGame();
         }
     }
 
     private static void setGravity( ArmorStand armorStand, boolean gravity ) {
         armorStand.setGravity( gravity );
-        ( ( CraftArmorStand ) armorStand ).getHandle().noclip = !gravity;
+        (( CraftArmorStand ) armorStand).getHandle().noclip = !gravity;
     }
 
     public void setSpeed( double speed ) {
@@ -253,7 +253,7 @@ public abstract class Ship {
         this.maxSpeed = maxSpeed;
     }
 
-    public World getWorld( ) {
+    public World getWorld() {
         return this.player.getWorld();
     }
 

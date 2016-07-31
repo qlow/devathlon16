@@ -54,17 +54,21 @@ public class GamePlayer {
         return players.get( uuid );
     }
 
-    public String getHeartString() {
+    public String getHeartString( boolean info ) {
         int hearts = ( int ) (((100F / Level.values()[level].getMaxHearts()) * life) / 10F);
 
         String heartString = "§a";
 
         for ( int i = 0; i < 10; i++ ) {
-            heartString += "♥";
+            heartString += "❤";
 
-            if((i + 1) == hearts) {
+            if ( (i + 1) == hearts ) {
                 heartString += "§c";
             }
+        }
+
+        if ( info ) {
+            heartString += "§7[" + life + "/" + Level.values()[level].getMaxHearts() + "]";
         }
 
         return heartString;

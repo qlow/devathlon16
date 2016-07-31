@@ -70,7 +70,7 @@ public class DevAthlon extends JavaPlugin implements Listener {
                         continue;
 
                     (( CraftPlayer ) gamePlayer.getPlayer()).getHandle().playerConnection.sendPacket(
-                            new PacketPlayOutChat( new ChatComponentText( "§7Leben:  " + gamePlayer.getHeartString() ), ( byte ) 2 ) );
+                            new PacketPlayOutChat( new ChatComponentText( "§7Leben:  " + gamePlayer.getHeartString(true) ), ( byte ) 2 ) );
                 }
             }
 
