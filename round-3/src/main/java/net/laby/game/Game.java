@@ -6,6 +6,7 @@ import net.laby.devathlon.DevAthlon;
 import net.laby.game.command.GameCommand;
 import net.laby.game.config.GameConfig;
 import net.laby.game.listeners.DamageListener;
+import net.laby.game.listeners.EntityExplodeListener;
 import net.laby.game.listeners.FoodLevelChangeListener;
 import net.laby.game.listeners.InteractListener;
 import net.laby.game.listeners.JoinListener;
@@ -57,7 +58,8 @@ public class Game implements Listener {
                 new FoodLevelChangeListener(),
                 new InteractListener(),
                 new JoinListener(),
-                new QuitListener()
+                new QuitListener(),
+                new EntityExplodeListener()
         };
 
         for ( Listener listener : listeners ) {

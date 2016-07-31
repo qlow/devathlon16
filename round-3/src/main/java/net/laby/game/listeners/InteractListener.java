@@ -76,7 +76,7 @@ public class InteractListener implements Listener {
                         hitPlayer.setLife( hitPlayer.getLife() - gamePlayer.getAttackDamage() );
 
                         if ( hitPlayer.getLife() <= 0 ) {
-                            player.sendMessage( "§7Du hast §6" + player.getName() + " §7getötet!" );
+                            player.sendMessage( "§7Du hast §6" + hitPlayer.getPlayer().getName() + " §7getötet!" );
 
                             hitPlayer.leaveGame();
                             gamePlayer.setKillStreak( gamePlayer.getKillStreak() + 1 );
@@ -89,9 +89,9 @@ public class InteractListener implements Listener {
                                 player.getVehicle().setPassenger( null );
                                 spawnShip( player, level );
                             }
-                        } else {
-                            player.sendMessage( "§7" + player.getName() + ": \n" + hitPlayer.getHeartString( true ) );
                         }
+
+                        break;
                     }
                 }
             }.runTaskTimer( DevAthlon.getInstance(), 1L, 1L );
