@@ -62,7 +62,7 @@ public class InteractListener implements Listener {
 
                         UUID playerUuid = UUID.fromString( armorStand.getCustomName().split( ";" )[1] );
 
-                        if ( playerUuid == player.getUniqueId() )
+                        if ( playerUuid.equals( player.getUniqueId() ) )
                             continue;
 
                         GamePlayer hitPlayer = GamePlayer.getPlayer( playerUuid );
@@ -93,6 +93,9 @@ public class InteractListener implements Listener {
             return;
         }
         if ( !Game.getGame().getRegion().isValid() )
+            return;
+
+        if ( event.getClickedBlock() == null )
             return;
 
         if ( !(event.getClickedBlock().getState() instanceof Sign) )
