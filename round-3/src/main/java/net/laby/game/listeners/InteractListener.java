@@ -38,6 +38,7 @@ public class InteractListener implements Listener {
             event.setCancelled( true );
 
             Fireball fireball = player.launchProjectile( Fireball.class );
+            fireball.setVelocity( player.getLocation().getDirection().multiply( 3 ) );
 
             new BukkitRunnable() {
 
@@ -77,6 +78,7 @@ public class InteractListener implements Listener {
 
                         if ( hitPlayer.getLife() <= 0 ) {
                             player.sendMessage( "§7Du hast §6" + hitPlayer.getPlayer().getName() + " §7getötet!" );
+                            hitPlayer.getPlayer().sendMessage( "§7Du wurdest von §6" + player.getName() + " §7getötet!" );
 
                             hitPlayer.leaveGame();
                             gamePlayer.setKillStreak( gamePlayer.getKillStreak() + 1 );
