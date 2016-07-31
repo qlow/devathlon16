@@ -149,8 +149,13 @@ public class InteractListener implements Listener {
         // Teleporting player
         GameRegion region = Game.getGame().getRegion();
 
-        player.teleport( new Location( Game.getGame().getConfig().getGameRegionFirstPoint().getLocation().getWorld(),
-                region.getRandomX(), Game.getGame().getConfig().getHighestWaterY() + 5, region.getRandomZ() ) );
+        Location location = new Location( Game.getGame().getConfig().getGameRegionFirstPoint().getLocation().getWorld(),
+                region.getRandomX(), Game.getGame().getConfig().getHighestWaterY() + 5, region.getRandomZ() );
+
+        // Loading chunk
+        location.getChunk().load();
+
+        player.teleport( location );
 
         // Constructing ship
         spawnShip( player, Level.values()[0] );
