@@ -40,6 +40,12 @@ public class GameRegion {
     }
 
     private int randomBetween( int min, int max ) {
+        if(max < min) {
+            final int tmpMin = min;
+            min = max;
+            max = tmpMin;
+        }
+
         return RANDOM.nextInt( max - min ) + min;
     }
 
