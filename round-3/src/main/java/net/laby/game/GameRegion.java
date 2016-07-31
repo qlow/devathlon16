@@ -32,17 +32,17 @@ public class GameRegion {
     }
 
     public int getRandomX() {
-        return randomBetween( minX, maxX );
+        return randomBetween( Math.abs(minX), Math.abs(maxX) );
     }
 
     public int getRandomZ() {
-        return randomBetween( Math.abs(maxX), Math.abs(maxZ) );
+        return randomBetween( Math.abs( maxX ), Math.abs( maxZ ) );
     }
 
     private int randomBetween( int min, int max ) {
         boolean reversed = false;
 
-        if(max < min) {
+        if ( max < min ) {
             final int tmpMin = min;
             min = max;
             max = tmpMin;
