@@ -38,7 +38,7 @@ public enum Level {
 
         this.level = ordinal() + 1;
         this.shipModel = shipModel;
-        this.neededKillStreak = ((ordinal() + 1) * 15) + ((ordinal() - 1) * 5);
+        this.neededKillStreak = ordinal() + 1;//((ordinal() + 1) * 15) + ((ordinal() - 1) * 5);
         this.maxHearts = 20F + (ordinal() * 5F);
         this.attackDamage = (ordinal() + 1) * 2F;
     }

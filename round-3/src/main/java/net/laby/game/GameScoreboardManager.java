@@ -26,9 +26,9 @@ public class GameScoreboardManager {
         Map<String, String> playerScores = new HashMap();
         GamePlayer gamePlayer = GamePlayer.getPlayer( player.getUniqueId() );
 
-        playerScores.put( "Level", String.valueOf( gamePlayer.getLevel() ) );
+        playerScores.put( "Level", String.valueOf( gamePlayer.getLevel() + 1 ) );
         playerScores.put( "Killstreak", String.valueOf( gamePlayer.getKillStreak() ) );
-        playerScores.put( "Maximales Level", String.valueOf( Level.getMaxLevels() - 1 ) );
+        playerScores.put( "Maximales Level", String.valueOf( Level.getMaxLevels() ) );
 
         int requiredKills = gamePlayer.getRequiredKills();
 

@@ -82,25 +82,31 @@ public class InteractListener implements Listener {
 
                         hitPlayer.setLife( hitPlayer.getLife() - gamePlayer.getAttackDamage() );
 
+                        // Checking for HP
                         if ( hitPlayer.getLife() <= 0 ) {
+                            // Sending messages
                             player.sendMessage( "§7Du hast §6" + hitPlayer.getPlayer().getName() + " §7getötet!" );
                             hitPlayer.getPlayer().sendMessage( "§7Du wurdest von §6" + player.getName() + " §7getötet!" );
 
+                            // Leaving game for hit player
                             hitPlayer.getPlayer().getVehicle().setPassenger( null );
                             hitPlayer.leaveGame();
 
-                            hitPlayer.setIngame( false );
-
                             gamePlayer.setKillStreak( gamePlayer.getKillStreak() + 1 );
-                            Game.getGame().getGameScoreboardManager().updateScoreboard( player );
 
+                            // Checking for new level
                             if ( gamePlayer.getRequiredKills() == 0 ) {
                                 gamePlayer.setLevel( gamePlayer.getLevel() + 1 );
                                 Level level = Level.values()[gamePlayer.getLevel()];
 
+                                // Setting new level
                                 player.getVehicle().setPassenger( null );
                                 spawnShip( player, level );
                             }
+
+                            // Healing and updating scoreboard
+                            gamePlayer.setLife( Level.values()[gamePlayer.getLevel()].getMaxHearts() );
+                            Game.getGame().getGameScoreboardManager().updateScoreboard( player );
                         }
 
                         break;

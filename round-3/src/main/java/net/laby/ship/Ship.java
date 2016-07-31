@@ -40,8 +40,8 @@ public abstract class Ship {
     protected double speed = 0.006;
 
     public Ship( Player player, String modelName ) {
-
-        player.addPotionEffect( new PotionEffect( PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1 ) );
+        if ( !player.hasPotionEffect( PotionEffectType.INVISIBILITY ) )
+            player.addPotionEffect( new PotionEffect( PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1 ) );
 
         this.player = player;
 
@@ -100,7 +100,7 @@ public abstract class Ship {
 
                 if ( gamePlayer != null ) {
                     updateHologramHearts( gamePlayer.getHeartString( false ) );
-                    updateHologramLevel( "§aLevel " + gamePlayer.getLevel() );
+                    updateHologramLevel( "§aLevel " + (gamePlayer.getLevel() + 1) );
                 }
 
                 if ( lastLocation.distance( mainArmorStand.getLocation() ) == 0 ) {
