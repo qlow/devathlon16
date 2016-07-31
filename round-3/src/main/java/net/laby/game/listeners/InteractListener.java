@@ -74,9 +74,13 @@ public class InteractListener implements Listener {
                         fireball.remove();
                         cancel();
 
+                        if(!hitPlayer.isIngame())
+                            break;
+
                         hitPlayer.setLife( hitPlayer.getLife() - gamePlayer.getAttackDamage() );
 
                         if ( hitPlayer.getLife() <= 0 ) {
+                            hitPlayer.setIngame( false );
                             player.sendMessage( "§7Du hast §6" + hitPlayer.getPlayer().getName() + " §7getötet!" );
                             hitPlayer.getPlayer().sendMessage( "§7Du wurdest von §6" + player.getName() + " §7getötet!" );
 
