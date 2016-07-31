@@ -40,7 +40,7 @@ public class GameRegion {
     }
 
     private int randomBetween( int min, int max ) {
-        return RANDOM.nextInt( Math.abs(max) - Math.abs(min) ) + min;
+        return RANDOM.nextInt( Math.abs( Math.abs( max ) - Math.abs( min ) ) ) + min;
     }
 
 }
