@@ -32,25 +32,15 @@ public class GameRegion {
     }
 
     public int getRandomX() {
-        return randomBetween( Math.abs(minX), Math.abs(maxX) );
+        return randomBetween( minX, maxX );
     }
 
     public int getRandomZ() {
-        return randomBetween( Math.abs( maxX ), Math.abs( maxZ ) );
+        return randomBetween( maxX, maxZ );
     }
 
     private int randomBetween( int min, int max ) {
-        boolean reversed = false;
-
-        if ( max < min ) {
-            final int tmpMin = min;
-            min = max;
-            max = tmpMin;
-
-            reversed = true;
-        }
-
-        return RANDOM.nextInt( max - min ) + (min * (reversed ? -1 : 1));
+        return RANDOM.nextInt( Math.abs(max) - Math.abs(min) ) + min;
     }
 
 }
