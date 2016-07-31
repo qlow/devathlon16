@@ -32,7 +32,9 @@ public abstract class Ship {
     protected ArmorStand mainArmorStand;
     protected ArmorStand mainSeatStand;
     protected ArmorStand mainMovilityStand;
-    protected ArmorStand mainHologram;
+    protected ArmorStand mainHologramHearts;
+    protected ArmorStand mainHologramName;
+    protected ArmorStand mainHologramLevel;
 
     protected double maxSpeed = 0.2D;
     protected double speed = 0.006;
@@ -51,6 +53,8 @@ public abstract class Ship {
         if ( this.shipModel != null ) {
             buildModel();
         }
+
+        updateHologramName( "§7" + player.getName() );
 
         new BukkitRunnable() {
 
@@ -88,12 +92,15 @@ public abstract class Ship {
                     return;
                 }
 
-                mainHologram.teleport( player.getLocation() );
+                mainHologramHearts.teleport( player.getLocation() );
+                mainHologramName.teleport( player.getLocation().clone().add( 0, 0.4, 0 ) );
+                mainHologramLevel.teleport( player.getLocation().clone().add( 0, -0.4, 0 ) );
 
                 GamePlayer gamePlayer = GamePlayer.getPlayer( player.getUniqueId() );
 
                 if ( gamePlayer != null ) {
-                    updateHologram( gamePlayer.getHeartString( false ) );
+                    updateHologramHearts( gamePlayer.getHeartString( false ) );
+                    updateHologramLevel( "§aLevel " + gamePlayer.getLevel() );
                 }
 
                 if ( lastLocation.distance( mainArmorStand.getLocation() ) == 0 ) {
@@ -206,11 +213,24 @@ public abstract class Ship {
         seatStand.setVisible( false );
         seatStand.setCustomName( "ShipPart;" + player.getUniqueId() );
 
-        ArmorStand hologram = ( ArmorStand ) location.getWorld().spawnEntity( location, EntityType.ARMOR_STAND );
-        setGravity( hologram, false );
-        hologram.setVisible( false );
-        hologram.setCustomNameVisible( true );
-        hologram.setCustomName( "" );
+        ArmorStand hologramHearts = ( ArmorStand ) location.getWorld().spawnEntity( location, EntityType.ARMOR_STAND );
+        setGravity( hologramHearts, false );
+        hologramHearts.setVisible( false );
+        hologramHearts.setCustomNameVisible( true );
+        hologramHearts.setCustomName( "" );
+
+        ArmorStand hologramName = ( ArmorStand ) location.getWorld().spawnEntity( location, EntityType.ARMOR_STAND );
+        setGravity( hologramName, false );
+        hologramName.setVisible( false );
+        hologramName.setCustomNameVisible( true );
+        hologramName.setCustomName( "" );
+
+        ArmorStand hologramLevel = ( ArmorStand ) location.getWorld().spawnEntity( location, EntityType.ARMOR_STAND );
+        setGravity( hologramLevel, false );
+        hologramLevel.setVisible( false );
+        hologramLevel.setCustomNameVisible( true );
+        hologramLevel.setCustomName( "" );
+
 
         // Setting passenger
         movilityStand.setPassenger( seatStand );
@@ -224,7 +244,9 @@ public abstract class Ship {
         this.mainArmorStand = mainStand;
         this.mainSeatStand = seatStand;
         this.mainMovilityStand = movilityStand;
-        this.mainHologram = hologram;
+        this.mainHologramHearts = hologramHearts;
+        this.mainHologramName = hologramName;
+        this.mainHologramLevel = hologramLevel;
     }
 
     public void buildModel() {
@@ -233,9 +255,18 @@ public abstract class Ship {
         }
     }
 
-    public void updateHologram( String text ) {
-        this.mainHologram.setCustomName( text );
+    public void updateHologramHearts( String text ) {
+        this.mainHologramHearts.setCustomName( text );
     }
+
+    public void updateHologramName( String text ) {
+        this.mainHologramName.setCustomName( text );
+    }
+
+    public void updateHologramLevel( String text ) {
+        this.mainHologramLevel.setCustomName( text );
+    }
+
 
     public void dismount() {
         dismount( true );
@@ -247,7 +278,10 @@ public abstract class Ship {
         mainArmorStand.remove();
         mainMovilityStand.remove();
         mainSeatStand.remove();
-        mainHologram.remove();
+        mainHologramHearts.remove();
+        mainHologramLevel.remove();
+        mainHologramName.remove();
+
 
         for ( ArmorStandBlock model : blocksArmorStand ) {
             model.getArmorStand().remove();
@@ -278,6 +312,6 @@ public abstract class Ship {
     }
 
     public void add( double x, double y, double z, float rotation, Material material, int data ) {
-        this.blocksArmorStand.add( new ArmorStandBlock( this.player.getLocation(), new Location( getWorld(), x * 0.7d, y * 0.7d, z * 0.7d, rotation, 0 ), material, data, false ) );
+        this.blocksArmorStand.add( new ArmorStandBlock( this.player.getLocation(), new Location( getWorld(), x * 0.6d, y * 0.6d, z * 0.6d, rotation, 0 ), material, data, false ) );
     }
 }

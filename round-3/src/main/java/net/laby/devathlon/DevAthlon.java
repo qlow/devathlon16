@@ -8,7 +8,7 @@ import net.laby.schematic.SchematicCreator;
 import net.laby.schematic.SchematicLoader;
 import net.laby.schematic.ShipModel;
 import net.laby.ship.Ship;
-import net.laby.ship.ShipModelStarter;
+import net.laby.ship.ShipModel1;
 import net.minecraft.server.v1_10_R1.ChatComponentText;
 import net.minecraft.server.v1_10_R1.PacketPlayOutChat;
 import org.bukkit.Bukkit;
@@ -46,10 +46,10 @@ public class DevAthlon extends JavaPlugin implements Listener {
 
         SCHEMATIC_FOLDER = new File( getInstance().getDataFolder(), "schematics" );
 
+        new SchematicLoader( SCHEMATIC_FOLDER ).load();
+
         Bukkit.getPluginManager().registerEvents( this, this );
         Bukkit.getPluginManager().registerEvents( schematicCreator = new SchematicCreator(), this );
-
-        new SchematicLoader( SCHEMATIC_FOLDER ).load();
 
         // Initializing game
         new Game();
@@ -96,7 +96,7 @@ public class DevAthlon extends JavaPlugin implements Listener {
         Bukkit.getScheduler().runTask( this, new Runnable() {
             @Override
             public void run() {
-                new ShipModelStarter( player );
+                new ShipModel1( player );
             }
         } );
     }

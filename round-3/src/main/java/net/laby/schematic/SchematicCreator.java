@@ -55,6 +55,9 @@ public class SchematicCreator implements Listener {
         int py = p.getLocation().getBlockY();
         int pz = p.getLocation().getBlockZ();
 
+        // Fixed y position;
+        py = (int) yMin + 1;
+
         BufferedWriter bufferedWriter = null;
         try {
             File file = new File( DevAthlon.SCHEMATIC_FOLDER, name + ".schem" );
@@ -63,6 +66,9 @@ public class SchematicCreator implements Listener {
                 for ( double x = xMin; x <= xMax; x++ ) {
                     for ( double z = zMin; z <= zMax; z++ ) {
                         Location loc = new Location( position1.getWorld(), x, y, z );
+                        if(loc.getBlock().getType() == Material.AIR) {
+                            continue;
+                        }
                         String line = ( int ) ( x - px ) + ";" + ( int ) ( y - py ) + ";" + ( int ) ( z - pz ) + ";"
                                 + Utils.dataToYaw( loc.getBlock().getData() )
                                 + ";" + loc.getBlock().getType().name()

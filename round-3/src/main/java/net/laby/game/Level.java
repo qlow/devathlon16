@@ -2,7 +2,8 @@ package net.laby.game;
 
 import lombok.Getter;
 import net.laby.ship.Ship;
-import net.laby.ship.ShipModelStarter;
+import net.laby.ship.ShipModel1;
+import net.laby.ship.ShipModel2;
 import org.bukkit.entity.Player;
 
 /**
@@ -10,7 +11,8 @@ import org.bukkit.entity.Player;
  */
 public enum Level {
 
-    STARTER( ShipModelStarter.class );
+    LEVEL1( ShipModel1.class ),
+    LEVEL2( ShipModel2.class );
 
     @Getter
     private static int maxLevels = Level.values().length;
