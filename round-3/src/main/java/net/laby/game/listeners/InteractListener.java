@@ -80,12 +80,13 @@ public class InteractListener implements Listener {
                         hitPlayer.setLife( hitPlayer.getLife() - gamePlayer.getAttackDamage() );
 
                         if ( hitPlayer.getLife() <= 0 ) {
-                            hitPlayer.setIngame( false );
                             player.sendMessage( "§7Du hast §6" + hitPlayer.getPlayer().getName() + " §7getötet!" );
                             hitPlayer.getPlayer().sendMessage( "§7Du wurdest von §6" + player.getName() + " §7getötet!" );
 
                             hitPlayer.getPlayer().getVehicle().setPassenger( null );
                             hitPlayer.leaveGame();
+
+                            hitPlayer.setIngame( false );
 
                             gamePlayer.setKillStreak( gamePlayer.getKillStreak() + 1 );
                             Game.getGame().getGameScoreboardManager().updateScoreboard( player );
